@@ -16,7 +16,6 @@
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-
   },
   "include": ["lib/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts", "tests"]
