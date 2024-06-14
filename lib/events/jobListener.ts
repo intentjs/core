@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { SquareboatNestEventConstants } from './constants';
-import { EventListenerRunner } from './runner';
+import { Injectable } from "@nestjs/common";
+import { SquareboatNestEventConstants } from "./constants";
+import { EventListenerRunner } from "./runner";
 
-export const JOB_NAME = '__JOB_NAME__';
-export const JOB_OPTIONS = '__JOB_OPTIONS__';
+export const JOB_NAME = "__JOB_NAME__";
+export const JOB_OPTIONS = "__JOB_OPTIONS__";
 
 export function Job(job: string, options?: Record<string, any>) {
   options = options || {};

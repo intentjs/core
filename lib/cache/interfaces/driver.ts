@@ -1,4 +1,4 @@
-import { GenericFunction } from '@libs/quicksilver/interfaces';
+import { GenericFunction } from "../../interfaces";
 
 export interface CacheDriver {
   /**
@@ -16,7 +16,7 @@ export interface CacheDriver {
   set(
     key: string,
     value: Record<string, any> | string,
-    ttlInSec?: number,
+    ttlInSec?: number
   ): Promise<void>;
 
   /**

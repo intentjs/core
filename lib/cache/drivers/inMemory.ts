@@ -1,12 +1,12 @@
-import { GenericFunction } from '@libs/quicksilver/interfaces';
-import { CacheDriver, InMemoryDriverOption } from '../interfaces';
-import { loadPackage } from '../utils/loadPackage';
+import { GenericFunction } from "../../interfaces";
+import { CacheDriver, InMemoryDriverOption } from "../interfaces";
+import { loadPackage } from "../utils/loadPackage";
 
 export class InMemoryDriver implements CacheDriver {
   private client: any;
 
   constructor(private options: InMemoryDriverOption) {
-    const NodeCache = loadPackage('node-cache', '@hanalabs/nest-cache');
+    const NodeCache = loadPackage("node-cache", "@hanalabs/nest-cache");
 
     this.client = new NodeCache({ stdTTL: 100, checkperiod: 120 });
   }
@@ -19,7 +19,7 @@ export class InMemoryDriver implements CacheDriver {
   async set(
     key: string,
     value: string | Record<string, any>,
-    ttlInSec?: number | undefined,
+    ttlInSec?: number | undefined
   ): Promise<void> {
     const cacheKey = `${this.options.prefix}:::${key}`;
 
@@ -38,7 +38,7 @@ export class InMemoryDriver implements CacheDriver {
   async remember<T>(
     key: string,
     cb: GenericFunction,
-    ttlInSec: number,
+    ttlInSec: number
   ): Promise<T> {
     const exists = await this.has(key);
     if (exists) return this.get(key);
@@ -68,7 +68,7 @@ export class InMemoryDriver implements CacheDriver {
   async forget(key: string): Promise<void> {
     const cacheKey = `${this.options.prefix}:::${key}`;
     await this.client.del(cacheKey);
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   getClient<T>(): T {

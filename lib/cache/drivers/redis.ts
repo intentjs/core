@@ -1,6 +1,6 @@
-import IORedis from 'ioredis';
-import { CacheDriver, RedisDriverOption } from '../interfaces';
-import { GenericFunction } from '@libs/quicksilver/interfaces';
+import IORedis from "ioredis";
+import { CacheDriver, RedisDriverOption } from "../interfaces";
+import { GenericFunction } from "../../interfaces";
 
 export class RedisDriver implements CacheDriver {
   private client: IORedis;
@@ -22,11 +22,11 @@ export class RedisDriver implements CacheDriver {
   async set(
     key: string,
     value: string | Record<string, any>,
-    ttlInSec?: number,
+    ttlInSec?: number
   ): Promise<void> {
     const redisKey = `${this.options.prefix}:::${key}`;
     if (ttlInSec) {
-      await this.client.set(redisKey, JSON.stringify(value), 'EX', ttlInSec);
+      await this.client.set(redisKey, JSON.stringify(value), "EX", ttlInSec);
       return;
     }
 
@@ -41,7 +41,7 @@ export class RedisDriver implements CacheDriver {
   async remember<T>(
     key: string,
     cb: GenericFunction,
-    ttlInSec: number,
+    ttlInSec: number
   ): Promise<T> {
     const exists = await this.has(key);
     if (exists) return this.get(key);

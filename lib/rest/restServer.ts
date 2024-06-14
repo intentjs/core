@@ -1,13 +1,12 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
-import { useContainer } from 'class-validator';
-import { ServerOptions } from './interfaces';
-import { ExceptionFilter } from '../exceptions';
-import { EdgeViewEngine } from '../views/viewEngine';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { IntentConfig } from '../config/service';
-import { requestMiddleware } from './middlewares/requestSerializer';
-import { ResponseSerializerInterceptor } from './interceptors/response';
-import { LoggerService } from '../logger/service';
+import { HttpAdapterHost, NestFactory } from "@nestjs/core";
+import { useContainer } from "class-validator";
+import { ServerOptions } from "./interfaces";
+import { ExceptionFilter } from "../exceptions";
+import { EdgeViewEngine } from "../views/viewEngine";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { IntentConfig } from "../config/service";
+import { requestMiddleware } from "./middlewares/requestSerializer";
+import { ResponseSerializerInterceptor } from "./interceptors/response";
 
 export class RestServer {
   private module: any;
@@ -35,28 +34,20 @@ export class RestServer {
 
     this.bindViewEngine(app);
     const config = app.get(IntentConfig, { strict: false });
-    console.log('port ===> ', config.get('app.port'));
+    console.log("port ===> ", config.get("app.port"));
 
-    const logger = LoggerService.logger();
-    logger.error('hello there');
-    logger.info('hello there from trace');
-    const child = logger.child({ userId: 'vinayak' });
-    logger.info('Hello there');
-    child.info('Hello there');
-    // logger.end();
-
-    await app.listen(options?.port || config.get<number>('app.port'));
+    await app.listen(options?.port || config.get<number>("app.port"));
   }
 
   static bindViewEngine(app: NestExpressApplication) {
     const viewEngine = new EdgeViewEngine();
     const edge = viewEngine.handle();
-    app.engine('edge', (path, options, callback) =>
+    app.engine("edge", (path, options, callback) =>
       edge
         .render(path, options)
         .catch((error) => callback(error))
-        .then((rendered) => callback(null, rendered)),
+        .then((rendered) => callback(null, rendered))
     );
-    app.setViewEngine('edge');
+    app.setViewEngine("edge");
   }
 }

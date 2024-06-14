@@ -1,8 +1,7 @@
-import { ArgumentParserOutput } from './interfaces';
-import { ArgumentParser } from './argumentParser';
-import { Inquirer } from './inquirer';
-import { Logger } from './logger';
-import ora from 'ora';
+import { ArgumentParserOutput } from "./interfaces";
+import { ArgumentParser } from "./argumentParser";
+import { Inquirer } from "./inquirer";
+import { Logger } from "./logger";
 
 export class ConsoleIO {
   schema: ArgumentParserOutput;
@@ -11,11 +10,8 @@ export class ConsoleIO {
   hasErrors: boolean;
   missingArguments: string[];
 
-  constructor(
-    private schemaString: string,
-    private argv: Record<string, any>,
-  ) {
-    this.schema = { name: '', arguments: [], options: [], meta: { desc: '' } };
+  constructor(private schemaString: string, private argv: Record<string, any>) {
+    this.schema = { name: "", arguments: [], options: [], meta: { desc: "" } };
     this.values = { arguments: {}, options: {} };
     this.rawValues = { ...this.argv };
     this.missingArguments = [];
@@ -57,7 +53,7 @@ export class ConsoleIO {
       }
 
       if (!this.values.arguments[argument.name]) {
-        if (argument.defaultValue !== 'secret_default_value') {
+        if (argument.defaultValue !== "secret_default_value") {
           this.values.arguments[argument.name] = argument.isArray
             ? [argument.defaultValue]
             : argument.defaultValue;
@@ -159,7 +155,7 @@ export class ConsoleIO {
     question: string,
     choices: string[],
     multiple = false,
-    defaultVal?: string[],
+    defaultVal?: string[]
   ) {
     return Inquirer.select(question, choices, multiple, defaultVal);
   }
@@ -177,14 +173,7 @@ export class ConsoleIO {
    * @param question
    * @param mask
    */
-  async password(question: string, mask = '', defaultVal?: string) {
+  async password(question: string, mask = "", defaultVal?: string) {
     return Inquirer.password(question, mask, defaultVal);
-  }
-
-  /**
-   * Create Spinner
-   */
-  spinner(options?: string | ora.Options): ora.Ora {
-    return ora(options);
   }
 }

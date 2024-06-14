@@ -1,4 +1,4 @@
-import * as inquirer from 'inquirer';
+import inquirer from "inquirer";
 
 export class Inquirer {
   /**
@@ -8,7 +8,7 @@ export class Inquirer {
    */
   static async ask(question: string, defaultVal?: string): Promise<string> {
     const answers = await inquirer.prompt([
-      { name: 'question', message: question, default: defaultVal },
+      { name: "question", message: question, default: defaultVal },
     ]);
     return answers.question;
   }
@@ -19,13 +19,13 @@ export class Inquirer {
    */
   static async confirm(
     message: string,
-    defaultVal?: boolean,
+    defaultVal?: boolean
   ): Promise<boolean> {
     const answer = await inquirer.prompt([
       {
-        name: 'confirm_once',
+        name: "confirm_once",
         message,
-        type: 'confirm',
+        type: "confirm",
         default: defaultVal || true,
       },
     ]);
@@ -43,10 +43,10 @@ export class Inquirer {
     message: string,
     choices: string[],
     multiple = false,
-    defaultVal?: string[],
+    defaultVal?: string[]
   ): Promise<string | string[]> {
-    const type = multiple ? 'checkbox' : 'list';
-    const name = 'command';
+    const type = multiple ? "checkbox" : "list";
+    const name = "command";
     const answers = await inquirer.prompt([
       { type, name, message, choices, default: defaultVal },
     ]);
@@ -60,11 +60,11 @@ export class Inquirer {
    */
   static async password(
     message: string,
-    mask = '',
-    defaultVal?: string,
+    mask = "",
+    defaultVal?: string
   ): Promise<string> {
-    const type = 'password',
-      name = 'command';
+    const type = "password",
+      name = "command";
     const answers = await inquirer.prompt([
       { type, name, message, mask, default: defaultVal },
     ]);

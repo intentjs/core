@@ -1,9 +1,9 @@
-import * as pc from 'picocolors';
-import { CommandObject } from './interfaces';
-import { ConsoleIO } from './consoleIO';
-import { Logger } from './logger';
-import yargsParser from 'yargs-parser';
-import { CommandMeta } from './metadata';
+import * as pc from "picocolors";
+import { CommandObject } from "./interfaces";
+import { ConsoleIO } from "./consoleIO";
+import { Logger } from "./logger";
+import * as yargsParser from "yargs-parser";
+import { CommandMeta } from "./metadata";
 
 export class CommandRunner {
   static async run(cmd: string): Promise<void> {
@@ -14,10 +14,10 @@ export class CommandRunner {
 
   static async handle(
     command: CommandObject | null,
-    args: Record<string, any>,
+    args: Record<string, any>
   ): Promise<void> {
     if (command == null) {
-      Logger.error('No command found');
+      Logger.error("No command found");
       return;
     }
 
@@ -28,7 +28,7 @@ export class CommandRunner {
 
     const _cli = ConsoleIO.from(command.expression, args);
     if (_cli.hasErrors && _cli.missingArguments.length > 0) {
-      _cli.error(` Missing Arguments: ${_cli.missingArguments.join(', ')} `);
+      _cli.error(` Missing Arguments: ${_cli.missingArguments.join(", ")} `);
       return;
     }
 
@@ -37,43 +37,43 @@ export class CommandRunner {
   }
 
   static printOptions(command: CommandObject) {
-    console.log(pc.bold('Expression: ') + command.expression);
+    console.log(pc.bold("Expression: ") + command.expression);
     if (command.meta.desc) {
-      console.log(pc.bold('Description: ') + command.meta.desc);
+      console.log(pc.bold("Description: ") + command.meta.desc);
     }
-    console.log('\n');
+    console.log("\n");
 
     if (command.arguments.length > 0) {
-      Logger.success(pc.bgBlue(pc.white(pc.bold(' Arguments '))));
+      Logger.success(pc.bgBlue(pc.white(pc.bold(" Arguments "))));
 
       const list = [];
       for (const argument of command.arguments) {
         console.log(argument);
         list.push({
           name: argument.name,
-          desc: 'No description passed',
+          desc: "No description passed",
           default: argument.defaultValue,
-          isArray: argument.isArray ? 'Y' : 'N',
+          isArray: argument.isArray ? "Y" : "N",
         });
       }
 
-      Logger.table(['Name', 'Description', 'Default', 'Is Array?'], list);
+      Logger.table(["Name", "Description", "Default", "Is Array?"], list);
     }
 
     if (command.options.length > 0) {
-      Logger.success(pc.bgBlue(pc.white(pc.bold(' Options '))));
+      Logger.success(pc.bgBlue(pc.white(pc.bold(" Options "))));
 
       const list = [];
       for (const option of command.options) {
         list.push({
           name: option.name,
-          desc: '',
-          default: option.defaultValue || 'null',
-          isArray: option.isArray ? 'Y' : 'N',
+          desc: "",
+          default: option.defaultValue || "null",
+          isArray: option.isArray ? "Y" : "N",
         });
       }
 
-      Logger.table(['Name', 'Desc', 'Default', 'Is Array?'], list);
+      Logger.table(["Name", "Desc", "Default", "Is Array?"], list);
     }
   }
 }

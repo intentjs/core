@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { Command, ConsoleIO } from '../console';
-import { CodegenService } from './service';
+import { Injectable } from "@nestjs/common";
+import { Command, ConsoleIO } from "../console";
+import { CodegenService } from "./service";
 
 @Injectable()
 export class CodegenCommand {
   constructor(private service: CodegenService) {}
 
-  @Command('make:config {namespace}', { desc: 'Command to make config' })
+  @Command("make:config {namespace}", { desc: "Command to make config" })
   async makeConfig(_cli: ConsoleIO): Promise<void> {
-    const namespace = _cli.argument<string>('namespace');
+    const namespace = _cli.argument<string>("namespace");
     const filePath = `config/${namespace}.ts`;
 
     /**
@@ -17,12 +17,12 @@ export class CodegenCommand {
     try {
       await this.service.checkIfFileAlreadyExists(filePath);
     } catch (e) {
-      _cli.error(e.message);
+      _cli.error(e["message"]);
       return;
     }
 
     const stubContent = await this.service.prepareFromStub({
-      stubName: 'config',
+      stubName: "config",
       state: { namespace },
     });
 
@@ -31,7 +31,7 @@ export class CodegenCommand {
     _cli.success(`Successfully created ${filePath}`);
   }
 
-  @Command('make:controller {name}', { desc: 'Command to create a controller' })
+  @Command("make:controller {name}", { desc: "Command to create a controller" })
   async makeController(_cli: ConsoleIO): Promise<void> {
     _cli.info;
   }

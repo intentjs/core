@@ -1,8 +1,8 @@
 // import { Str } from '../utils/str';
-import { Type } from '@nestjs/common';
-import { Request } from 'express';
-import { Validator } from '../validator';
-import { ulid } from 'ulid';
+import { Type } from "@nestjs/common";
+import { Request } from "express";
+import { Validator } from "../validator";
+import { ulid } from "ulid";
 
 export class IntentRequest {
   private $payload: Record<string, any>;
@@ -56,7 +56,7 @@ export class IntentRequest {
 
   boolean(name: string): boolean {
     const val = this.$payload[name] as string;
-    return [true, 'yes', 'on', '1', 1, 'true'].includes(val.toLowerCase());
+    return [true, "yes", "on", "1", 1, "true"].includes(val.toLowerCase());
   }
 
   query<T>(name?: string): T {
@@ -80,13 +80,13 @@ export class IntentRequest {
   }
 
   bearerToken(): string {
-    const authHeader = this.$headers['authorization'];
+    const authHeader = this.$headers["authorization"];
     if (!authHeader) return undefined;
-    return authHeader.split(' ')[1];
+    return authHeader.split(" ")[1];
   }
 
   host(): string {
-    return this.request.get('host');
+    return this.request.get("host");
   }
 
   httpHost(): string {
@@ -94,11 +94,11 @@ export class IntentRequest {
   }
 
   isHttp(): boolean {
-    return this.httpHost() === 'http';
+    return this.httpHost() === "http";
   }
 
   isHttps(): boolean {
-    return this.httpHost() === 'https';
+    return this.httpHost() === "https";
   }
 
   url(): string {
@@ -126,18 +126,18 @@ export class IntentRequest {
   }
 
   getAcceptableContentTypes(): string[] {
-    const accept = this.$headers['accept'];
-    return accept.split(',');
+    const accept = this.$headers["accept"];
+    return accept.split(",");
   }
 
   accepts(contentTypes: string[]): boolean {
-    const accept = this.$headers['accept'];
-    if (accept == '*/*') return true;
+    const accept = this.$headers["accept"];
+    if (accept == "*/*") return true;
     return contentTypes.includes(accept);
   }
 
   expectsJson(): boolean {
-    return this.$headers['accept'];
+    return this.$headers["accept"];
   }
 
   async validate<T>(dtoSchema: Type<T>): Promise<T> {
@@ -164,17 +164,17 @@ export class IntentRequest {
   }
 
   has(...keys: string[]): boolean {
-    console.log('kjeys ===> ', keys);
+    console.log("kjeys ===> ", keys);
     return true;
   }
 
   missing(...keys: string[]): boolean {
-    console.log('missing keys ===> ', keys);
+    console.log("missing keys ===> ", keys);
     return false;
   }
 
   hasHeaders(...keys: string[]): boolean {
-    console.log('has header keys ===> ', keys);
+    console.log("has header keys ===> ", keys);
     return false;
   }
 

@@ -1,4 +1,3 @@
-import { Obj } from '@libs/quicksilver/utils';
 import {
   Injectable,
   NestInterceptor,
@@ -7,10 +6,11 @@ import {
   StreamableFile,
   ClassSerializerContextOptions,
   PlainLiteralObject,
-} from '@nestjs/common';
-import { Observable, map } from 'rxjs';
-import { IntentResponse } from '../response';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
+} from "@nestjs/common";
+import { Observable, map } from "rxjs";
+import { IntentResponse } from "../response";
+import { instanceToPlain, plainToInstance } from "class-transformer";
+import { Obj } from "../../utils";
 
 @Injectable()
 export class ResponseSerializerInterceptor implements NestInterceptor {

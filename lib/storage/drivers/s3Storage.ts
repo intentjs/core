@@ -5,11 +5,11 @@ import {
   StorageDriver$FileMetadataResponse,
   StorageDriver$PutFileResponse,
   StorageDriver$RenameFileResponse,
-} from '../interfaces';
-import { Credentials, S3, SharedIniFileCredentials } from 'aws-sdk';
-import { getMimeFromExtension } from '../helpers';
-import { HeadObjectRequest, PutObjectRequest } from 'aws-sdk/clients/s3';
-import { ReadStream } from 'fs';
+} from "../interfaces";
+import { Credentials, S3, SharedIniFileCredentials } from "aws-sdk";
+import { getMimeFromExtension } from "../helpers";
+import { HeadObjectRequest, PutObjectRequest } from "aws-sdk/clients/s3";
+import { ReadStream } from "fs";
 
 export class S3Storage implements StorageDriver {
   private readonly disk: string;
@@ -20,16 +20,16 @@ export class S3Storage implements StorageDriver {
     this.disk = disk;
     this.config = config;
     const options = {
-      signatureVersion: 'v4',
+      signatureVersion: "v4",
       region: this.config.region,
     } as Record<string, any>;
 
     if (config.profile) {
-      options['credentials'] = new SharedIniFileCredentials({
+      options["credentials"] = new SharedIniFileCredentials({
         profile: config.profile,
       });
     } else if (config.accessKey && config.secretKey) {
-      options['credentials'] = new Credentials({
+      options["credentials"] = new Credentials({
         accessKeyId: config.accessKey,
         secretAccessKey: config.secretKey,
       });
@@ -39,11 +39,11 @@ export class S3Storage implements StorageDriver {
   }
 
   getStream(filePath: string): ReadStream {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   listDir(path: string): Promise<Record<string, any>> {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   /**
@@ -55,7 +55,7 @@ export class S3Storage implements StorageDriver {
   async put(
     path: string,
     fileContent: any,
-    options?: FileOptions,
+    options?: FileOptions
   ): Promise<StorageDriver$PutFileResponse> {
     const { mimeType } = options || {};
     const params = {
@@ -81,7 +81,7 @@ export class S3Storage implements StorageDriver {
       Expires: 60 * expireInMinutes,
     };
 
-    const signedUrl = this.client.getSignedUrl('getObject', params);
+    const signedUrl = this.client.getSignedUrl("getObject", params);
 
     return signedUrl;
   }
@@ -94,7 +94,7 @@ export class S3Storage implements StorageDriver {
   async get(path: string): Promise<Buffer | null> {
     try {
       const params = {
-        Bucket: this.config.bucket || '',
+        Bucket: this.config.bucket || "",
         Key: this.getPath(path),
       };
       const res = await this.client.getObject(params).promise();
@@ -155,7 +155,7 @@ export class S3Storage implements StorageDriver {
    * @param path
    */
   url(path: string): string {
-    return this.signedUrl(this.getPath(path), 20).split('?')[0];
+    return this.signedUrl(this.getPath(path), 20).split("?")[0];
   }
 
   /**
@@ -165,7 +165,7 @@ export class S3Storage implements StorageDriver {
    */
   async delete(path: string): Promise<boolean> {
     const params = {
-      Bucket: this.config.bucket || '',
+      Bucket: this.config.bucket || "",
       Key: this.getPath(path),
     };
     try {
@@ -184,12 +184,12 @@ export class S3Storage implements StorageDriver {
    */
   async copy(
     path: string,
-    newPath: string,
+    newPath: string
   ): Promise<StorageDriver$RenameFileResponse> {
     this.client
       .copyObject({
-        Bucket: this.config.bucket || '',
-        CopySource: this.config.bucket + '/' + this.getPath(path),
+        Bucket: this.config.bucket || "",
+        CopySource: this.config.bucket + "/" + this.getPath(path),
         Key: newPath,
       })
       .promise();
@@ -204,7 +204,7 @@ export class S3Storage implements StorageDriver {
    */
   async move(
     path: string,
-    newPath: string,
+    newPath: string
   ): Promise<StorageDriver$RenameFileResponse> {
     await this.copy(this.getPath(path), newPath);
     await this.delete(this.getPath(path));

@@ -3,12 +3,12 @@ import {
   Model,
   PartialModelObject,
   QueryBuilder,
-} from 'objection';
-import { CustomQueryBuilder } from './custom';
+} from "objection";
+import { CustomQueryBuilder } from "./custom";
 
 export class SoftDeleteQueryBuilder<
   M extends Model,
-  R = M[],
+  R = M[]
 > extends CustomQueryBuilder<M, R> {
   static forClass: ForClassMethod = (modelClass) => {
     const qb = QueryBuilder.forClass.call(this, modelClass);
