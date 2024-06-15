@@ -60,6 +60,7 @@
     "ora": "^8.0.1",
     "picocolors": "^1.0.0",
     "ulid": "^2.3.0",
+    "winston": "^3.13.0",
     "yargs-parser": "^21.1.1"
   },
   "peerDependencies": {
