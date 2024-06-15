@@ -20,4 +20,5 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
+  "exclude": ["node_modules", "tests", "dist", "**/*spec.ts"]
 }
