@@ -1,0 +1,5 @@
+import { BaseModel } from '@intentjs/core';
+
+export class <%= it.className %> extends BaseModel {
+  static tableName = '<%= it.tableName %>';
+}

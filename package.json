@@ -1,6 +1,6 @@
 {
   "name": "@intentjs/core",
-  "version": "0.0.1-beta23",
+  "version": "0.0.1-beta",
   "description": "Core module for IntentJS",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
@@ -40,16 +40,17 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@nestjs/common": "^10.3.9",
-    "@nestjs/core": "^10.3.9",
+    "@nestjs/common": "^9.0.0 || ^10.0.0",
     "@nestjs/config": "^3.2.0",
+    "@nestjs/core": "^9.0.0 || ^10.0.0",
     "@nestjs/platform-express": "^10.3.9",
     "@squareboat/nest-queue-strategy": "^0.0.9",
+    "app-root-path": "^3.1.0",
     "aws-sdk": "^2.1555.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cli-table3": "^0.6.3",
-    "edgejs-cjs": "^6.0.1",
+    "eta": "^3.4.0",
     "express": "^4.18.2",
     "fs-extra": "^11.1.1",
     "inquirer": "^8.0.0",
@@ -59,6 +60,7 @@
     "marked": "^12.0.0",
     "objection": "^3.1.4",
     "picocolors": "^1.0.0",
+    "ts-morph": "^22.0.0",
     "ulid": "^2.3.0",
     "winston": "^3.13.0",
     "yargs-parser": "^21.1.1"

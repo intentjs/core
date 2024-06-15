@@ -1,0 +1,11 @@
+import { Controller, Get } from '@nestjs/common';
+
+@Controller('/<%= it.routeName %>/')
+export class <%= it.controllerName %> {
+  constructor() {}
+
+  @Get('')
+  async create() {
+    return 'Hello with an intent!';
+  }
+}

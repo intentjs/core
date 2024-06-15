@@ -1,0 +1,5 @@
+import { BaseModel } from '@libs/intent/database';
+
+export class <%= it.classModel %> extends BaseModel {
+  static tableName = '<%= it.tableName %>';
+}
