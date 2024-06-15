@@ -17,6 +17,7 @@ import { ViewConfigCommand } from "./config/command";
 import { IntentConfig } from "./config/service";
 import { ExistsConstraint } from "./validator/decorators/exists";
 import { IsUniqueConstraint } from "./validator/decorators/isUnique";
+import { LoggerService } from "./logger/service";
 
 @Global()
 @Module({
@@ -39,6 +40,7 @@ import { IsUniqueConstraint } from "./validator/decorators/isUnique";
     IntentConfig,
     ExistsConstraint,
     IsUniqueConstraint,
+    LoggerService,
   ],
   exports: [IntentConfig],
 })
