@@ -1,4 +1,4 @@
-import stringToPath from './stringToPath';
+import stringToPath from "./stringToPath";
 
 function baseGet(object: Record<string, any>, path: any): any {
   path = castPath(path, object);
@@ -12,8 +12,6 @@ function baseGet(object: Record<string, any>, path: any): any {
   return index && index == length ? object : undefined;
 }
 
-const toString = Object.prototype.toString;
-
 /**
  * Gets the `toStringTag` of `value`.
  *
@@ -23,7 +21,7 @@ const toString = Object.prototype.toString;
  */
 function getTag(value: string): any {
   if (value == null) {
-    return value === undefined ? '[object Undefined]' : '[object Null]';
+    return value === undefined ? "[object Undefined]" : "[object Null]";
   }
   return toString.call(value);
 }
@@ -60,8 +58,8 @@ function isKey(value: any, object: Record<string, any>): boolean {
   }
   const type = typeof value;
   if (
-    type === 'number' ||
-    type === 'boolean' ||
+    type === "number" ||
+    type === "boolean" ||
     value == null ||
     isSymbol(value)
   ) {
@@ -85,24 +83,17 @@ const INFINITY = 1 / 0;
  * @returns {string|symbol} Returns the key.
  */
 function toKey(value: number): any {
-  if (typeof value === 'string' || isSymbol(value)) {
+  if (typeof value === "string" || isSymbol(value)) {
     return value;
   }
   const result = `${value}`;
-  return result == '0' && 1 / value == -INFINITY ? '-0' : result;
+  return result == "0" && 1 / value == -INFINITY ? "-0" : result;
 }
 
 function isSymbol(value: any): boolean {
   const type = typeof value;
   return (
-    type == 'symbol' ||
-    (type === 'object' && value != null && getTag(value) == '[object Symbol]')
+    type == "symbol" ||
+    (type === "object" && value != null && getTag(value) == "[object Symbol]")
   );
 }
-
-function get(object: Record<string, any>, path: any, defaultValue: any): any {
-  const result = object == null ? undefined : baseGet(object, path);
-  return result === undefined ? defaultValue : result;
-}
-
-export default get;

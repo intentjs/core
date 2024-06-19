@@ -1,17 +1,17 @@
-import { ConflictException } from '@nestjs/common';
-import { Num } from './number';
-import { singularize, pluralize } from './pluralise';
+import { ConflictException } from "@nestjs/common";
+import { Num } from "./number";
+import { singularize, pluralize } from "./pluralise";
 
 export class Str {
   static wordsArr = (str: string): string[] => {
     if (Str.len(str) == 0) return [];
     // escape (strip) unicodes
     const words = [];
-    let word = '';
+    let word = "";
     for (const char of str) {
-      if (['_', '-', ' ', '/', '\\'].includes(char) || Str.isUpperCase(char)) {
+      if (["_", "-", " ", "/", "\\"].includes(char) || Str.isUpperCase(char)) {
         if (Str.len(word)) words.push(word);
-        word = '';
+        word = "";
         if (Str.isUpperCase(char)) word += char;
       } else {
         word += char;
@@ -23,27 +23,27 @@ export class Str {
   };
 
   static kebab = (str: string): string => {
-    return Str.wordsArr(str).join('-');
+    return Str.wordsArr(str).join("-");
   };
 
   static snake = (str: string): string => {
-    return Str.wordsArr(str).join('_');
+    return Str.wordsArr(str).join("_");
   };
 
   static camel = (str: string): string => {
-    return Str.lcfirst(Str.wordsArr(str).map(Str.ucfirst).join(''));
+    return Str.lcfirst(Str.wordsArr(str).map(Str.ucfirst).join(""));
   };
 
   static studly = (str: string): string => {
-    return Str.wordsArr(str).map(Str.ucfirst).join('');
+    return Str.wordsArr(str).map(Str.ucfirst).join("");
   };
 
   static headline = (str: string): string => {
-    return Str.wordsArr(str).map(Str.ucfirst).join(' ');
+    return Str.wordsArr(str).map(Str.ucfirst).join(" ");
   };
 
   static charAt = (str: string, idx: number) => {
-    return str?.[idx] ?? '';
+    return str?.[idx] ?? "";
   };
 
   static isLowerCase = (str: string): boolean => {
@@ -65,7 +65,7 @@ export class Str {
   };
 
   static isString = (str: any): boolean => {
-    return typeof str == 'string';
+    return typeof str == "string";
   };
 
   static after = (text: string, subStr: string): string => {
@@ -91,7 +91,7 @@ export class Str {
   static between = (
     text: string,
     startingSubStr: string,
-    endingSubStr: string,
+    endingSubStr: string
   ): string => {
     let startIdx = 0;
     let endIdx = Str.len(text);
@@ -119,7 +119,7 @@ export class Str {
   static isEmail = (email: string): boolean => {
     return (
       Str.lower(email)?.match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       ) != null
     );
   };
@@ -135,13 +135,13 @@ export class Str {
 
   static isUrl = (url: string): boolean => {
     const pattern = new RegExp(
-      '^(https?:\\/\\/)?' + // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-        '(\\#[-a-z\\d_]*)?$',
-      'i',
+      "^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
     ); // fragment locator
     return !!pattern.test(url);
   };
@@ -153,10 +153,10 @@ export class Str {
 
   static lcfirst = (str: string): string => {
     if (Str.isNotString(str)) {
-      throw new ConflictException('Not a string');
+      throw new ConflictException("Not a string");
     }
 
-    return (Str.lower(str?.[0]) ?? '') + (str?.slice(1) ?? '');
+    return (Str.lower(str?.[0]) ?? "") + (str?.slice(1) ?? "");
   };
 
   static isNotString = (value: any): boolean => {
@@ -173,7 +173,7 @@ export class Str {
 
   static limit = (str: string, limit: number, suffix?: string): string => {
     return (
-      str?.slice(0, limit) + (Str.len(str) >= limit ? suffix ?? '...' : '')
+      str?.slice(0, limit) + (Str.len(str) >= limit ? suffix ?? "..." : "")
     );
   };
 
@@ -191,60 +191,60 @@ export class Str {
 
   static title = (text: string): string => {
     return text
-      .split(' ')
+      .split(" ")
       .map(
         (word: string) =>
-          (Str.upper(word?.[0]) ?? '') + (Str.lower(word?.slice(1)) ?? ''),
+          (Str.upper(word?.[0]) ?? "") + (Str.lower(word?.slice(1)) ?? "")
       )
-      .join(' ');
+      .join(" ");
   };
 
   static replace(
     str: string,
     findStr: string | RegExp,
-    replaceStr: string,
-    caseInsensitive?: boolean,
+    replaceStr: string | ((substring: string, ...args: any[]) => string),
+    caseInsensitive?: boolean
   ): string {
-    const regexFlags = ['g'];
-    caseInsensitive && regexFlags.push('i');
-    const pattern = new RegExp(findStr, regexFlags.join(''));
-    return str.replace(pattern, replaceStr);
+    const regexFlags = ["g"];
+    caseInsensitive && regexFlags.push("i");
+    const pattern = new RegExp(findStr, regexFlags.join(""));
+    return str.replace(pattern, replaceStr as string);
   }
 
   static replaceArray(
     str: string,
     identifier: string,
-    values: Array<string | number>,
+    values: Array<string | number>
   ): string {
-    const words = str.split(' ');
+    const words = str.split(" ");
     const newWordsArr = [];
     let i = 0;
     for (const word of words) {
-      if (word === '') newWordsArr.push(' ');
+      if (word === "") newWordsArr.push(" ");
       else if (word === identifier) newWordsArr.push(values[i++]);
       else newWordsArr.push(word);
     }
-    return newWordsArr.join(' ');
+    return newWordsArr.join(" ");
   }
 
   static replaceFirst(
     str: string,
     oldValue: string | RegExp,
-    newValue: string | number,
+    newValue: string | number
   ): string {
     console.log(str, oldValue, newValue);
     // return str.replace();
-    return '';
+    return "";
   }
 
   static replaceLast(
     str: string,
     oldValue: string | RegExp,
-    newValue: string | number,
+    newValue: string | number
   ): string {
     console.log(str, oldValue, newValue);
     // return str.replace();
-    return '';
+    return "";
   }
 
   static mask(str: string, mask: string, leave: number): string {
@@ -253,11 +253,11 @@ export class Str {
   }
 
   static remove(str: string, remove: string): string {
-    return str.split(remove).join('');
+    return str.split(remove).join("");
   }
 
   static repeat(repeat: string, times: number): string {
-    let newStr = '';
+    let newStr = "";
     let i = 1;
     while (i <= times) {
       newStr += repeat;
@@ -268,7 +268,7 @@ export class Str {
   }
 
   static reverse(str: string): string {
-    let newStr = '';
+    let newStr = "";
     for (let i = Str.len(str) - 1; i >= 0; i--) {
       newStr += str.charAt(i);
     }
@@ -284,23 +284,23 @@ export class Str {
   }
 
   static toBase64(str: string): string {
-    return Buffer.from(str).toString('base64');
+    return Buffer.from(str).toString("base64");
   }
 
   static toBase64Url(str: string): string {
-    return Buffer.from(str).toString('base64url');
+    return Buffer.from(str).toString("base64url");
   }
 
   static fromBase64(str: string): string {
-    return Buffer.from(str, 'base64').toString();
+    return Buffer.from(str, "base64").toString();
   }
 
   static ucsplit(str: string): string[] {
     const newStr = [];
-    let substr = '';
+    let substr = "";
     for (let i = 0; i < Str.len(str); i++) {
       if (Num.inRange(str.charCodeAt(i), [65, 90])) {
-        if (substr != '') {
+        if (substr != "") {
           newStr.push(substr);
         }
         substr = str.charAt(i);
@@ -314,17 +314,17 @@ export class Str {
 
   // buggy
   static squish(str: string): string {
-    let newStr = '';
-    let nextChar = '';
+    let newStr = "";
+    let nextChar = "";
     for (let i = 0; i < Str.len(str); i++) {
       const char = str.charAt(i);
       nextChar = str.charAt(i + 1);
-      if (char !== ' ') {
+      if (char !== " ") {
         newStr += char;
       }
 
-      if (char != ' ' && nextChar == ' ' && i !== Str.len(str) - 1) {
-        newStr += ' ';
+      if (char != " " && nextChar == " " && i !== Str.len(str) - 1) {
+        newStr += " ";
       }
     }
 
@@ -345,15 +345,15 @@ export class Str {
 
   static is(str: string, pattern: string): boolean {
     if (str === pattern) return true;
-    let regex = '^';
+    let regex = "^";
     for (const p of pattern) {
-      regex += p === '*' ? '.*' : p;
+      regex += p === "*" ? ".*" : p;
     }
-    const regexp = new RegExp(regex + '$', 'g');
+    const regexp = new RegExp(regex + "$", "g");
     return regexp.test(str);
   }
 
-  static padBoth(str: string, maxLength: number, char = ' '): string {
+  static padBoth(str: string, maxLength: number, char = " "): string {
     const len = maxLength - Str.len(str);
     if (len > 0)
       return str
@@ -362,11 +362,11 @@ export class Str {
     return str;
   }
 
-  static padLeft(str: string, maxLength: number, char = ' '): string {
+  static padLeft(str: string, maxLength: number, char = " "): string {
     return str.padStart(maxLength, char);
   }
 
-  static padRight(str: string, maxLength: number, char = ' '): string {
+  static padRight(str: string, maxLength: number, char = " "): string {
     return str.padEnd(maxLength, char);
   }
 
@@ -378,13 +378,13 @@ export class Str {
     return str.replace(patern, replace);
   }
 
-  static slug(str: string, delimiter = '-'): string {
+  static slug(str: string, delimiter = "-"): string {
     return String(str)
-      .normalize('NFKD')
-      .replace(/[\u0300-\u036f]/g, '')
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
       .trim()
       .toLowerCase()
-      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/[^a-z0-9 -]/g, "")
       .replace(/\s+/g, delimiter)
       .replace(/-+/g, delimiter);
   }
@@ -398,9 +398,9 @@ export class Str {
   }
 
   static words(str: string, count: number, suffix: string): string {
-    const arr = str.split(' ');
+    const arr = str.split(" ");
     return (
-      arr.slice(count).join(' ') + (arr.length > count ? ' ' + suffix : '')
+      arr.slice(count).join(" ") + (arr.length > count ? " " + suffix : "")
     );
   }
 
@@ -425,9 +425,9 @@ export class Str {
   }
 
   static random(length: number): string {
-    let result = '';
+    let result = "";
     const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const charactersLength = characters.length;
     let counter = 0;
     while (counter < length) {
@@ -438,8 +438,12 @@ export class Str {
   }
 
   static equals(str1: string, str2: string): boolean {
-    return typeof str1 === 'string' && str1 === str2;
+    return typeof str1 === "string" && str1 === str2;
   }
+
+  static isSentenceCase = (value: string): boolean => {
+    return Str.isUpperCase(value[0]);
+  };
 
   static pluralize = pluralize;
 
