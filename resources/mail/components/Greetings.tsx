@@ -1,16 +1,15 @@
-import React from 'react';
-import { Heading } from '@react-email/components';
+import React from "react";
+import { Heading } from "@react-email/components";
 
-export const Greetings = ({ ...props }) => {
+interface GreetingsProp {
+  className?: string;
+  value: string;
+}
+
+export const Greetings = ({ className, value }: GreetingsProp) => {
   return (
-    <Heading
-      className={
-        props.className
-          ? props.className
-          : 'text-black text-[22px] p-0 mb-[20px] mx-0'
-      }
-    >
-      Hello <strong>{props.value},</strong>
+    <Heading className={className ? className : "text-black text-xl p-0 mx-0"}>
+      Hello <strong>{value},</strong>
     </Heading>
   );
 };

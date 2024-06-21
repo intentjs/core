@@ -1,13 +1,24 @@
-import * as React from 'react';
-import { Img } from '@react-email/components';
+import * as React from "react";
+import { Img } from "@react-email/components";
 
-export const Image = ({ ...props }) => {
+interface ImgProp {
+  className?: string;
+  value: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  };
+}
+
+export const Image = ({ className, value }: ImgProp) => {
   return (
     <Img
-      src={props.value.src}
-      alt={props.value.alt}
-      width={props.value.width}
-      height={props.value.height}
+      src={value.src}
+      alt={value.alt}
+      width={value.width}
+      height={value.height}
+      className={className ? className : ""}
     />
   );
 };

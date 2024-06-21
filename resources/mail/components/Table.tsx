@@ -1,14 +1,19 @@
-import * as React from 'react';
-import { Row, Column, Section, Hr } from '@react-email/components';
+import * as React from "react";
+import { Row, Column, Section, Hr } from "@react-email/components";
 
-export const Table = ({ ...props }) => {
+interface TableProp {
+  className?: string;
+  value: string[][];
+}
+
+export const Table = ({ className, value }: TableProp) => {
   return (
-    <Section className="mb-2">
-      {props.value.map((row: string[]) => {
+    <Section className={className ? className : ""}>
+      {value.map((row: string[], i) => {
         return (
-          <Row>
-            {row.map((column: string) => {
-              return <Column>{column}</Column>;
+          <Row key={i}>
+            {row.map((column: string, j) => {
+              return <Column key={j}>{column}</Column>;
             })}
             <Hr />
           </Row>

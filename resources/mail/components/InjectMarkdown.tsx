@@ -1,10 +1,14 @@
-import React from 'react';
-import { Markdown, Html, Section } from '@react-email/components';
+import React from "react";
+import { Markdown, Html } from "@react-email/components";
 
-export const InjectMarkdown = ({ ...props }) => {
+interface MarkdownProp {
+  value: string;
+}
+
+export const InjectMarkdown = ({ value }: MarkdownProp) => {
   return (
-    <Section>
-      <Markdown>{props.value}</Markdown>
-    </Section>
+    <Html lang="en" dir="ltr">
+      <Markdown>{value}</Markdown>
+    </Html>
   );
 };

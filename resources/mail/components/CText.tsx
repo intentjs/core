@@ -1,14 +1,15 @@
-import React from 'react';
-import { Text } from '@react-email/components';
+import React from "react";
+import { Text } from "@react-email/components";
 
-export const CText = ({ ...props }) => {
+interface TextProp {
+  className: string;
+  value: string;
+}
+
+export const CText = ({ className, value }: TextProp) => {
   return (
-    <Text
-      className={
-        props.className ? props.className : 'text-black text-md mb-[20px]'
-      }
-    >
-      {props.value}
+    <Text className={className ? className : "text-black text-md"}>
+      {value}
     </Text>
   );
 };

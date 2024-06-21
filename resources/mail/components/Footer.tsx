@@ -1,25 +1,42 @@
-import React from 'react';
-import { Img, Section, Text } from '@react-email/components';
+import React from "react";
+import { Img, Section, Text } from "@react-email/components";
 
-export const Footer = ({ ...props }) => {
+interface FooterProp {
+  className?: string;
+  value?: {
+    logo?: {
+      src: string;
+      alt: string;
+      width: number;
+      height: number;
+    };
+    title?: {
+      text: string;
+      className?: string;
+    };
+    content?: string;
+  };
+}
+
+export const Footer = ({ className, value }: FooterProp) => {
   return (
-    <Section className={props?.className ? props.className : 'flex flex-col'}>
+    <Section className={className ? className : "flex flex-col"}>
       <Img
-        src={props?.logo?.src}
-        alt={props?.logo?.alt}
-        width={props?.logo?.width}
-        height={props?.logo?.height}
+        src={value?.logo?.src}
+        alt={value?.logo?.alt}
+        width={value?.logo?.width}
+        height={value?.logo?.height}
       />
       <Text
         className={
-          props?.title?.className
-            ? props.title.className
-            : 'text-[#666666] text-md'
+          value?.title?.className
+            ? value.title.className
+            : "text-[#666666] text-md"
         }
       >
-        {props?.title?.text}
+        {value?.title?.text}
         <br />
-        {props?.content?.text}
+        {value?.content}
       </Text>
     </Section>
   );

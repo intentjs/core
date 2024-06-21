@@ -1,13 +1,17 @@
-import * as React from 'react';
-import { Hr } from '@react-email/components';
+import * as React from "react";
+import { Hr } from "@react-email/components";
 
-export const HrLine = ({ ...props }) => {
+interface LineProp {
+  className?: string;
+}
+
+export const HrLine = ({ className }: LineProp) => {
   return (
     <Hr
       className={
-        props.className
-          ? props.className
-          : 'border border-solid border-[#eaeaea] my-2 mx-0 w-full'
+        className
+          ? className
+          : "border border-solid border-[#eaeaea] my-2 mx-0 w-full"
       }
     />
   );

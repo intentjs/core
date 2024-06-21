@@ -1,16 +1,22 @@
-import React from 'react';
-import { Link, Text } from '@react-email/components';
+import React from "react";
+import { Link } from "@react-email/components";
 
-export const CLink = ({ ...props }) => {
+interface LinkProp {
+  className?: string;
+  value: {
+    link: string;
+    title: string;
+  };
+}
+
+export const CLink = ({ className, value }: LinkProp) => {
   return (
     <Link
-      href={props.value.link}
+      href={value.link}
       target="_blank"
-      className={
-        props.className ? props.className : 'block mb-[20px] underline'
-      }
+      className={className ? className : "block underline"}
     >
-      {props.value.title}
+      {value.title}
     </Link>
   );
 };
