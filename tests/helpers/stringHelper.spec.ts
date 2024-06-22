@@ -7,7 +7,21 @@ describe("String Helper", () => {
     expect(Str.trim(" vinayak ")).toBe("vinayak");
   });
 
+  it("should pluralize the sentence", () => {
+    const string = `Vinayak ${Str.pluralize("have")} 5 ${Str.pluralize(
+      "apple"
+    )}.`;
+    expect(string).toBe("Vinayak has 5 apples.");
+  });
+
   it("should replace using string", () => {
+    const string = "vinayak don";
+    const find = "don";
+    const replace = "sarawagi";
+    expect(Str.replace(string, find, replace)).toBe("vinayak sarawagi");
+  });
+
+  it("should replace using regex", () => {
     const string = "vinayak don";
     const find = "don";
     const replace = "sarawagi";
