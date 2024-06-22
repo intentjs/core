@@ -22,6 +22,10 @@ export class Str {
     return words.map((key) => Str.lower(key));
   };
 
+  static pascal = (str: string): string => {
+    return Str.wordsArr(str).map(Str.ucfirst).join("");
+  };
+
   static kebab = (str: string): string => {
     return Str.wordsArr(str).join("-");
   };

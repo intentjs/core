@@ -1,0 +1,9 @@
+import { DatabaseRepository, InjectModel } from '@libs/intent/database';
+import { Injectable } from '@nestjs/common';
+import { <%= it.modelName %> } from '<%= it.modelFilePath %>';
+
+@Injectable()
+export class <%= it.className %> extends DatabaseRepository<<%= it.modelName %>> {
+  @InjectModel(<%= it.modelName %>)
+  model: <%= it.modelName %>;
+}

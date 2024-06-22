@@ -1,10 +1,10 @@
-import { InvalidValue } from '../exceptions';
-import { Obj } from './object';
+import { InvalidValueType } from "../exceptions/invalidValueType";
+import { Obj } from "./object";
 
 export class Arr {
   static toObj(
     nestedArray: Array<any>,
-    keyIndexMap: string[],
+    keyIndexMap: string[]
   ): Record<string, any>[] {
     Arr.isArray(nestedArray, true);
 
@@ -29,7 +29,7 @@ export class Arr {
     if (Array.isArray(value)) return true;
 
     if (throwError) {
-      throw new InvalidValue('Passed value is not an object');
+      throw new InvalidValueType("Passed value is not an object");
     }
 
     return false;
@@ -47,7 +47,7 @@ export class Arr {
     return newArr;
   }
 
-  static random<T>(arr: T[]): T[] {
+  static random(arr: any[]): any[] {
     let currentIndex = arr.length,
       randomIndex;
 
@@ -67,7 +67,7 @@ export class Arr {
     return arr;
   }
 
-  static sort<T>(arr: T[]): T[] {
+  static sort(arr: any[]): any[] {
     return arr.sort();
   }
 
@@ -78,12 +78,12 @@ export class Arr {
   static pick<T = any>(arr: T[], props: Array<string>): T[] {
     const newArr = [];
     for (const prop of props) {
-      const propArr = prop.split('.');
-      let startIndex = propArr[0] === '*' ? 0 : +propArr[0];
-      const endIndex = propArr[0] === '*' ? arr.length - 1 : +propArr[0];
+      const propArr = prop.split(".");
+      let startIndex = propArr[0] === "*" ? 0 : +propArr[0];
+      const endIndex = propArr[0] === "*" ? arr.length - 1 : +propArr[0];
 
       while (startIndex <= endIndex) {
-        const newPropsArr = [propArr.slice(1).join('.')];
+        const newPropsArr = [propArr.slice(1).join(".")];
         if (Obj.isObj(arr[startIndex])) {
           newArr[startIndex] = Obj.pick(arr[startIndex], newPropsArr);
         }
@@ -98,12 +98,13 @@ export class Arr {
     return newArr;
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   static except<T = any>(arr: T[], props: Array<string>): T[] {
     let newArr = [...arr];
     for (const prop of props) {
-      const propArr = prop.split('.');
-      let startIndex = propArr[0] === '*' ? 0 : +propArr[0];
-      const endIndex = propArr[0] === '*' ? arr.length - 1 : +propArr[0];
+      const propArr = prop.split(".");
+      let startIndex = propArr[0] === "*" ? 0 : +propArr[0];
+      const endIndex = propArr[0] === "*" ? arr.length - 1 : +propArr[0];
 
       while (startIndex <= endIndex) {
         if (!propArr[1]) {
@@ -112,7 +113,7 @@ export class Arr {
           continue;
         }
 
-        const newPropsArr = [propArr.slice(1).join('.')];
+        const newPropsArr = [propArr.slice(1).join(".")];
         if (Obj.isObj(arr[startIndex])) {
           newArr[startIndex] = Obj.except(arr[startIndex], newPropsArr);
         }
@@ -120,7 +121,7 @@ export class Arr {
         if (Array.isArray(arr[startIndex])) {
           newArr[startIndex] = Arr.except(
             arr[startIndex] as T[],
-            newPropsArr,
+            newPropsArr
           ) as T;
         }
 
@@ -134,7 +135,7 @@ export class Arr {
 
   static intersect<T = string | number, M = T>(
     arr1: T[],
-    arr2: M[],
+    arr2: M[]
   ): Array<T | M> {
     const tempMap = new Map<T | M, number>();
     const newArr = [] as Array<T | M>;

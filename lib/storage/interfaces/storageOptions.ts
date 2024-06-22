@@ -1,7 +1,7 @@
-import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
+import { ModuleMetadata, Type } from "@nestjs/common/interfaces";
 
 export interface DiskOptions {
-  driver: 's3' | 'local';
+  driver: "s3" | "local";
   profile?: string;
   region?: string;
   bucket?: string;
@@ -21,7 +21,7 @@ export interface StorageOptionsFactory {
   createStorageOptions(): Promise<StorageOptions> | StorageOptions;
 }
 
-export interface StorageAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
+export interface StorageAsyncOptions extends Pick<ModuleMetadata, "imports"> {
   name?: string;
   useExisting?: Type<StorageOptions>;
   useClass?: Type<StorageOptions>;

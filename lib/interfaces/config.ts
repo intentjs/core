@@ -1,7 +1,7 @@
 import {
   CorsOptions,
   CorsOptionsDelegate,
-} from '@nestjs/common/interfaces/external/cors-options.interface';
+} from "@nestjs/common/interfaces/external/cors-options.interface";
 
 export interface AppConfig {
   name: string;

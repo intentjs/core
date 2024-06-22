@@ -2,7 +2,7 @@ import * as pc from "picocolors";
 import { CommandObject } from "./interfaces";
 import { ConsoleIO } from "./consoleIO";
 import { Logger } from "./logger";
-import * as yargsParser from "yargs-parser";
+import yargsParser from "yargs-parser";
 import { CommandMeta } from "./metadata";
 
 export class CommandRunner {

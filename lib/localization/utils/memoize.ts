@@ -1,3 +1,5 @@
+import { GenericFunction } from "../../interfaces";
+
 /**
  * Creates a function that memoizes the result of `func`. If `resolver` is
  * provided, it determines the cache key for storing the result based on the
@@ -40,24 +42,27 @@
  * // Replace `memoize.Cache`.
  * memoize.Cache = WeakMap
  */
-function memoize(func: any, resolver: any): any {
+function memoize(this: any, func: any, resolver: any): any {
   if (
-    typeof func !== 'function' ||
-    (resolver != null && typeof resolver !== 'function')
+    typeof func !== "function" ||
+    (resolver != null && typeof resolver !== "function")
   ) {
-    throw new TypeError('Expected a function');
+    throw new TypeError("Expected a function");
   }
+
+  const that = this;
   const memoized = (...args: any[]) => {
-    const key = resolver ? resolver.apply(this, args) : args[0];
+    const key = resolver ? resolver.apply(that, args) : args[0];
     const cache = memoized.cache;
 
     if (cache.has(key)) {
       return cache.get(key);
     }
-    const result = func.apply(this, args);
+    const result = func.apply(that, args);
     memoized.cache = cache.set(key, result) || cache;
     return result;
   };
+
   memoized.cache = new (memoize.Cache || Map)();
   return memoized;
 }

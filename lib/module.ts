@@ -1,4 +1,4 @@
-import { Global, Module } from "@nestjs/common";
+import { DynamicModule, Global, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { DiscoveryModule } from "@nestjs/core";
 import { ConsoleExplorer, ListCommands } from "./console";
@@ -18,30 +18,48 @@ import { IntentConfig } from "./config/service";
 import { ExistsConstraint } from "./validator/decorators/exists";
 import { IsUniqueConstraint } from "./validator/decorators/isUnique";
 import { LoggerService } from "./logger/service";
+import { GenericFunction } from "./interfaces";
+
+const providers = [
+  ConsoleExplorer,
+  ListCommands,
+  DbOperationsCommand,
+  ObjectionService,
+  EventExplorer,
+  StorageService,
+  CacheMetadata,
+  CacheService,
+  QueueService,
+  QueueConsoleCommands,
+  QueueExplorer,
+  CodegenCommand,
+  CodegenService,
+  ViewConfigCommand,
+  IntentConfig,
+  ExistsConstraint,
+  IsUniqueConstraint,
+  LoggerService,
+];
+const imports = [DiscoveryModule];
+const exportsArr = [IntentConfig];
 
 @Global()
-@Module({
-  imports: [DiscoveryModule],
-  providers: [
-    ConsoleExplorer,
-    ListCommands,
-    DbOperationsCommand,
-    ObjectionService,
-    EventExplorer,
-    StorageService,
-    CacheMetadata,
-    CacheService,
-    QueueService,
-    QueueConsoleCommands,
-    QueueExplorer,
-    CodegenCommand,
-    CodegenService,
-    ViewConfigCommand,
-    IntentConfig,
-    ExistsConstraint,
-    IsUniqueConstraint,
-    LoggerService,
-  ],
-  exports: [IntentConfig],
-})
-export class IntentModule {}
+@Module({})
+export class IntentModule {
+  static register(config: GenericFunction[]): DynamicModule {
+    return {
+      global: true,
+      module: IntentModule,
+      imports: [
+        ...imports,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          expandVariables: true,
+          load: config,
+        }),
+      ],
+      providers: providers,
+      exports: exportsArr,
+    };
+  }
+}
