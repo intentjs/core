@@ -1,4 +1,6 @@
-import { ArgumentOptionObject, ArgumentParserOutput } from './interfaces';
+import { InternalLogger } from "../utils/logger";
+import { Str } from "../utils/strings";
+import { ArgumentOptionObject, ArgumentParserOutput } from "./interfaces";
 
 export class ArgumentParser {
   constructor(private exp: string) {}
@@ -9,44 +11,62 @@ export class ArgumentParser {
   }
 
   private handle(): ArgumentParserOutput {
-    const words = this.exp.split(' ');
+    const words = this.exp.split("{");
     const obj: ArgumentParserOutput = {
-      name: words.splice(0, 1)[0],
+      name: Str.replace(words.splice(0, 1)[0], /[\s\n]*/, ""),
       arguments: [],
       options: [],
-      meta: { desc: '' },
+      meta: { desc: "" },
     };
 
+    const reservedArgumentsAndOptions = {};
     for (const word of words) {
       if (!word) continue;
-      const input = word.substring(1, word.length - 1);
-
-      // check if inputName starts with "--"
-      const startsWithDoubleHyphen = input.substring(0, 2) === '--';
-      startsWithDoubleHyphen
+      const input = Str.replace(word, /[\n}]]*/, "").trim();
+      Str.startsWith(input, "--")
         ? obj.options.push({
-            ...this.parseExpression(input.substring(2)),
+            ...this.parseExpression(
+              input.substring(2),
+              reservedArgumentsAndOptions
+            ),
             isRequired: false,
           })
-        : obj.arguments.push(this.parseExpression(input));
+        : obj.arguments.push(
+            this.parseExpression(input, reservedArgumentsAndOptions)
+          );
     }
 
     return obj;
   }
 
-  parseExpression(expression: string): ArgumentOptionObject {
-    const [arg, defaultValue = null] = expression.split('=');
+  parseExpression(
+    expression: string,
+    reservedArgumentsAndOptions: Record<string, any>
+  ): ArgumentOptionObject {
+    const [arg, description] = expression.split(":");
+    const [arg1, defaultValue = null] = arg.split("=");
 
-    const specialCharMatch = arg.match(/[?\*]/i);
+    const formattedExp = Str.replace(arg1, /[?\*]+/g, "");
+    const aliasedExp = formattedExp.split("|");
+
+    for (const alias of aliasedExp) {
+      if (reservedArgumentsAndOptions[alias]) {
+        InternalLogger.error(
+          "Console Argument Parser",
+          `Only unique command name or alias are allowed, duplicated found for alias: '${alias}'`
+        );
+        return;
+      }
+      reservedArgumentsAndOptions[alias] = 1;
+    }
     return {
-      name: specialCharMatch
-        ? arg.substring(0, arg.indexOf(specialCharMatch[0]))
-        : arg,
-      isRequired: !!!arg.includes('?'),
-      isArray: arg.includes('*'),
-      defaultValue:
-        defaultValue != undefined ? defaultValue : 'secret_default_value',
+      name: aliasedExp.pop(),
+      alias: aliasedExp,
+      isRequired: !Str.contains(arg, "?"),
+      isArray: Str.contains(arg, "*"),
+      defaultValue,
       expression,
+      description: description?.trim() ?? "",
     };
   }
 }

@@ -13,7 +13,6 @@ export class ConsoleExplorer {
   ) {}
 
   onModuleInit() {
-    console.time('time_to_scan_for_console_commands')
     const wrappers = this.discovery.getProviders();
     wrappers.forEach((w) => {
       const { instance } = w;
@@ -31,8 +30,6 @@ export class ConsoleExplorer {
         (key: string) => this.lookupConsoleCommands(instance, key),
       );
     });
-    console.timeEnd('time_to_scan_for_console_commands')
-
   }
 
   lookupConsoleCommands(

@@ -1,4 +1,4 @@
-import { InvalidValueType } from "../exceptions/invalidValueType";
+import { InvalidValue } from "../exceptions";
 import { Arr } from "./array";
 
 export class Obj {
@@ -95,7 +95,7 @@ export class Obj {
 
   static isEmpty(obj: Record<string, any>): boolean {
     Obj.isObj(obj, true);
-    return !Object.keys(obj).length;
+    return !!Object.keys(obj).length;
   }
 
   static isNotEmpty(obj: Record<string, any>): boolean {
@@ -105,9 +105,11 @@ export class Obj {
   /**
    * TODO
    */
-  static get<T>(obj: Record<string, any>, key: string, defaultValue: any): T {
-    if (key in obj) return obj[key];
-    return defaultValue;
+  static get<T>(obj: Record<string, any>, ...keys: string[]): T {
+    for (const key of keys) {
+      if (key in obj) return obj[key];
+    }
+    return undefined;
   }
 
   static sort<T = Record<string, any>>(obj: T): T {
@@ -133,6 +135,14 @@ export class Obj {
     return newObj;
   }
 
+  static hash(obj: Record<string, any>): string {
+    const sortedObj = this.sort(obj);
+    console.log(sortedObj);
+    const jsonString = JSON.stringify(sortedObj);
+    console.log(jsonString);
+    return "";
+  }
+
   static asMap<T = Record<string, any>>(obj: T): Map<keyof T, any> {
     const map = new Map();
     for (const key in obj) {
@@ -147,7 +157,7 @@ export class Obj {
     }
 
     if (throwError) {
-      throw new InvalidValueType("Passed value is not an object");
+      throw new InvalidValue("Passed value is not an object");
     }
 
     return false;

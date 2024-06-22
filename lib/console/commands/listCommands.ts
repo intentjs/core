@@ -2,47 +2,49 @@ import { Injectable } from '@nestjs/common';
 import { Command } from '../decorators';
 import { CommandMeta } from '../metadata';
 import * as pc from 'picocolors';
-import { ConsoleIO } from '../consoleIO';
+import { columnify } from '@libs/intent/utils/columnify';
+import { Str } from '@libs/intent/utils/strings';
+// import * as columnify from 'columnify';
 
 @Injectable()
 @Command('list', { desc: 'Command to list all the commands' })
 export class ListCommands {
-  public async handle(_cli: ConsoleIO): Promise<void> {
+  public async handle(): Promise<void> {
     const commands = CommandMeta.getAllCommands();
-    const keys = Object.keys(commands).sort().reverse();
 
-    const commandGroups: { [key: string]: string[] } = { '#': [] };
-    for (const key of keys) {
-      const c = key.split(':');
+    const list = [];
+    const groupsWithIndices = {};
+    for (const commandKey in commands) {
+      const commandInfo = commands[commandKey];
+      const group = Str.before(commandKey, ':');
+      groupsWithIndices[group] = [];
+      list.push({
+        command: commandKey,
+        desc: commandInfo.meta.desc || '',
+      });
+    }
 
-      if (c.length === 1) {
-        if (commandGroups[c[0]]) {
-          commandGroups[c[0]].push(key);
-        } else {
-          commandGroups['#'].push(c[0]);
-        }
+    const formattedRows = columnify(list, { padStart: 2 });
+    const groups = {};
+    for (const row of formattedRows) {
+      const group = Str.before(row[0], ':').trim();
+      if (groups[group]) {
+        groups[group].push(row);
       } else {
-        if (commandGroups[c[0]]) {
-          commandGroups[c[0]].push(key);
-        } else {
-          commandGroups[c[0]] = [key];
-        }
+        groups[group] = [row];
       }
     }
 
-    for (const group in commandGroups) {
-      _cli.success(pc.bgBlue(pc.white(pc.bold(' ' + group + ' '))));
-      const list = [];
-      const sortedCommands = commandGroups[group].sort();
-      for (const command of sortedCommands) {
-        const options = commands[command].meta || {};
-        list.push({
-          command: pc.green(pc.bold(command)),
-          description: options.desc || 'No Description Passed',
-        });
+    // create rows
+    const printRows = [pc.yellow(Str.prepend('Available Commands:', ' '))];
+    for (const group in groups) {
+      printRows.push(pc.yellow(Str.prepend(group, ' ')));
+      for (const command of groups[group]) {
+        printRows.push([pc.green(command[0]), command[1]].join(' '));
       }
-
-      _cli.table(['Command', 'Description'], list);
     }
+
+    console.log(printRows.join('\n'));
+    return;
   }
 }

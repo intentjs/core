@@ -2,6 +2,7 @@ import { ArgumentParserOutput } from "./interfaces";
 import { ArgumentParser } from "./argumentParser";
 import { Inquirer } from "./inquirer";
 import { Logger } from "./logger";
+import { Obj } from "../utils";
 
 export class ConsoleIO {
   schema: ArgumentParserOutput;
@@ -53,7 +54,7 @@ export class ConsoleIO {
       }
 
       if (!this.values.arguments[argument.name]) {
-        if (argument.defaultValue !== "secret_default_value") {
+        if (argument.defaultValue !== undefined) {
           this.values.arguments[argument.name] = argument.isArray
             ? [argument.defaultValue]
             : argument.defaultValue;
@@ -68,7 +69,7 @@ export class ConsoleIO {
      * Parse options
      */
     for (const option of this.schema.options) {
-      const value = this.argv[option.name];
+      const value = Obj.get(this.argv, option.name, ...option.alias);
       if (value) {
         this.values.options[option.name] = value;
       } else {
