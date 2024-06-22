@@ -3,18 +3,11 @@ import { Str } from "../../lib/utils/strings";
 describe("String Helper", () => {
   beforeEach(async () => {});
 
-  // it('should trim', () => {
-  //   expect(Str.trim(' vinayak ')).toBe('vinayak');
-  // });
-
-  it("should replace using string", () => {
-    const string = "vinayak don";
-    const find = "don";
-    const replace = "sarawagi";
-    expect(Str.replace(string, find, replace)).toBe("vinayak sarawagi");
+  it("should trim", () => {
+    expect(Str.trim(" vinayak ")).toBe("vinayak");
   });
 
-  it("should replace using regex", () => {
+  it("should replace using string", () => {
     const string = "vinayak don";
     const find = "don";
     const replace = "sarawagi";
@@ -31,12 +24,11 @@ describe("String Helper", () => {
   });
 
   it("should replace all occurences using regex", () => {
-    const string = "vinayak don don don don";
-    const find = /don/g;
-    const replace = "sarawagi";
-    expect(Str.replace(string, find, replace)).toBe(
-      "vinayak sarawagi sarawagi sarawagi sarawagi"
-    );
+    const string = "Virat Kohli says Ben Stokes";
+    const replacements = {
+      "Ben Stokes": "OUT!!",
+    };
+    expect(Str.swap(string, replacements)).toBe("Virat Kohli says OUT!!");
   });
 
   it("should convert to snake case", () => {

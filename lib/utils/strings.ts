@@ -279,10 +279,10 @@ export class Str {
     return newStr;
   }
 
-  static swap(str: string, swapArr: Record<string, any>): string {
+  static swap(str: string, swapVals: Record<string, any>): string {
     let newStr = str;
-    for (const key in swapArr) {
-      newStr = Str.replace(newStr, key, swapArr[key]);
+    for (const key in swapVals) {
+      newStr = Str.replace(newStr, key, swapVals[key]);
     }
     return newStr;
   }
@@ -447,6 +447,10 @@ export class Str {
 
   static isSentenceCase = (value: string): boolean => {
     return Str.isUpperCase(value[0]);
+  };
+
+  static trim = (value: string): string => {
+    return value?.trim();
   };
 
   static pluralize = pluralize;
