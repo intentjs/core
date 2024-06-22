@@ -142,8 +142,8 @@ export class ConsoleIO {
    * @param question
    * @returns Promise<string>
    */
-  async ask(question: string, defaultVal?: string) {
-    return Inquirer.ask(question, defaultVal);
+  async ask(question: string) {
+    return Inquirer.ask(question);
   }
 
   /**
@@ -152,21 +152,20 @@ export class ConsoleIO {
    * @param choices
    * @returns Promise<string>
    */
-  async select(
-    question: string,
-    choices: string[],
-    multiple = false,
-    defaultVal?: string[]
-  ) {
-    return Inquirer.select(question, choices, multiple, defaultVal);
+  async select(question: string, choices: string[]): Promise<string> {
+    return Inquirer.select(question, choices);
+  }
+
+  async multiSelect(question: string, choices: string[]) {
+    return Inquirer.multiSelect(question, choices);
   }
 
   /**
    * Use this method to ask for confirmation from the client
    * @param message
    */
-  async confirm(message: string, defaultVal?: boolean) {
-    return Inquirer.confirm(message, defaultVal);
+  async confirm(message: string) {
+    return Inquirer.confirm(message);
   }
 
   /**
@@ -174,7 +173,7 @@ export class ConsoleIO {
    * @param question
    * @param mask
    */
-  async password(question: string, mask = "", defaultVal?: string) {
-    return Inquirer.password(question, mask, defaultVal);
+  async password(question: string) {
+    return Inquirer.password(question);
   }
 }

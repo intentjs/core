@@ -359,4 +359,8 @@ export class Str {
   static ws(len: number): string {
     return Array(len).fill(" ").join("");
   }
+
+  static equals(str1: string, str2: string): boolean {
+    return typeof str1 === "string" && str1 === str2;
+  }
 }

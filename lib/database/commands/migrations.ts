@@ -103,7 +103,7 @@ export class DbOperationsCommand {
       "Please enter the password of the database to proceed"
     );
 
-    if (connConfig.connection && !Str.isString(connConfig.connection)) {
+    if (connConfig.connection && Str.isNotString(connConfig.connection)) {
       const conPassword = connConfig.connection?.["password"];
       if (conPassword && password !== conPassword) {
         _cli.error(" Wrong Password. Exiting... ");

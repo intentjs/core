@@ -10,7 +10,9 @@ export class CodegenService {
   private templateEngine: Eta;
 
   constructor() {
-    this.templateEngine = new Eta({ cache: true, views: join("../", "stubs") });
+    this.templateEngine = new Eta({
+      views: join("../", "stubs"),
+    });
   }
 
   async checkIfFileAlreadyExists(filePath: string): Promise<void> {

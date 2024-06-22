@@ -1,6 +1,6 @@
-import * as pc from 'picocolors';
-import * as Table from 'cli-table3';
-import { camelCase } from 'lodash';
+import pc from "picocolors";
+import Table from "cli-table3";
+import { camelCase } from "lodash";
 
 export class Logger {
   /**
@@ -36,7 +36,7 @@ export class Logger {
    * @returns void
    */
   static line(): void {
-    console.log(pc.gray('-'.repeat(process.stdout.columns / 2)));
+    console.log(pc.gray("-".repeat(process.stdout.columns / 2)));
   }
 
   /**
