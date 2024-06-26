@@ -303,7 +303,6 @@ const pluralRules = [
   [/eaux$/i, "$0"],
   [/m[ae]n$/i, "men"],
   ["thou", "you"],
-
   [/pok[eé]mon$/i, "$0"],
   [/[^aeiou]ese$/i, "$0"],
   [/deer$/i, "$0"],
@@ -323,20 +322,21 @@ const sanitizeWord = (token: string, word: string, rules: object[]) => {
 
   while (len--) {
     const rule = rules[len];
-
     if (new RegExp(rule[0]).test(word)) return replace(word, rule);
   }
 
   return word;
 };
 
-const interpolate = (str: string) => {
-  return str.replace(/\$(\d{1,2})/g, "");
+const interpolate = (str: string, args) => {
+  return str.replace(/\$(\d{1,2})/g, function (match, index) {
+    return args[index] || "";
+  });
 };
+
 const replace = (word: string, rule: object) => {
   return word.replace(rule[0], function (match, index) {
-    const result = interpolate(rule[1]);
-
+    const result = interpolate(rule[1], arguments);
     if (match === "") {
       return revertCase(word[index - 1], result);
     }
@@ -355,7 +355,6 @@ export const pluralize = (word: string) => {
   if (irregularSingulars.hasOwnProperty(token)) {
     return revertCase(word, irregularSingulars[token]);
   }
-
   return sanitizeWord(token, word, pluralRules);
 };
 

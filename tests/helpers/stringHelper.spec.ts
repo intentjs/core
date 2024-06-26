@@ -51,4 +51,8 @@ describe("String Helper", () => {
       "intent_js_for_the_devs_who_have_the_intent"
     );
   });
+
+  it("should pluralize", () => {
+    expect(Str.singularize("indices")).toBe("index");
+  });
 });
