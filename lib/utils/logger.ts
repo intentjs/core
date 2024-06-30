@@ -1,5 +1,5 @@
 import * as pc from "picocolors";
-import { Str } from "./strings";
+import { Str } from "./string";
 
 export class InternalLogger {
   static moduleName = "Intent";

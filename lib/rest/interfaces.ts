@@ -1,5 +1,6 @@
-import { Request as BaseRequest } from 'express';
-import { Response as BaseResponse } from 'express';
+import { AbstractHttpAdapter, BaseExceptionFilter } from "@nestjs/core";
+import { Request as BaseRequest } from "express";
+import { Response as BaseResponse } from "express";
 
 export interface Request extends BaseRequest {
   /**
@@ -16,7 +17,7 @@ export interface Request extends BaseRequest {
 export interface Response extends BaseResponse {
   success(
     data: Record<string, any> | Array<any> | string,
-    status?: number | string,
+    status?: number | string
   ): any;
 
   error(error: Record<string, any> | string, status?: number | string): any;
@@ -30,4 +31,5 @@ export interface ServerOptions {
   addValidationContainer?: boolean;
   port?: number;
   globalPrefix?: string;
+  exceptionFilter?: (httpAdapter: AbstractHttpAdapter) => BaseExceptionFilter;
 }

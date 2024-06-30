@@ -3,7 +3,7 @@ import { Command } from "../decorators";
 import { CommandMeta } from "../metadata";
 import * as pc from "picocolors";
 import { columnify } from "../../utils/columnify";
-import { Str } from "../../utils/strings";
+import { Str } from "../../utils/string";
 
 @Injectable()
 @Command("list", { desc: "Command to list all the commands" })

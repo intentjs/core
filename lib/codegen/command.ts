@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Command, ConsoleIO } from "../console";
 import { CodegenService } from "./service";
-import { Str } from "../utils/strings";
+import { Str } from "../utils/string";
 import { getClassNamesFromFilePath } from "./utils";
 import { join } from "path";
 

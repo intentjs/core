@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import * as pc from "picocolors";
 import { Command, ConsoleIO } from "../../console";
 import { ObjectionService } from "../service";
-import { Str } from "../../utils/strings";
+import { Str } from "../../utils/string";
 
 @Injectable()
 export class DbOperationsCommand {

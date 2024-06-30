@@ -1,5 +1,5 @@
 import { InternalLogger } from "../utils/logger";
-import { Str } from "../utils/strings";
+import { Str } from "../utils/string";
 import { ArgumentOptionObject, ArgumentParserOutput } from "./interfaces";
 
 export class ArgumentParser {

@@ -1,6 +1,6 @@
-import { ModuleMetadata, Type } from '@nestjs/common';
-import { Logform, transports, format, transport } from 'winston';
-import { Str } from '../utils/strings';
+import { ModuleMetadata, Type } from "@nestjs/common";
+import { Logform, transports, format, transport } from "winston";
+import { Str } from "../utils/string";
 
 export enum Transports {
   Default,
@@ -54,7 +54,7 @@ export interface LoggerConfig {
   }[];
 }
 export const defaultLoggerOptions = () => ({
-  level: 'debug',
+  level: "debug",
   transports: [
     {
       transport: Transports.Default,
@@ -77,7 +77,7 @@ export interface LoggerAsyncOptionsFactory {
 }
 
 export interface IntentLoggerAsyncOptions
-  extends Pick<ModuleMetadata, 'imports'> {
+  extends Pick<ModuleMetadata, "imports"> {
   name?: string;
   isGlobal: boolean;
   useExisting?: Type<IntentLoggerOptions>;
@@ -98,7 +98,11 @@ export const TransportsMap = {
 const defaultFormat = () => {
   const date = new Date().toISOString();
   const logFormat = format.printf((info) => {
-    return `${date} - ${info.level}: ${Str.isString(info.message) ? info.message : JSON.stringify(info.message, null, 4)}`;
+    return `${date} - ${info.level}: ${
+      Str.isString(info.message)
+        ? info.message
+        : JSON.stringify(info.message, null, 4)
+    }`;
   });
   return format.combine(format.colorize(), logFormat);
 };

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 import {
   Formats,
   FormatsMap,
@@ -8,10 +8,10 @@ import {
   TransportsMap,
   TransportOptions,
   defaultLoggerOptions,
-} from './options';
-import * as winston from 'winston';
-import { IntentConfig } from '../config/service';
-import { Num } from '../utils/number';
+} from "./options";
+import * as winston from "winston";
+import { IntentConfig } from "../config/service";
+import { Num } from "../utils/number";
 
 @Injectable()
 export class LoggerService {
@@ -19,12 +19,12 @@ export class LoggerService {
   private static options: any = {};
 
   constructor(private readonly config: IntentConfig) {
-    const options = config.get<IntentLoggerOptions>('logger');
+    const options = config.get<IntentLoggerOptions>("logger");
     LoggerService.config = options;
-    console.log('conifg options=============>', options);
+    console.log("conifg options=============>", options);
     for (const conn in options.loggers) {
       LoggerService.options[conn] = LoggerService.createLogger(
-        options.loggers[conn],
+        options.loggers[conn]
       );
     }
   }
@@ -58,11 +58,11 @@ export class LoggerService {
       } as TransportOptions;
 
       transportsConfig.push(
-        new TransportsMap[transportOptions.transport as Transports](options),
+        new TransportsMap[transportOptions.transport as Transports](options)
       );
     }
     options.transports = transportsConfig;
-    console.log('options=================>', options);
+    console.log("options=================>", options);
     return winston.createLogger({
       transports: transportsConfig,
       level: options.level,
