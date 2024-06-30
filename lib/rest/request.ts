@@ -3,7 +3,7 @@ import { Type } from "@nestjs/common";
 import { Request as ERequest } from "express";
 import { Validator } from "../validator";
 import { ulid } from "ulid";
-import { isEmpty } from "class-validator";
+import { isEmpty } from "lodash";
 
 export class Request {
   private $payload: Record<string, any>;
@@ -168,34 +168,31 @@ export class Request {
 
   has(...keys: string[]): boolean {
     console.log("kjeys ===> ", keys);
+    for (const key of keys) {
+      if (!(key in this.$payload)) return false;
+    }
+
     return true;
   }
 
-  missing(...keys: string[]): boolean {
-    console.log("missing keys ===> ", keys);
+  hasAny(...keys: string[]): boolean {
+    for (const key of keys) {
+      if (key in this.$payload) return true;
+    }
+
     return false;
+  }
+
+  missing(...keys: string[]): boolean {
+    for (const key of keys) {
+      if (key in this.$payload) return false;
+    }
+
+    return true;
   }
 
   hasHeaders(...keys: string[]): boolean {
     console.log("has header keys ===> ", keys);
     return false;
   }
-
-  //   schemeAndHttpHost(): string {}
-
-  //   has(): boolean {}
-
-  //   async whenHas(): Promise<void> {}
-
-  //   async hasAny(): Promise<void> {}
-
-  //   filled(): boolean {}
-
-  //   anyFilled(): boolean {}
-
-  //   missing(): boolean {}
-
-  //   merge() {}
-
-  //   mergeIfMissing() {}
 }
