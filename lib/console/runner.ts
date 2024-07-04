@@ -1,7 +1,7 @@
 import * as pc from "picocolors";
 import { CommandObject } from "./interfaces";
 import { ConsoleIO } from "./consoleIO";
-import { Logger } from "./logger";
+import { ConsoleLogger } from "./logger";
 import yargsParser from "yargs-parser";
 import { CommandMeta } from "./metadata";
 import { columnify } from "../utils/columnify";
@@ -19,7 +19,7 @@ export class CommandRunner {
     args: Record<string, any>
   ): Promise<void> {
     if (command == null) {
-      Logger.error("No command found");
+      ConsoleLogger.error("No command found");
       return;
     }
 

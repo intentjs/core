@@ -2,6 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { Command } from "../decorators";
 import { CommandMeta } from "../metadata";
 import * as pc from "picocolors";
+import { readFileSync } from "fs";
+import { path } from "app-root-path";
+import { join } from "path";
 import { columnify } from "../../utils/columnify";
 import { Str } from "../../utils/string";
 
@@ -43,7 +46,21 @@ export class ListCommands {
       }
     }
 
+    /**
+     * Read package.json
+     */
+    const packageJson = JSON.parse(
+      readFileSync(join(path, "package.json")).toString()
+    );
+    console.log();
+    console.log(
+      pc.white(
+        ` IntentJS ${packageJson.dependencies["@intentjs/core"] || "0.0.1"}`
+      )
+    );
+    console.log();
     console.log(printRows.join("\n"));
+    console.log();
     return;
   }
 }

@@ -1,7 +1,7 @@
 import { ArgumentParserOutput } from "./interfaces";
 import { ArgumentParser } from "./argumentParser";
 import { Inquirer } from "./inquirer";
-import { Logger } from "./logger";
+import { ConsoleLogger } from "./logger";
 import { Obj } from "../utils";
 
 export class ConsoleIO {
@@ -98,7 +98,7 @@ export class ConsoleIO {
    * @returns void
    */
   info(msg: string) {
-    Logger.info(msg);
+    ConsoleLogger.info(msg);
   }
 
   /**
@@ -107,7 +107,7 @@ export class ConsoleIO {
    * @returns void
    */
   error(msg: string) {
-    Logger.error(msg);
+    ConsoleLogger.error(msg);
   }
 
   /**
@@ -116,7 +116,7 @@ export class ConsoleIO {
    * @returns void
    */
   success(msg: string) {
-    Logger.success(msg);
+    ConsoleLogger.success(msg);
   }
 
   /**
@@ -125,7 +125,7 @@ export class ConsoleIO {
    * @returns void
    */
   line() {
-    Logger.line();
+    ConsoleLogger.line();
   }
   /**
    * Use this function to print table in console
@@ -134,7 +134,7 @@ export class ConsoleIO {
    * @returns void
    */
   table(header: string[], rows: Record<string, any>[]) {
-    Logger.table(header, rows);
+    ConsoleLogger.table(header, rows);
   }
 
   /**

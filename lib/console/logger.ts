@@ -2,7 +2,7 @@ import pc from "picocolors";
 import Table from "cli-table3";
 import { camelCase } from "lodash";
 
-export class Logger {
+export class ConsoleLogger {
   /**
    * Use this method to print an information line
    * @param msg

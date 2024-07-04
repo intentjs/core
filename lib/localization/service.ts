@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { readdirSync, readFileSync } from "fs";
 import { ConfigService } from "@nestjs/config";
 import { Obj } from "../utils";
-import { Str } from "../utils/strings";
+import { Str } from "../utils/string";
 
 @Injectable()
 export class LocalizationService {

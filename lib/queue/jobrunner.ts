@@ -2,43 +2,43 @@ import {
   DriverJob,
   InternalMessage,
   QueueDriver,
-} from '@squareboat/nest-queue-strategy';
-import { ListenerOptions } from './interfaces';
-import { QueueMetadata } from './metadata';
-import { Dispatch } from './queue';
-import { JobFailed, JobProcessed, JobProcessing } from './events';
-import { ConsoleIO, Logger } from '../console';
+} from "@squareboat/nest-queue-strategy";
+import { ListenerOptions } from "./interfaces";
+import { QueueMetadata } from "./metadata";
+import { Dispatch } from "./queue";
+import { JobFailed, JobProcessed, JobProcessing } from "./events";
+import { ConsoleIO, ConsoleLogger } from "../console";
 
 export class JobRunner {
   private consoleIo: ConsoleIO;
 
   constructor(
     private options: ListenerOptions,
-    private connection: QueueDriver,
+    private connection: QueueDriver
   ) {
-    this.consoleIo = new ConsoleIO('', {});
+    this.consoleIo = new ConsoleIO("", {});
   }
 
   async run(job: DriverJob) {
     const message = this.fetchMessage(job);
     const { data } = message;
     try {
-      this.log('info', `LOG [${message.job}] Job Processing...`);
+      this.log("info", `LOG [${message.job}] Job Processing...`);
       const targetJob = QueueMetadata.getJob(message.job);
       if (!targetJob || !targetJob.target) return;
       const event = new JobProcessing(message, job);
       event.emit();
       await targetJob.target(data);
       await this.success(message, job);
-      this.log('success', `LOG [${message.job}] Job Processed`);
+      this.log("success", `LOG [${message.job}] Job Processed`);
     } catch (e) {
       const event = new JobFailed(message, job);
       event.emit();
       await this.retry(message, job);
       const errorMessage = (e as Error).message;
       this.log(
-        'error',
-        `LOG [${message.job}] Job Failed | Error: ${errorMessage}`,
+        "error",
+        `LOG [${message.job}] Job Failed | Error: ${errorMessage}`
       );
     }
   }
@@ -47,17 +47,17 @@ export class JobRunner {
     if (!this.options.logger) return;
     let logger = undefined;
     switch (level) {
-      case 'info':
-        logger = Logger.info;
+      case "info":
+        logger = ConsoleLogger.info;
         break;
-      case 'success':
-        logger = Logger.success;
+      case "success":
+        logger = ConsoleLogger.success;
         break;
-      case 'error':
-        logger = Logger.error;
+      case "error":
+        logger = ConsoleLogger.error;
         break;
-      case 'warn':
-        logger = Logger.warn;
+      case "warn":
+        logger = ConsoleLogger.warn;
         break;
     }
 
