@@ -1,12 +1,10 @@
 import { HttpAdapterHost, NestFactory } from "@nestjs/core";
 import { useContainer } from "class-validator";
 import { ServerOptions } from "./interfaces";
-import { ExceptionFilter } from "../exceptions";
-import { EdgeViewEngine } from "../views/viewEngine";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { IntentConfig } from "../config/service";
 import { requestMiddleware } from "./middlewares/requestSerializer";
-import { ResponseSerializerInterceptor } from "./interceptors/response";
+import { Obj, Package } from "../utils";
 
 export class RestServer {
   private module: any;
@@ -26,28 +24,55 @@ export class RestServer {
 
     app.enableCors({ origin: true });
     app.use(requestMiddleware);
-    app.useGlobalInterceptors(new ResponseSerializerInterceptor());
 
-    const { httpAdapter } = app.get(HttpAdapterHost);
-    app.useGlobalFilters(new ExceptionFilter(httpAdapter));
-    options?.globalPrefix && app.setGlobalPrefix(options.globalPrefix);
-
-    this.bindViewEngine(app);
     const config = app.get(IntentConfig, { strict: false });
-    console.log("port ===> ", config.get("app.port"));
+
+    if (config.get("errors")) {
+      this.configureErrorReporter(config.get("errors"));
+    }
+
+    if (options.exceptionFilter) {
+      const { httpAdapter } = app.get(HttpAdapterHost);
+      app.useGlobalFilters(options.exceptionFilter(httpAdapter));
+    }
+
+    options?.globalPrefix && app.setGlobalPrefix(options.globalPrefix);
 
     await app.listen(options?.port || config.get<number>("app.port"));
   }
 
-  static bindViewEngine(app: NestExpressApplication) {
-    const viewEngine = new EdgeViewEngine();
-    const edge = viewEngine.handle();
-    app.engine("edge", (path, options, callback) =>
-      edge
-        .render(path, options)
-        .catch((error) => callback(error))
-        .then((rendered) => callback(null, rendered))
-    );
-    app.setViewEngine("edge");
+  static configureErrorReporter(config: Record<string, any>) {
+    if (!config) return;
+
+    if (Obj.isObj(config.sentry)) {
+      const {
+        dsn,
+        tracesSampleRate,
+        integrateNodeProfile,
+        profilesSampleRate,
+      } = config.sentry;
+
+      if (dsn) {
+        const Sentry = Package.load("@sentry/node");
+        const integrations = [];
+        /**
+         * Load integrations
+         */
+        if (integrateNodeProfile) {
+          const { nodeProfilingIntegration } = Package.load(
+            "@sentry/profiling-node"
+          );
+
+          integrations.push(nodeProfilingIntegration());
+        }
+
+        Sentry.init({
+          dsn,
+          tracesSampleRate,
+          profilesSampleRate,
+          integrations,
+        });
+      }
+    }
   }
 }

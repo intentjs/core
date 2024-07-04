@@ -1,6 +1,6 @@
 import { ConflictException } from "@nestjs/common";
 import { Num } from "./number";
-import { singularize, pluralize } from "./pluralise";
+import { pluralize, singularize } from "./pluralise";
 
 export class Str {
   static wordsArr = (str: string): string[] => {
@@ -22,10 +22,6 @@ export class Str {
     return words.map((key) => Str.lower(key));
   };
 
-  static pascal = (str: string): string => {
-    return Str.wordsArr(str).map(Str.ucfirst).join("");
-  };
-
   static kebab = (str: string): string => {
     return Str.wordsArr(str).join("-");
   };
@@ -34,12 +30,12 @@ export class Str {
     return Str.wordsArr(str).join("_");
   };
 
-  static camel = (str: string): string => {
-    return Str.lcfirst(Str.wordsArr(str).map(Str.ucfirst).join(""));
+  static pascal = (str: string): string => {
+    return Str.wordsArr(str).map(Str.ucfirst).join("");
   };
 
-  static studly = (str: string): string => {
-    return Str.wordsArr(str).map(Str.ucfirst).join("");
+  static camel = (str: string): string => {
+    return Str.lcfirst(Str.wordsArr(str).map(Str.ucfirst).join(""));
   };
 
   static headline = (str: string): string => {
@@ -59,7 +55,7 @@ export class Str {
   };
 
   static isAlpha = (str: string): boolean => {
-    for (let i = 0; i < Str.len(str); i++) {
+    for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       if (!Num.inRange(char, [97, 122]) && !Num.inRange(char, [65, 90])) {
         return false;
@@ -68,7 +64,7 @@ export class Str {
     return true;
   };
 
-  static isString = (str: any): boolean => {
+  static isString = (str: string): boolean => {
     return typeof str == "string";
   };
 
@@ -193,6 +189,10 @@ export class Str {
     return prefix + middle + (suffix ?? prefix);
   };
 
+  static prepend = (str: string, prefix: string): string => {
+    return prefix + str;
+  };
+
   static title = (text: string): string => {
     return text
       .split(" ")
@@ -253,7 +253,7 @@ export class Str {
 
   static mask(str: string, mask: string, leave: number): string {
     const substr = str.slice(0, leave);
-    return substr.padEnd(Str.len(str), mask);
+    return substr.padEnd(str.length, mask);
   }
 
   static remove(str: string, remove: string): string {
@@ -273,7 +273,7 @@ export class Str {
 
   static reverse(str: string): string {
     let newStr = "";
-    for (let i = Str.len(str) - 1; i >= 0; i--) {
+    for (let i = str.length - 1; i >= 0; i--) {
       newStr += str.charAt(i);
     }
     return newStr;
@@ -302,7 +302,7 @@ export class Str {
   static ucsplit(str: string): string[] {
     const newStr = [];
     let substr = "";
-    for (let i = 0; i < Str.len(str); i++) {
+    for (let i = 0; i < str.length; i++) {
       if (Num.inRange(str.charCodeAt(i), [65, 90])) {
         if (substr != "") {
           newStr.push(substr);
@@ -320,14 +320,14 @@ export class Str {
   static squish(str: string): string {
     let newStr = "";
     let nextChar = "";
-    for (let i = 0; i < Str.len(str); i++) {
+    for (let i = 0; i < str.length; i++) {
       const char = str.charAt(i);
       nextChar = str.charAt(i + 1);
       if (char !== " ") {
         newStr += char;
       }
 
-      if (char != " " && nextChar == " " && i !== Str.len(str) - 1) {
+      if (char != " " && nextChar == " " && i !== str.length - 1) {
         newStr += " ";
       }
     }
@@ -336,7 +336,7 @@ export class Str {
   }
 
   static startsWith(str: string, startStr: string): boolean {
-    return str.slice(0, Str.len(startStr)) === startStr;
+    return str.slice(0, startStr.length) === startStr;
   }
 
   static finish(str: string, finishStr: string): string {
@@ -357,88 +357,8 @@ export class Str {
     return regexp.test(str);
   }
 
-  static padBoth(str: string, maxLength: number, char = " "): string {
-    const len = maxLength - Str.len(str);
-    if (len > 0)
-      return str
-        .padStart(Math.floor(len / 2) + Str.len(str), char)
-        .padEnd(Math.ceil(len / 2) + Str.len(str), char);
-    return str;
-  }
-
-  static padLeft(str: string, maxLength: number, char = " "): string {
-    return str.padStart(maxLength, char);
-  }
-
-  static padRight(str: string, maxLength: number, char = " "): string {
-    return str.padEnd(maxLength, char);
-  }
-
-  static position(str: string, subStr: string): number {
-    return str.indexOf(subStr);
-  }
-
-  static replaceMatches(str: string, patern: string, replace: string): string {
-    return str.replace(patern, replace);
-  }
-
-  static slug(str: string, delimiter = "-"): string {
-    return String(str)
-      .normalize("NFKD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9 -]/g, "")
-      .replace(/\s+/g, delimiter)
-      .replace(/-+/g, delimiter);
-  }
-
-  static take(str: string, length: number): string {
-    return str.slice(length);
-  }
-
-  static wordCount(str: string): number {
-    return Str.wordsArr(str).length;
-  }
-
-  static words(str: string, count: number, suffix: string): string {
-    const arr = str.split(" ");
-    return (
-      arr.slice(count).join(" ") + (arr.length > count ? " " + suffix : "")
-    );
-  }
-
-  static wordWrap(str: string, characters: number, subStr: string): string {
-    const arr = [];
-    for (let i = 0; i < this.len(str); i += characters) {
-      arr.push(str.slice(i, i + characters));
-    }
-    return arr.join(subStr);
-  }
-
-  static unwrap(str: string, prefix: string, suffix?: string): string {
-    let start = 0;
-    let end = Str.len(str);
-    while (str[start] == prefix) {
-      start += 1;
-    }
-    while (str[end - 1] == suffix ?? prefix) {
-      end -= 1;
-    }
-    return str.slice(start, end);
-  }
-
-  static random(length: number): string {
-    let result = "";
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
-    }
-    return result;
+  static ws(len: number): string {
+    return Array(len).fill(" ").join("");
   }
 
   static equals(str1: string, str2: string): boolean {

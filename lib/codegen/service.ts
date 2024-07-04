@@ -10,7 +10,10 @@ export class CodegenService {
   private templateEngine: Eta;
 
   constructor() {
-    this.templateEngine = new Eta({ cache: true, views: join("../", "stubs") });
+    this.templateEngine = new Eta({
+      cache: true,
+      views: join(path, "stubs"),
+    });
   }
 
   async checkIfFileAlreadyExists(filePath: string): Promise<void> {
@@ -138,6 +141,20 @@ export class CodegenService {
     });
 
     await moduleFile.save();
+  }
+
+  async createException(options: Record<string, any>): Promise<void> {
+    const { input, filePath } = options;
+    await this.checkIfFileAlreadyExists(filePath);
+
+    const project = new Project();
+    const content = await this.templateEngine.renderAsync("exception", input);
+    const newException = project.createSourceFile(
+      join(path, filePath),
+      content,
+      { overwrite: false }
+    );
+    await newException.save();
   }
 
   async createRepo(options: Record<string, any>): Promise<void> {

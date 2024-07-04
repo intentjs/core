@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import * as pc from "picocolors";
 import { Command, ConsoleIO } from "../../console";
 import { ObjectionService } from "../service";
-import { Str } from "../../utils/strings";
+import { Str } from "../../utils/string";
 
 @Injectable()
 export class DbOperationsCommand {
@@ -103,7 +103,7 @@ export class DbOperationsCommand {
       "Please enter the password of the database to proceed"
     );
 
-    if (connConfig.connection && !Str.isString(connConfig.connection)) {
+    if (connConfig.connection && Str.isNotString(connConfig.connection)) {
       const conPassword = connConfig.connection?.["password"];
       if (conPassword && password !== conPassword) {
         _cli.error(" Wrong Password. Exiting... ");

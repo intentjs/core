@@ -1,4 +1,4 @@
-import { InvalidValueType } from "../exceptions/invalidValueType";
+import { InvalidValue } from "../exceptions";
 import { Obj } from "./object";
 
 export class Arr {
@@ -29,7 +29,7 @@ export class Arr {
     if (Array.isArray(value)) return true;
 
     if (throwError) {
-      throw new InvalidValueType("Passed value is not an object");
+      throw new InvalidValue("Passed value is not an object");
     }
 
     return false;
@@ -51,13 +51,9 @@ export class Arr {
     let currentIndex = arr.length,
       randomIndex;
 
-    // While there remain elements to shuffle.
     while (currentIndex > 0) {
-      // Pick a remaining element.
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
-
-      // And swap it with the current element.
       [arr[currentIndex], arr[randomIndex]] = [
         arr[randomIndex],
         arr[currentIndex],
@@ -85,7 +81,10 @@ export class Arr {
       while (startIndex <= endIndex) {
         const newPropsArr = [propArr.slice(1).join(".")];
         if (Obj.isObj(arr[startIndex])) {
-          newArr[startIndex] = Obj.pick(arr[startIndex], newPropsArr);
+          newArr[startIndex] = Obj.pick(
+            arr[startIndex],
+            newPropsArr[0] === "" ? [] : newPropsArr
+          );
         }
 
         if (Array.isArray(arr[startIndex])) {
@@ -98,7 +97,6 @@ export class Arr {
     return newArr;
   }
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   static except<T = any>(arr: T[], props: Array<string>): T[] {
     let newArr = [...arr];
     for (const prop of props) {
@@ -131,12 +129,11 @@ export class Arr {
     return newArr;
   }
 
-  // static crossJoin(...arrays: any[][]):any
-
   static intersect<T = string | number, M = T>(
     arr1: T[],
     arr2: M[]
   ): Array<T | M> {
+    console.log(arr1, arr2);
     const tempMap = new Map<T | M, number>();
     const newArr = [] as Array<T | M>;
     for (const val of arr1) {

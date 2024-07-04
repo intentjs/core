@@ -1,10 +1,11 @@
 // import { Str } from '../utils/str';
 import { Type } from "@nestjs/common";
-import { Request } from "express";
+import { Request as ERequest } from "express";
 import { Validator } from "../validator";
 import { ulid } from "ulid";
+import { isEmpty } from "lodash";
 
-export class IntentRequest {
+export class Request {
   private $payload: Record<string, any>;
   private $headers: Record<string, any>;
   private $query: Record<string, any>;
@@ -13,7 +14,7 @@ export class IntentRequest {
   private $dto: any;
   private id: string;
 
-  constructor(private request: Request) {
+  constructor(private request: ERequest) {
     this.$payload = {};
     this.$headers = {};
     this.initiate();
@@ -42,16 +43,18 @@ export class IntentRequest {
     return this.$payload;
   }
 
-  input<T = string>(name: string, defaultValue?: any): T {
+  input<T = string>(name: string, defaultValue?: T): T {
     return name in this.$payload ? this.$payload[name] : defaultValue;
   }
 
   string(name: string): string {
-    return this.$payload[name];
+    const value = this.input(name);
+    return value && value.toString();
   }
 
   number(name: string): number {
-    return +this.$payload[name];
+    const value = this.input(name);
+    return +value;
   }
 
   boolean(name: string): boolean {
@@ -59,12 +62,12 @@ export class IntentRequest {
     return [true, "yes", "on", "1", 1, "true"].includes(val.toLowerCase());
   }
 
-  query<T>(name?: string): T {
+  query<T = Record<string, any>>(name?: string): T {
     return name ? this.$query[name] : this.$query;
   }
 
-  path(): string {
-    return this.request.path;
+  path<T = Record<string, any>>(): T {
+    return this.request.params as T;
   }
 
   header(name: string): string {
@@ -81,8 +84,8 @@ export class IntentRequest {
 
   bearerToken(): string {
     const authHeader = this.$headers["authorization"];
-    if (!authHeader) return undefined;
-    return authHeader.split(" ")[1];
+    const asArray = authHeader?.split(" ");
+    return !isEmpty(asArray) && asArray(" ")[1];
   }
 
   host(): string {
@@ -140,12 +143,12 @@ export class IntentRequest {
     return this.$headers["accept"];
   }
 
-  async validate<T>(dtoSchema: Type<T>): Promise<T> {
+  async validate<T>(dto: Type<T>): Promise<T> {
     const payload = this.all();
-    const validator = Validator.compareWith(dtoSchema);
+    const validator = Validator.compareWith(dto);
     return validator
       .addMeta({ ...payload, _headers: { ...this.$headers } })
-      .validate({ ...payload });
+      .validate({ ...this.all() });
   }
 
   only(...keys: string[]): Record<string, any> {
@@ -165,34 +168,31 @@ export class IntentRequest {
 
   has(...keys: string[]): boolean {
     console.log("kjeys ===> ", keys);
+    for (const key of keys) {
+      if (!(key in this.$payload)) return false;
+    }
+
     return true;
   }
 
-  missing(...keys: string[]): boolean {
-    console.log("missing keys ===> ", keys);
+  hasAny(...keys: string[]): boolean {
+    for (const key of keys) {
+      if (key in this.$payload) return true;
+    }
+
     return false;
+  }
+
+  missing(...keys: string[]): boolean {
+    for (const key of keys) {
+      if (key in this.$payload) return false;
+    }
+
+    return true;
   }
 
   hasHeaders(...keys: string[]): boolean {
     console.log("has header keys ===> ", keys);
     return false;
   }
-
-  //   schemeAndHttpHost(): string {}
-
-  //   has(): boolean {}
-
-  //   async whenHas(): Promise<void> {}
-
-  //   async hasAny(): Promise<void> {}
-
-  //   filled(): boolean {}
-
-  //   anyFilled(): boolean {}
-
-  //   missing(): boolean {}
-
-  //   merge() {}
-
-  //   mergeIfMissing() {}
 }

@@ -1,7 +1,8 @@
-import { ConsoleIO } from '../consoleIO';
+import { ConsoleIO } from "../consoleIO";
 
 export interface CommandMetaOptions {
   desc?: string;
+  usage?: string[];
 }
 
 export interface CommandObject extends ArgumentParserOutput {
@@ -12,10 +13,12 @@ export interface CommandObject extends ArgumentParserOutput {
 
 export interface ArgumentOptionObject {
   name: string;
+  alias?: string[];
   isRequired: boolean;
   isArray: boolean;
   defaultValue: string | boolean;
   expression: string;
+  description?: string;
 }
 
 export interface ArgumentParserOutput {

@@ -1,4 +1,4 @@
-import { Str } from "./strings";
+import { Str } from "./string";
 
 function revertCase(word: string, token: string) {
   if (Str.equals(word, token)) return token;

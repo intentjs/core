@@ -2,6 +2,7 @@ import { ArgumentParserOutput } from "./interfaces";
 import { ArgumentParser } from "./argumentParser";
 import { Inquirer } from "./inquirer";
 import { Logger } from "./logger";
+import { Obj } from "../utils";
 
 export class ConsoleIO {
   schema: ArgumentParserOutput;
@@ -53,7 +54,7 @@ export class ConsoleIO {
       }
 
       if (!this.values.arguments[argument.name]) {
-        if (argument.defaultValue !== "secret_default_value") {
+        if (argument.defaultValue !== undefined) {
           this.values.arguments[argument.name] = argument.isArray
             ? [argument.defaultValue]
             : argument.defaultValue;
@@ -68,7 +69,7 @@ export class ConsoleIO {
      * Parse options
      */
     for (const option of this.schema.options) {
-      const value = this.argv[option.name];
+      const value = Obj.get(this.argv, option.name, ...option.alias);
       if (value) {
         this.values.options[option.name] = value;
       } else {
@@ -141,8 +142,8 @@ export class ConsoleIO {
    * @param question
    * @returns Promise<string>
    */
-  async ask(question: string, defaultVal?: string) {
-    return Inquirer.ask(question, defaultVal);
+  async ask(question: string) {
+    return Inquirer.ask(question);
   }
 
   /**
@@ -151,21 +152,20 @@ export class ConsoleIO {
    * @param choices
    * @returns Promise<string>
    */
-  async select(
-    question: string,
-    choices: string[],
-    multiple = false,
-    defaultVal?: string[]
-  ) {
-    return Inquirer.select(question, choices, multiple, defaultVal);
+  async select(question: string, choices: string[]): Promise<string> {
+    return Inquirer.select(question, choices);
+  }
+
+  async multiSelect(question: string, choices: string[]) {
+    return Inquirer.multiSelect(question, choices);
   }
 
   /**
    * Use this method to ask for confirmation from the client
    * @param message
    */
-  async confirm(message: string, defaultVal?: boolean) {
-    return Inquirer.confirm(message, defaultVal);
+  async confirm(message: string) {
+    return Inquirer.confirm(message);
   }
 
   /**
@@ -173,7 +173,7 @@ export class ConsoleIO {
    * @param question
    * @param mask
    */
-  async password(question: string, mask = "", defaultVal?: string) {
-    return Inquirer.password(question, mask, defaultVal);
+  async password(question: string) {
+    return Inquirer.password(question);
   }
 }

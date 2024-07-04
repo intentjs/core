@@ -1,4 +1,4 @@
-import inquirer from "inquirer";
+import { prompt } from "enquirer";
 
 export class Inquirer {
   /**
@@ -6,31 +6,29 @@ export class Inquirer {
    * @param question
    * @returns Promise<string>
    */
-  static async ask(question: string, defaultVal?: string): Promise<string> {
-    const answers = await inquirer.prompt([
-      { name: "question", message: question, default: defaultVal },
+  static async ask(question: string): Promise<string> {
+    const answers = await prompt([
+      { name: "question", message: question, type: "input" },
     ]);
-    return answers.question;
+    console.log(answers);
+    return answers["question"];
   }
 
   /**
    * Use this method to ask for confirmation from the client
    * @param question
    */
-  static async confirm(
-    message: string,
-    defaultVal?: boolean
-  ): Promise<boolean> {
-    const answer = await inquirer.prompt([
-      {
-        name: "confirm_once",
-        message,
-        type: "confirm",
-        default: defaultVal || true,
-      },
+  static async confirm(message: string): Promise<boolean> {
+    const answer = await prompt([
+      { name: "confirm_once", message, type: "confirm" },
     ]);
 
-    return answer.confirm_once;
+    return answer["confirm_once"];
+  }
+
+  static async number(message: string): Promise<number> {
+    const answer = await prompt([{ name: "q", message, type: "numeral" }]);
+    return answer["q"];
   }
 
   /**
@@ -39,18 +37,27 @@ export class Inquirer {
    * @param choices
    * @returns Promise<string>
    */
-  static async select(
-    message: string,
-    choices: string[],
-    multiple = false,
-    defaultVal?: string[]
-  ): Promise<string | string[]> {
-    const type = multiple ? "checkbox" : "list";
+  static async select(message: string, choices: string[]): Promise<string> {
     const name = "command";
-    const answers = await inquirer.prompt([
-      { type, name, message, choices, default: defaultVal },
+    const answers = await prompt([{ type: "select", name, message, choices }]);
+    return answers["command"];
+  }
+
+  /**
+   * Use this method to let the client select option from given choices
+   * @param question
+   * @param choices
+   * @returns Promise<string>
+   */
+  static async multiSelect(
+    message: string,
+    choices: string[]
+  ): Promise<string | string[]> {
+    const name = "command";
+    const answers = await prompt([
+      { type: "multiselect", name, message, choices, multiple: true },
     ]);
-    return answers.command;
+    return answers["command"];
   }
 
   /**
@@ -58,16 +65,9 @@ export class Inquirer {
    * @param question
    * @param mask
    */
-  static async password(
-    message: string,
-    mask = "",
-    defaultVal?: string
-  ): Promise<string> {
-    const type = "password",
-      name = "command";
-    const answers = await inquirer.prompt([
-      { type, name, message, mask, default: defaultVal },
-    ]);
+  static async password(message: string): Promise<string> {
+    const name = "command";
+    const answers = await prompt([{ type: "password", name, message }]);
     return answers[name];
   }
 }
