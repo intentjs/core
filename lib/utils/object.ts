@@ -102,12 +102,24 @@ export class Obj {
     return !Obj.isEmpty(obj);
   }
 
-  /**
-   * TODO
-   */
-  static get<T>(obj: Record<string, any>, ...keys: string[]): T {
+  static get<T>(
+    obj: Record<string, any>,
+    key: string,
+    ...aliasKeys: string[]
+  ): T {
+    const keys = [key, ...aliasKeys];
     for (const key of keys) {
       if (key in obj) return obj[key];
+      const splitKeys = key.split(".");
+      if (!splitKeys.length) return;
+
+      if (Arr.isArray(obj[splitKeys[0]])) {
+        return Arr.get(obj[splitKeys[0]], splitKeys.slice(1).join("."));
+      }
+
+      if (Obj.isObj(obj[splitKeys[0]])) {
+        return Obj.get(obj[splitKeys[0]], splitKeys.slice(1).join("."));
+      }
     }
     return undefined;
   }

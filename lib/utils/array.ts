@@ -128,4 +128,21 @@ export class Arr {
     }
     return newArr;
   }
+
+  static get<T = any>(arr: T[], key: string | number): T {
+    if (key in arr) return arr[key];
+    key = key as string;
+    const splitKeys = key.split(".");
+    if (!splitKeys.length) return;
+
+    if (Arr.isArray(arr[splitKeys[0]])) {
+      return Arr.get(arr[splitKeys[0]], splitKeys.slice(1).join("."));
+    }
+
+    if (Obj.isObj(arr[splitKeys[0]])) {
+      return Obj.get(arr[splitKeys[0]], splitKeys.slice(1).join("."));
+    }
+
+    return undefined;
+  }
 }
