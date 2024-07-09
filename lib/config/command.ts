@@ -16,6 +16,10 @@ export class ViewConfigCommand {
   async handle(_cli: ConsoleIO): Promise<void> {
     const namespace = _cli.argument<string>("namespace");
     const config = this.config.get(namespace);
+    if (!config) {
+      _cli.error(`config with ${namespace} namespace not found`);
+      return;
+    }
     const columnifiedConfig = columnify(
       Arr.toObj(Obj.entries(config), ["key", "value"])
     );
