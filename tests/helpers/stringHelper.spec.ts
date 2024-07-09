@@ -1,11 +1,7 @@
-import { Str } from "../../lib/utils/strings";
+import { Str } from "../../lib/utils/string";
 
 describe("String Helper", () => {
   beforeEach(async () => {});
-
-  it("should trim", () => {
-    expect(Str.trim(" vinayak ")).toBe("vinayak");
-  });
 
   it("should pluralize the sentence", () => {
     const string = `Vinayak ${Str.pluralize("have")} 5 ${Str.pluralize(
@@ -52,7 +48,7 @@ describe("String Helper", () => {
     );
   });
 
-  it("should pluralize", () => {
-    expect(Str.singularize("indices")).toBe("index");
+  it("should singularize", () => {
+    expect(Str.singular("indices")).toBe("index");
   });
 });

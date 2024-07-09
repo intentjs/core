@@ -3,13 +3,24 @@ import { Num } from "./number";
 import { pluralize, singularize } from "./pluralise";
 
 export class Str {
-  static wordsArr = (str: string): string[] => {
+  static wordsArr = (str: string, stripAllSpecialChars?: boolean): string[] => {
     if (Str.len(str) == 0) return [];
     // escape (strip) unicodes
     const words = [];
     let word = "";
+
+    const isLegalChar = (charCode: number) =>
+      Num.inRange(charCode, [48, 57]) ||
+      Num.inRange(charCode, [65, 90]) ||
+      Num.inRange(charCode, [97, 122]) ||
+      charCode == 32;
+
     for (const char of str) {
-      if (["_", "-", " ", "/", "\\"].includes(char) || Str.isUpperCase(char)) {
+      if (
+        ["_", "-", " ", "/", "\\"].includes(char) ||
+        (stripAllSpecialChars && !isLegalChar(char.charCodeAt(0))) ||
+        Str.isUpperCase(char)
+      ) {
         if (Str.len(word)) words.push(word);
         word = "";
         if (Str.isUpperCase(char)) word += char;
@@ -22,12 +33,33 @@ export class Str {
     return words.map((key) => Str.lower(key));
   };
 
+  static words = (string: string, stripAllSpecialChars?: boolean): string[] => {
+    return Str.wordsArr(string, stripAllSpecialChars);
+  };
+
+  static alphaNumOnly = (str: string): string => {
+    let newStr = "";
+    let i = 0;
+    const isLegalChar = (charCode: number) =>
+      Num.inRange(charCode, [48, 57]) ||
+      Num.inRange(charCode, [65, 90]) ||
+      Num.inRange(charCode, [97, 122]) ||
+      charCode == 32;
+
+    while (i < str.length) {
+      newStr += isLegalChar(str.charCodeAt(i)) ? str.charAt(i) : " ";
+      i++;
+    }
+
+    return newStr;
+  };
+
   static kebab = (str: string): string => {
-    return Str.wordsArr(str).join("-");
+    return Str.wordsArr(str, true).join("-");
   };
 
   static snake = (str: string): string => {
-    return Str.wordsArr(str).join("_");
+    return Str.wordsArr(str, true).join("_");
   };
 
   static pascal = (str: string): string => {
@@ -38,8 +70,13 @@ export class Str {
     return Str.lcfirst(Str.wordsArr(str).map(Str.ucfirst).join(""));
   };
 
-  static headline = (str: string): string => {
-    return Str.wordsArr(str).map(Str.ucfirst).join(" ");
+  static headline = (str: string, stripAllSpecialChars?: boolean): string => {
+    return Str.wordsArr(str, stripAllSpecialChars).map(Str.ucfirst).join(" ");
+  };
+
+  static slug = (str: string): string => {
+    const words = Str.wordsArr(str, true);
+    return Str.lower(words.join("-"));
   };
 
   static charAt = (str: string, idx: number) => {
@@ -78,10 +115,18 @@ export class Str {
     return Str.reverse(Str.before(Str.reverse(text), Str.reverse(subStr)));
   }
 
-  static before = (text: string, subStr: string): string => {
+  static before = (
+    text: string,
+    subStr: string,
+    defaultValue?: string
+  ): string => {
     if (Str.len(subStr) < 1) return text;
     const index = text.indexOf(subStr);
-    return index < 0 ? text : text.slice(0, index);
+    return index < 0
+      ? defaultValue !== undefined
+        ? defaultValue
+        : text
+      : text.slice(0, index);
   };
 
   static beforeLast(text: string, subStr: string): string {
@@ -194,25 +239,20 @@ export class Str {
   };
 
   static title = (text: string): string => {
-    return text
-      .split(" ")
-      .map(
-        (word: string) =>
-          (Str.upper(word?.[0]) ?? "") + (Str.lower(word?.slice(1)) ?? "")
-      )
-      .join(" ");
+    const words = Str.words(text);
+    return words.map(Str.ucfirst).join(" ");
   };
 
   static replace(
     str: string,
     findStr: string | RegExp,
-    replaceStr: string | ((substring: string, ...args: any[]) => string),
+    replaceStr: string,
     caseInsensitive?: boolean
   ): string {
     const regexFlags = ["g"];
     caseInsensitive && regexFlags.push("i");
     const pattern = new RegExp(findStr, regexFlags.join(""));
-    return str.replace(pattern, replaceStr as string);
+    return str.replace(pattern, replaceStr);
   }
 
   static replaceArray(
@@ -258,6 +298,18 @@ export class Str {
     return substr.padEnd(str.length, mask);
   }
 
+  static padBoth(str: string, length: number, char: string): string {
+    return str.padStart((str.length + length) / 2, char).padEnd(length, char);
+  }
+
+  static padLeft(str: string, length: number, char: string): string {
+    return str.padStart(length, char);
+  }
+
+  static padRight(str: string, length: number, char: string): string {
+    return str.padEnd(length, char);
+  }
+
   static remove(str: string, remove: string): string {
     return str.split(remove).join("");
   }
@@ -281,11 +333,22 @@ export class Str {
     return newStr;
   }
 
-  static swap(str: string, swapVals: Record<string, any>): string {
+  static swap(str: string, swapArr: Record<string, any>): string {
     let newStr = str;
-    for (const key in swapVals) {
-      newStr = Str.replace(newStr, key, swapVals[key]);
+    for (const key in swapArr) {
+      newStr = Str.replace(newStr, key, swapArr[key]);
     }
+    return newStr;
+  }
+
+  static take(str: string, length: number): string {
+    let i = 0,
+      newStr = "";
+    while (i < length) {
+      newStr += str.charAt(i);
+      i++;
+    }
+
     return newStr;
   }
 
@@ -367,15 +430,7 @@ export class Str {
     return typeof str1 === "string" && str1 === str2;
   }
 
-  static isSentenceCase = (value: string): boolean => {
-    return Str.isUpperCase(value[0]);
-  };
-
-  static trim = (value: string): string => {
-    return value?.trim();
-  };
-
   static pluralize = pluralize;
 
-  static singularize = singularize;
+  static singular = singularize;
 }
