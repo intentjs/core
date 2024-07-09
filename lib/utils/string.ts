@@ -233,22 +233,24 @@ export class Str {
 
   static replaceFirst(
     str: string,
-    oldValue: string | RegExp,
-    newValue: string | number
+    pattern: string,
+    replacement: string
   ): string {
-    console.log(str, oldValue, newValue);
-    // return str.replace();
-    return "";
+    return str.replace(pattern, replacement);
   }
 
   static replaceLast(
     str: string,
-    oldValue: string | RegExp,
-    newValue: string | number
+    pattern: string,
+    replacement: string
   ): string {
-    console.log(str, oldValue, newValue);
-    // return str.replace();
-    return "";
+    const lastIndex = str.lastIndexOf(pattern);
+    if (lastIndex === -1) return str;
+    return (
+      str.slice(0, lastIndex) +
+      replacement +
+      str.slice(lastIndex + pattern.length)
+    );
   }
 
   static mask(str: string, mask: string, leave: number): string {

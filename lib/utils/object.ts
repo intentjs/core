@@ -94,8 +94,8 @@ export class Obj {
   }
 
   static isEmpty(obj: Record<string, any>): boolean {
-    Obj.isObj(obj, true);
-    return !!Object.keys(obj).length;
+    Obj.isObj(obj);
+    return !!!Object.keys(obj).length;
   }
 
   static isNotEmpty(obj: Record<string, any>): boolean {
