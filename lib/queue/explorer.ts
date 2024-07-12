@@ -11,10 +11,8 @@ export class QueueExplorer implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    console.time('time_to_scan_for_queue_jobs')
-
     const wrappers = this.discovery.getProviders();
-    wrappers.forEach(w => {
+    wrappers.forEach((w) => {
       const { instance } = w;
       if (
         !instance ||
@@ -29,8 +27,6 @@ export class QueueExplorer implements OnModuleInit {
         (key: string) => this.lookupJobs(instance, key),
       );
     });
-    console.timeEnd('time_to_scan_for_queue_jobs')
-
   }
 
   lookupJobs(instance: Record<string, Function>, key: string) {

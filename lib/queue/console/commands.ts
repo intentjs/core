@@ -8,9 +8,14 @@ export class QueueConsoleCommands {
    * Command to run the queue worker, starts processing the jobs
    * @param args C
    */
-  @Command("queue:work {--sleep=} {--connection=} {--queue=}", {
-    desc: "Command to run the queue worker, starts processing the jobs",
-  })
+  @Command(
+    `queue:work 
+      {--S|sleep= : Sleep time the queue should wait before moving on to next job} 
+      {--C|connection= : Connection which should be used for consumption} 
+      {--Q|queue= : Name of the queue from which the messages should be pulled}
+    `,
+    { desc: "Command to run the intent queue worker." }
+  )
   public async startQueueWork(_cli: ConsoleIO): Promise<void> {
     const sleep = _cli.option<number>("sleep");
     const connection = _cli.option<number>("connection");

@@ -1,5 +1,5 @@
 import { ModuleMetadata, Type } from '@nestjs/common';
-import { QueueDriver } from '@squareboat/nest-queue-strategy';
+import { QueueDriver } from '../strategy';
 
 export interface QueueDriverOptions {
   driver: Type<QueueDriver>;

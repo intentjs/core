@@ -1,9 +1,9 @@
-import { ListenerOptions } from "./interfaces";
-import { QueueMetadata } from "./metadata";
-import { QueueService } from "./service";
-import { JobRunner } from "./jobrunner";
-import { DriverJob, QueueDriver } from "@squareboat/nest-queue-strategy";
-import { ConsoleLogger } from "../console";
+import { ListenerOptions } from './interfaces';
+import { QueueMetadata } from './metadata';
+import { QueueService } from './service';
+import { JobRunner } from './jobrunner';
+import { Logger } from '../console';
+import { DriverJob, QueueDriver } from './strategy';
 
 export class QueueWorker {
   private options: ListenerOptions;
@@ -21,7 +21,7 @@ export class QueueWorker {
 
     if (!this.options.queue) {
       const data = QueueMetadata.getData();
-      this.options["queue"] = data.connections[
+      this.options['queue'] = data.connections[
         this.options.connection || defaultOptions.connection
       ].queue as string;
     }
@@ -40,7 +40,7 @@ export class QueueWorker {
    * Listen to the queue
    */
   async listen() {
-    this.log("info", "LOG [QueueWorker] Queue Worker Initialised");
+    this.log('info', 'LOG [QueueWorker] Queue Worker Initialised');
     const connection = QueueService.getConnection(this.options.connection);
 
     // perform scheduled task of the driver
@@ -64,7 +64,7 @@ export class QueueWorker {
         connection.scheduledTask
           ? await connection.scheduledTask(this.options)
           : null,
-      this.options.schedulerInterval || 10000
+      this.options.schedulerInterval || 10000,
     );
   }
 
@@ -83,17 +83,17 @@ export class QueueWorker {
     if (!this.options.logger) return;
     let logger = undefined;
     switch (level) {
-      case "info":
-        logger = ConsoleLogger.info;
+      case 'info':
+        logger = Logger.info;
         break;
-      case "success":
-        logger = ConsoleLogger.success;
+      case 'success':
+        logger = Logger.success;
         break;
-      case "error":
-        logger = ConsoleLogger.error;
+      case 'error':
+        logger = Logger.error;
         break;
-      case "warn":
-        logger = ConsoleLogger.warn;
+      case 'warn':
+        logger = Logger.warn;
         break;
     }
 

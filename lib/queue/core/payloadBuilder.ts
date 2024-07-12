@@ -1,9 +1,5 @@
-import {
-  InternalMessage,
-  JobOptions,
-  Message,
-} from '@squareboat/nest-queue-strategy';
 import { QueueMetadata } from '../metadata';
+import { Message, JobOptions, InternalMessage } from '../strategy';
 
 type Complete<T> = {
   [P in keyof Required<T>]: Pick<T, P> extends Required<Pick<T, P>>

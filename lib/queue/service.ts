@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { QueueOptions } from './interfaces';
 import { QueueMetadata } from './metadata';
-import { QueueDriver } from '@squareboat/nest-queue-strategy';
 import { IntentConfig } from '../config/service';
+import { QueueDriver } from './strategy';
 
 @Injectable()
 export class QueueService {

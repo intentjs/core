@@ -1,11 +1,12 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { JobOptions } from "@squareboat/nest-queue-strategy";
-import { QUEUE_OPTIONS } from "./constants";
-import { QueueOptions } from "./interfaces";
+import { Inject, Injectable } from '@nestjs/common';
+import { QUEUE_OPTIONS } from './constants';
+import { QueueOptions } from './interfaces';
+import { GenericFunction } from '../interfaces';
+import { JobOptions } from './strategy';
 
 interface JobTarget {
   options: JobOptions;
-  target: Function;
+  target: GenericFunction;
 }
 
 @Injectable()

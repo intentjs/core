@@ -1,13 +1,9 @@
-import {
-  DriverJob,
-  InternalMessage,
-  QueueDriver,
-} from "@squareboat/nest-queue-strategy";
 import { ListenerOptions } from "./interfaces";
 import { QueueMetadata } from "./metadata";
 import { Dispatch } from "./queue";
 import { JobFailed, JobProcessed, JobProcessing } from "./events";
 import { ConsoleIO, ConsoleLogger } from "../console";
+import { QueueDriver, DriverJob, InternalMessage } from "./strategy";
 
 export class JobRunner {
   private consoleIo: ConsoleIO;
