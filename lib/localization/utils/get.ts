@@ -1,16 +1,16 @@
 import stringToPath from "./stringToPath";
 
-function baseGet(object: Record<string, any>, path: any): any {
-  path = castPath(path, object);
+// function baseGet(object: Record<string, any>, path: any): any {
+//   path = castPath(path, object);
 
-  let index = 0;
-  const length = path.length;
+//   let index = 0;
+//   const length = path.length;
 
-  while (object != null && index < length) {
-    object = object[toKey(path[index++])];
-  }
-  return index && index == length ? object : undefined;
-}
+//   while (object != null && index < length) {
+//     object = object[toKey(path[index++])];
+//   }
+//   return index && index == length ? object : undefined;
+// }
 
 /**
  * Gets the `toStringTag` of `value`.

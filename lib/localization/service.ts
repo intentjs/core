@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from "fs";
 import { ConfigService } from "@nestjs/config";
 import { Obj } from "../utils";
 import { Str } from "../utils/string";
+import { Num } from "../utils/number";
 
 @Injectable()
 export class LocalizationService {
@@ -77,21 +78,16 @@ export class LocalizationService {
     if (!count && count != 0) throw new Error("Count value not found");
 
     const text = Obj.get(langData, key, null);
-    if (!text || typeof text !== "string") return `ERR::INVALID KEY ==> ${key}`;
+    if (!text || typeof text !== "string") return key;
 
     const textObjArr: Record<string, any>[] = [];
-    text.split("|").forEach((t) => {
-      textObjArr.push(this.choiceStringParser(t));
+    text.split("|").forEach((t, index) => {
+      textObjArr.push(this.choiceStringParser(t, index));
     });
 
     let finalText = "";
     for (const t of textObjArr) {
-      if (t.limit.upper === count && t.limit.lower === count) {
-        finalText = t.text;
-        break;
-      }
-
-      if (t.limit.upper >= count && t.limit.lower <= count) {
+      if (Num.inRange(count as number, [t.limit.lower, t.limit.upper])) {
         finalText = t.text;
         break;
       }
@@ -106,19 +102,25 @@ export class LocalizationService {
         finalText = this.handleOptions(finalText, k, options[k]);
       }
     }
-
-    return finalText ? finalText : `ERR::INVALID COUNT ==> ${count}`;
+    return finalText ?? key;
   }
 
-  private static choiceStringParser(t: string): Record<string, any> {
-    const limits: string[] = t.match(/\[(.*?)\]/)![1].split(",");
+  private static choiceStringParser(
+    t: string,
+    index: number
+  ): Record<string, any> {
+    const text: string = Str.after(t, "]").trim();
+    const range = Str.between(t, "[", "]");
+    const limits = Str.is(range, text)
+      ? [index == 0 ? index : index + 1, index == 0 ? index + 1 : "*"]
+      : range.split(",");
 
     return {
-      text: Str.replace(t, /\[.*?\]/, "").trim(),
+      text,
       limit: {
-        lower: limits[0] === "*" ? Number.NEGATIVE_INFINITY : +limits[0],
+        lower: limits[0] == "*" ? Number.NEGATIVE_INFINITY : +limits[0],
         upper: limits[1]
-          ? limits[1] === "*"
+          ? limits[1] == "*"
             ? Number.POSITIVE_INFINITY
             : +limits[1]
           : +limits[0],
@@ -146,30 +148,29 @@ export class LocalizationService {
       ? this.caseTypes.SENTENCE_CASE
       : this.caseTypes.UNKNOWN;
 
-    text = Str.replace(
-      text,
-      `:${
-        caseType === this.caseTypes.UPPER_CASE
-          ? key.toUpperCase()
-          : caseType === this.caseTypes.LOWER_CASE
-          ? key.toLowerCase()
-          : caseType === this.caseTypes.SENTENCE_CASE
-          ? key[0].toUpperCase() + key.slice(1)
-          : key
-      }`,
-      () => {
-        switch (caseType) {
-          case this.caseTypes.UPPER_CASE:
-            return value.toUpperCase();
-          case this.caseTypes.LOWER_CASE:
-            return value.toLowerCase();
-          case this.caseTypes.SENTENCE_CASE:
-            return value[0].toUpperCase() + value.slice(1);
-          default:
-            return value;
-        }
+    const matchStr =
+      caseType === this.caseTypes.UPPER_CASE
+        ? key.toUpperCase()
+        : caseType === this.caseTypes.LOWER_CASE
+        ? key.toLowerCase()
+        : caseType === this.caseTypes.SENTENCE_CASE
+        ? key[0].toUpperCase() + key.slice(1)
+        : key;
+
+    const replaceStr = () => {
+      switch (caseType) {
+        case this.caseTypes.UPPER_CASE:
+          return value.toUpperCase();
+        case this.caseTypes.LOWER_CASE:
+          return value.toLowerCase();
+        case this.caseTypes.SENTENCE_CASE:
+          return value[0].toUpperCase() + value.slice(1);
+        default:
+          return value;
       }
-    );
+    };
+
+    text = Str.replace(text, `:${matchStr}`, replaceStr());
     return text;
   }
 

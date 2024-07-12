@@ -430,6 +430,14 @@ export class Str {
     return typeof str1 === "string" && str1 === str2;
   }
 
+  static isSentenceCase = (value: string): boolean => {
+    return Str.isUpperCase(value[0]);
+  };
+
+  static trim = (value: string): string => {
+    return value?.trim();
+  };
+
   static pluralize = pluralize;
 
   static singular = singularize;
