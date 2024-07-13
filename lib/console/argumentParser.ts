@@ -64,7 +64,7 @@ export class ArgumentParser {
       alias: aliasedExp,
       isRequired: !Str.contains(arg, "?"),
       isArray: Str.contains(arg, "*"),
-      defaultValue,
+      defaultValue: ![" ", null].includes(defaultValue) && defaultValue,
       expression,
       description: description?.trim() ?? "",
     };

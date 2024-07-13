@@ -4,6 +4,28 @@ import { Str } from "./string";
 export class InternalLogger {
   static moduleName = "Intent";
 
+  static info(cls: string, msg: string): void {
+    const logLevel = this.successColor("LOG");
+    const formattedCls = this.warn(this.formatClass(cls));
+    msg = this.successColor(msg);
+    console.log(
+      `${this.getPrintableTag("")}${Str.ws(
+        5
+      )}${logLevel} ${formattedCls} ${msg}`
+    );
+  }
+
+  static success(cls: string, msg: string): void {
+    const logLevel = this.successColor("LOG");
+    const formattedCls = this.warn(this.formatClass(cls));
+    msg = this.successColor(msg);
+    console.log(
+      `${this.getPrintableTag("")}${Str.ws(
+        5
+      )}${logLevel} ${formattedCls} ${msg}`
+    );
+  }
+
   static error(cls: string, msg: string): void {
     const logLevel = this.danger("ERROR");
     const formattedCls = this.warn(this.formatClass(cls));
@@ -20,6 +42,10 @@ export class InternalLogger {
     return `[${msg}]`;
   }
 
+  private static successColor(msg: string): string {
+    return pc.isColorSupported ? pc.green(msg) : msg;
+  }
+
   private static danger(msg: string): string {
     return pc.isColorSupported ? pc.red(msg) : msg;
   }
@@ -31,7 +57,7 @@ export class InternalLogger {
   static getPrintableTag(type?: string): string {
     const pid = process.pid;
     const statement = `[Intent] ${pid} - `;
-    const colorFn = type === "danger" ? pc.red : pc.green;
+    const colorFn = type === "danger" ? pc.red : pc.yellow;
     const module = pc.isColorSupported ? colorFn(statement) : statement;
     const timestamp = new Intl.DateTimeFormat("en-US", {
       year: "numeric",

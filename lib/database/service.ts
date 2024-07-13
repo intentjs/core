@@ -1,9 +1,11 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { DatabaseOptions, DbConnectionOptions } from './options';
-import Knex, { Knex as KnexType } from 'knex';
-import { ConnectionNotFound } from './exceptions';
-import { BaseModel } from './baseModel';
-import { IntentConfig } from '../config/service';
+import { Injectable, OnModuleInit } from "@nestjs/common";
+import { DatabaseOptions, DbConnectionOptions } from "./options";
+import Knex, { Knex as KnexType } from "knex";
+import { ConnectionNotFound } from "./exceptions";
+import { BaseModel } from "./baseModel";
+import { IntentConfig } from "../config/service";
+import { InternalLogger } from "../utils/logger";
+import { logTime } from "../utils/helpers";
 
 @Injectable()
 export class ObjectionService implements OnModuleInit {
@@ -11,7 +13,7 @@ export class ObjectionService implements OnModuleInit {
   static dbConnections: Record<string, KnexType>;
 
   constructor(config: IntentConfig) {
-    const dbConfig = config.get('db') as DatabaseOptions;
+    const dbConfig = config.get("db") as DatabaseOptions;
     const defaultConnection = dbConfig.connections[dbConfig.default];
     ObjectionService.config = dbConfig;
     ObjectionService.dbConnections = {};
@@ -24,21 +26,25 @@ export class ObjectionService implements OnModuleInit {
 
   async onModuleInit() {
     for (const connName in ObjectionService.dbConnections) {
-      console.debug(
-        `[@hanalabs/quicksilver/nestjs-objection] '${connName}' validating connection...`,
-      );
+      const time = Date.now();
       const connection = ObjectionService.dbConnections[connName];
       const dbOptions = ObjectionService.getOptions(connName);
 
       try {
-        await connection.raw(dbOptions.validateQuery || 'select 1+1 as result');
-        console.debug(
-          `[@hanalabs/nestjs-objection] '${connName}' connection validated...`,
+        await connection.raw(dbOptions.validateQuery || "select 1+1 as result");
+        InternalLogger.success(
+          "DatabaseService",
+          `Was able to successfully validate [${connName}] connection ${logTime(
+            Date.now() - time
+          )}`
         );
       } catch (_e) {
         const e = _e as Error;
-        console.error(
-          `[@hanalabs/nestjs-objection] '${connName}' connection failed, REASON: ${e.message}`,
+        InternalLogger.error(
+          "DatabaseService",
+          `Validation for connection [${connName}] failed with reason ${
+            e.message
+          } ${logTime(Date.now() - time)}`
         );
       }
     }
@@ -49,7 +55,7 @@ export class ObjectionService implements OnModuleInit {
     conName = conName || ObjectionService.config.default;
 
     const isConNameValid = Object.keys(
-      ObjectionService.config.connections,
+      ObjectionService.config.connections
     ).includes(conName);
 
     if (conName && !isConNameValid) {
@@ -64,7 +70,7 @@ export class ObjectionService implements OnModuleInit {
     conName = conName || ObjectionService.config.default;
 
     const isConNameValid = Object.keys(
-      ObjectionService.config.connections,
+      ObjectionService.config.connections
     ).includes(conName);
 
     if (conName && !isConNameValid) {
