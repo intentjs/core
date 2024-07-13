@@ -1,30 +1,54 @@
-import { ModuleMetadata, Type } from '@nestjs/common';
-import { QueueDriver } from '../strategy';
+import { Type } from '@nestjs/common';
+import { QueueDrivers } from '../strategy';
 
 export interface QueueDriverOptions {
-  driver: Type<QueueDriver>;
+  listenerType: 'poll' | 'subscribe';
+  driver: Type<QueueDrivers>;
   [key: string]: string | number | Record<string, any>;
+}
+
+export interface SyncQueueDriverOptions {
+  listenerType: 'poll';
+  driver: 'sync';
+  queue?: string;
+}
+
+export interface SqsQueueDriverOptions {
+  listenerType: 'poll';
+  driver: 'sqs';
+  region: string;
+  apiVersion: string;
+  prefix: string;
+  queue: string;
+  credentials: Record<string, any>;
+  profile?: string;
+  accessKey?: string;
+  accessSecret?: string;
+}
+
+export interface RedisQueueDriverOptions {
+  listenerType: 'poll';
+  driver: 'redis';
+  host?: string;
+  port?: number;
+  url?: string;
+  username?: string;
+  password?: string;
+  database: number;
+  queue: string;
+  prefix: string;
 }
 
 export interface QueueOptions {
   isGlobal?: boolean;
   default: string;
   connections: {
-    [key: string]: QueueDriverOptions;
+    [key: string]:
+      | SyncQueueDriverOptions
+      | SqsQueueDriverOptions
+      | RedisQueueDriverOptions
+      | QueueDriverOptions;
   };
-}
-
-export interface QueueAsyncOptionsFactory {
-  createQueueOptions(): Promise<QueueOptions> | QueueOptions;
-}
-
-export interface QueueAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
-  name?: string;
-  isGlobal: boolean;
-  useExisting?: Type<QueueOptions>;
-  useClass?: Type<QueueAsyncOptionsFactory>;
-  useFactory?: (...args: any[]) => Promise<QueueOptions> | QueueOptions;
-  inject?: any[];
 }
 
 export interface ListenerOptions {

@@ -207,6 +207,48 @@ export class CodegenService {
     await moduleFile.save();
   }
 
+  async createJob(options: Record<string, any>): Promise<void> {
+    const { input, filePath, fileNameWithoutEx } = options;
+    await this.checkIfFileAlreadyExists(filePath);
+
+    const project = new Project();
+    const content = await this.templateEngine.renderAsync("job", input);
+    const newController = project.createSourceFile(
+      join(path, filePath),
+      content,
+      { overwrite: false }
+    );
+    await newController.save();
+
+    // update module.ts
+    const moduleFile = project.addSourceFileAtPath(
+      join(path, "app", "module.ts")
+    );
+    const classDeclaration = moduleFile.getClassOrThrow("AppModule");
+    const moduleDecorator = classDeclaration.getDecoratorOrThrow("Module");
+    const moduleDecoratorArg = moduleDecorator.getArguments()[0];
+
+    const moduleObjectLiteral = moduleDecoratorArg.asKindOrThrow(
+      SyntaxKind.ObjectLiteralExpression
+    );
+
+    const controllersProperty = moduleObjectLiteral.getProperty("providers");
+
+    if (Node.isPropertyAssignment(controllersProperty)) {
+      const controllersArray = controllersProperty
+        .getInitializer()
+        .asKindOrThrow(SyntaxKind.ArrayLiteralExpression);
+      controllersArray.addElement(input.jobClassName);
+    }
+
+    moduleFile.addImportDeclaration({
+      namedImports: [input.jobClassName],
+      moduleSpecifier: `./jobs/${fileNameWithoutEx}`,
+    });
+
+    await moduleFile.save();
+  }
+
   async createModel(options: Record<string, any>): Promise<void> {
     const { input, filePath } = options;
     await this.checkIfFileAlreadyExists(filePath);

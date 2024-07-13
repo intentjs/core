@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { QUEUE_OPTIONS } from './constants';
-import { QueueOptions } from './interfaces';
-import { GenericFunction } from '../interfaces';
-import { JobOptions } from './strategy';
+import { Injectable } from "@nestjs/common";
+import { QueueOptions } from "./interfaces";
+import { GenericFunction } from "../interfaces";
+import { JobOptions } from "./strategy";
+import { IntentConfig } from "../config/service";
 
 interface JobTarget {
   options: JobOptions;
@@ -18,7 +18,8 @@ export class QueueMetadata {
   >;
   private static store: Record<string, any> = { jobs: {} };
 
-  constructor(@Inject(QUEUE_OPTIONS) data: QueueOptions) {
+  constructor(private config: IntentConfig) {
+    const data = this.config.get<QueueOptions>("queue");
     QueueMetadata.data = data;
     QueueMetadata.defaultOptions = {
       connection: data.default,
@@ -44,5 +45,9 @@ export class QueueMetadata {
 
   static getJob(jobName: string): JobTarget {
     return QueueMetadata.store.jobs[jobName];
+  }
+
+  static getAllJobs(): Record<string, any> {
+    return QueueMetadata.store.jobs;
   }
 }

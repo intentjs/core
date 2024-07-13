@@ -1,5 +1,5 @@
-import { QueueMetadata } from '../metadata';
-import { Message, JobOptions, InternalMessage } from '../strategy';
+import { QueueMetadata } from "../metadata";
+import { Message, JobOptions, InternalMessage } from "../strategy";
 
 type Complete<T> = {
   [P in keyof Required<T>]: Pick<T, P> extends Required<Pick<T, P>>
@@ -10,7 +10,7 @@ type Complete<T> = {
 export class PayloadBuilder {
   static build(
     message: Message,
-    jobOptions: JobOptions,
+    jobOptions: JobOptions
   ): Complete<InternalMessage> {
     const defaultOptions = QueueMetadata.getDefaultOptions();
     const payload = {

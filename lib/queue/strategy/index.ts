@@ -1,4 +1,7 @@
-export * from "./driver";
+import { PollQueueDriver } from "./pollQueueDriver";
+import { SubscribeQueueDriver } from "./subscribeQueueDriver";
+
 export * from "./message";
 export * from "./driverJob";
-export * from "./helpers";
+
+export type QueueDrivers = PollQueueDriver | SubscribeQueueDriver;

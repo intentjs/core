@@ -101,7 +101,7 @@ export class Str {
     return true;
   };
 
-  static isString = (str: string): boolean => {
+  static isString = (str: any): boolean => {
     return typeof str == "string";
   };
 

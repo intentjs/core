@@ -1,71 +1,69 @@
-import AWS = require('aws-sdk');
-import { Credentials } from 'aws-sdk';
-import { SqsJob } from '../interfaces/sqsJob';
-import { InternalMessage, QueueDriver } from '../strategy';
+import { SqsJob } from "../interfaces/sqsJob";
+import { InternalMessage } from "../strategy";
+import { SqsQueueOptionsDto } from "../schema";
+import { PollQueueDriver } from "../strategy/pollQueueDriver";
+import { Package } from "../../utils";
+import { joinUrl, validateOptions } from "../../utils/helpers";
 
-export class SqsQueueDriver implements QueueDriver {
-  private client: AWS.SQS;
-  private queueUrl: string;
+export class SqsQueueDriver implements PollQueueDriver {
+  private client: any;
 
   constructor(private options: Record<string, any>) {
-    AWS.config.update({ region: options.region });
-
-    if (options.profile) {
-      options['credentials'] = new AWS.SharedIniFileCredentials({
-        profile: options.profile,
-      });
-    } else if (options.accessKey && options.secretKey) {
-      options['credentials'] = new Credentials({
+    validateOptions(options, SqsQueueOptionsDto, { cls: SqsQueueDriver.name });
+    const AWS = Package.load("@aws-sdk/client-sqs");
+    this.client = new AWS.SQS({
+      region: options.region,
+      apiVersion: options.apiVersion,
+      credentials: options.credentials || {
         accessKeyId: options.accessKey,
         secretAccessKey: options.secretKey,
-      });
-    }
-
-    this.client = new AWS.SQS({
-      apiVersion: options.apiVersion,
-      credentials: options.credentials,
+      },
     });
-    this.queueUrl = options.prefix + '/' + options.queue;
+  }
+
+  init(): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   async push(message: string, rawPayload: InternalMessage): Promise<void> {
     const params = {
       DelaySeconds: rawPayload.delay,
       MessageBody: message,
-      QueueUrl: this.options.prefix + '/' + rawPayload.queue,
+      QueueUrl: joinUrl(this.options.prefix, rawPayload.queue),
     };
 
-    await this.client.sendMessage(params).promise().then();
+    await this.client.sendMessage(params);
     return;
   }
 
-  async pull(options: Record<string, any>): Promise<SqsJob | null> {
+  async pull(options: Record<string, any>): Promise<SqsJob[] | null> {
     const params = {
-      MaxNumberOfMessages: 1,
-      MessageAttributeNames: ['All'],
-      QueueUrl: this.options.prefix + '/' + options.queue,
+      MaxNumberOfMessages: 10,
+      MessageAttributeNames: ["All"],
+      QueueUrl: joinUrl(this.options.prefix, options.queue),
       VisibilityTimeout: 30,
       WaitTimeSeconds: 20,
     };
-    const response = await this.client.receiveMessage(params).promise();
-    const message = response.Messages ? response.Messages[0] : null;
-    return message ? new SqsJob(message) : null;
+
+    const response = await this.client.receiveMessage(params);
+    const messages = response.Messages ?? [];
+    return messages.map((m) => new SqsJob(m));
   }
 
   async remove(job: SqsJob, options: Record<string, any>): Promise<void> {
     const params = {
-      QueueUrl: this.options.prefix + '/' + options.queue,
+      QueueUrl: joinUrl(this.options.prefix, options.queue),
       ReceiptHandle: job.data.ReceiptHandle,
     };
 
-    await this.client.deleteMessage(params).promise();
+    await this.client.deleteMessage(params);
 
     return;
   }
 
   async purge(options: Record<string, any>): Promise<void> {
     const params = {
-      QueueUrl: this.options.prefix + '/' + options.queue,
+      QueueUrl: joinUrl(this.options.prefix, options.queue),
     };
 
     await this.client.purgeQueue(params).promise();
@@ -75,12 +73,12 @@ export class SqsQueueDriver implements QueueDriver {
 
   async count(options: Record<string, any>): Promise<number> {
     const params = {
-      QueueUrl: this.options.prefix + '/' + options.queue,
-      AttributeNames: ['ApproximateNumberOfMessages'],
+      QueueUrl: joinUrl(this.options.prefix, options.queue),
+      AttributeNames: ["ApproximateNumberOfMessages"],
     };
-    const response: Record<string, any> = await this.client
-      .getQueueAttributes(params)
-      .promise();
+    const response: Record<string, any> = await this.client.getQueueAttributes(
+      params
+    );
     return +response.Attributes.ApproximateNumberOfMessages;
   }
 }

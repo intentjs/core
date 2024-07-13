@@ -75,21 +75,22 @@ export class CodegenCommand {
 
   @Command("make:job {name}", { desc: "Command to create a job" })
   async makeJob(_cli: ConsoleIO): Promise<void> {
-    _cli.info("Creating service class");
-    const name = _cli.argument<string>("name");
-    const routeName = name;
-    const controllerName = Str.pascal(`${name}_service`);
-    const fileNameWithoutEx = Str.camel(`${name}_service`);
-    const filePath = `app/services/${fileNameWithoutEx}.ts`;
+    _cli.info("Creating job class");
+    const jobName = _cli.argument<string>("name");
+    const jobClassName = Str.pascal(`${jobName}_job`);
+    const fileNameWithoutEx = Str.camel(`${jobName}_job`);
+    const filePath = `app/jobs/${fileNameWithoutEx}.ts`;
     const options = {
-      input: { routeName, controllerName },
+      input: { jobName, jobClassName },
       filePath,
       fileNameWithoutEx,
+      template: "job",
     };
     try {
-      await this.service.createService(options);
-      _cli.success(`Successfully created ${filePath}`);
+      await this.service.createJob(options);
+      _cli.success(`Successfully created job at ${filePath}`);
     } catch (e) {
+      console.log(e);
       _cli.error(e["message"]);
       return;
     }

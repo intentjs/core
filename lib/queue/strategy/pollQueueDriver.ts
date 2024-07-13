@@ -1,10 +1,10 @@
-import { DriverJob } from "./driverJob";
-import { Message } from "./message";
+import { DriverJob, Message } from '.';
+import { BaseQueueDriver } from './subscribeQueueDriver';
 
-export interface QueueDriver {
+export interface PollQueueDriver extends BaseQueueDriver {
   push(message: string, rawMessage: Message): Promise<void>;
 
-  pull(options: Record<string, any>): Promise<DriverJob | null>;
+  pull(options: Record<string, any>): Promise<DriverJob[] | null>;
 
   remove(job: DriverJob, options: Record<string, any>): Promise<void>;
 

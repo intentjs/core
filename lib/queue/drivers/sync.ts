@@ -1,8 +1,11 @@
 import { QueueMetadata } from '../metadata';
-import { QueueDriver, InternalMessage, DriverJob } from '../strategy';
+import { InternalMessage, DriverJob } from '../strategy';
+import { PollQueueDriver } from '../strategy/pollQueueDriver';
 
-export class SyncQueueDriver implements QueueDriver {
+export class SyncQueueDriver implements PollQueueDriver {
   constructor() {}
+
+  async init(): Promise<void> {}
 
   async push(message: string, rawPayload: InternalMessage): Promise<void> {
     const job = QueueMetadata.getJob(rawPayload.job);
@@ -10,8 +13,8 @@ export class SyncQueueDriver implements QueueDriver {
     return;
   }
 
-  async pull(options: Record<string, any>): Promise<DriverJob | null> {
-    return null;
+  async pull(options: Record<string, any>): Promise<DriverJob[]> {
+    return [];
   }
 
   async remove(job: DriverJob, options: Record<string, any>): Promise<void> {
