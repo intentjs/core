@@ -1,0 +1,12 @@
+import { Injectable } from '@nestjs/common';
+import { Job } from '@intentjs/core';
+
+@Injectable()
+export class <%= it.jobClassName %> {
+  constructor() {}
+
+  @Job('<%= it.jobName %>')
+  async create(data: Record<string,any>) {
+    console.log(data);
+  }
+}

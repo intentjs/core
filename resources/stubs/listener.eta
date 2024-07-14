@@ -1,0 +1,10 @@
+import { Injectable } from '@nestjs/common';
+import { ListensTo } from '@intentjs/core';
+
+@Injectable()
+export class <%= it.className %> {
+  @ListensTo('<%= it.eventName %>')
+  async handle(data: Record<string, any>): Promise<void> {
+    // write your code here...
+  }
+}

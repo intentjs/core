@@ -1,0 +1,8 @@
+import { EmitsEvent, Event } from '@intentjs/core';
+
+@Event('<%= it.eventName %>')
+export class <%= it.className %> extends EmitsEvent {
+  constructor() {
+    super();
+  }
+}

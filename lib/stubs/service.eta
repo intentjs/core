@@ -1,7 +1,0 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { RepoConstants } from 'app/utils/constant';
-
-@Injectable()
-export class <%= it.className %> {
-  constructor() {}
-}

@@ -1,0 +1,9 @@
+import { Transformer } from '@intentjs/core';
+
+export class <%= it.className %> extends Transformer {
+    availableIncludes = [];
+    defaultIncludes = [];
+    
+  async transform(obj: Record<string, any>): Promise<Record<string, any>> {
+  }
+}
