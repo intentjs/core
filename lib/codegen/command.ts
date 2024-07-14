@@ -244,4 +244,52 @@ export class CodegenCommand {
       return;
     }
   }
+
+  @Command("make:event {name}", {
+    desc: "Command to create an event class",
+  })
+  async makeEvent(_cli: ConsoleIO): Promise<void> {
+    _cli.info("Creating an event class");
+    const name = _cli.argument<string>("name");
+    const className = Str.pascal(`${name}_event`);
+    const fileNameWithoutEx = Str.camel(`${name}_event`);
+    const filePath = `app/events/${fileNameWithoutEx}.ts`;
+    const options = {
+      input: { className, eventName: name },
+      filePath,
+      fileNameWithoutEx,
+    };
+    try {
+      await this.service.createEvent(options);
+      _cli.success(`Successfully created ${filePath}`);
+    } catch (e) {
+      _cli.error(e["message"]);
+      return;
+    }
+  }
+
+  @Command(
+    "make:listener {name : Name of the listener} {--E|event_name= : Name of the event to which the listener will listen to}",
+    { desc: "Command to create an event listener class" }
+  )
+  async makeListener(_cli: ConsoleIO): Promise<void> {
+    _cli.info("Creating a listener class");
+    const name = _cli.argument<string>("name");
+    const eventName = _cli.option<string>("event_name");
+    const className = Str.pascal(`${name}_listener`);
+    const fileNameWithoutEx = Str.camel(`${name}_listener`);
+    const filePath = `app/events/listeners/${fileNameWithoutEx}.ts`;
+    const options = {
+      input: { className, eventName },
+      filePath,
+      fileNameWithoutEx,
+    };
+    try {
+      await this.service.createListener(options);
+      _cli.success(`Successfully created ${filePath}`);
+    } catch (e) {
+      _cli.error(e["message"]);
+      return;
+    }
+  }
 }
