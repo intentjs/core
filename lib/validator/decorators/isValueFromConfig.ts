@@ -5,9 +5,11 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from "class-validator";
-import { isEmpty, isArray, isObject } from "lodash";
 import { Injectable } from "@nestjs/common";
 import { IntentConfig } from "../../config/service";
+import { isEmpty } from "../../utils/helpers";
+import { Arr } from "../../utils/array";
+import { Obj } from "../../utils";
 
 @Injectable()
 @ValidatorConstraint({ async: false })
@@ -20,7 +22,7 @@ export class IsValueFromConfigConstraint
     const [options] = args.constraints;
     const validValues = this.getValues(options.key);
 
-    if (isEmpty(validValues) || !isArray(validValues)) {
+    if (isEmpty(validValues) || !Arr.isArray(validValues)) {
       return false;
     }
 
@@ -41,7 +43,7 @@ export class IsValueFromConfigConstraint
 
   private getValues(key: string): any {
     let validValues: Array<string> = this.config.get(key);
-    if (isObject(validValues)) {
+    if (Obj.isObj(validValues)) {
       validValues = Object.values(validValues);
     }
 

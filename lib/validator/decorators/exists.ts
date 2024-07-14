@@ -6,8 +6,8 @@ import {
   ValidatorConstraintInterface,
 } from "class-validator";
 import { Injectable } from "@nestjs/common";
-import { isEmpty } from "lodash";
 import { ObjectionService } from "../../database";
+import { isEmpty } from "../../utils/helpers";
 
 @Injectable()
 @ValidatorConstraint({ async: true })

@@ -1,4 +1,4 @@
-import { padEnd, padStart } from "lodash";
+import { Str } from "./string";
 
 export const columnify = (
   rows: Record<string, any>[],
@@ -10,9 +10,9 @@ export const columnify = (
     const colValues = findAllColumnsAtIndex(formattedRows, i);
     const maxLength = findMaxLength(colValues);
     for (const row of formattedRows) {
-      row[i] = padEnd(row[i], maxLength, " ");
+      row[i] = Str.padRight(row[i], maxLength, " ");
       if (options?.padStart) {
-        row[i] = padStart("", options.padStart, " ").concat(row[i]);
+        row[i] = Str.padLeft("", options.padStart, " ").concat(row[i]);
       }
     }
   }

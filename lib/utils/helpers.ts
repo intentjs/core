@@ -28,6 +28,10 @@ export const isEmpty = (value: any) => {
   return false;
 };
 
+export const isBoolean = (value: any): boolean => {
+  return typeof value === "boolean";
+};
+
 export const toBoolean = (value: any) => {
   if (!Str.isString(value) || typeof value !== "boolean") return undefined;
   const val = String(value);

@@ -5,7 +5,7 @@ import { ConsoleLogger } from "./logger";
 import yargsParser from "yargs-parser";
 import { CommandMeta } from "./metadata";
 import { columnify } from "../utils/columnify";
-import { isEmpty } from "lodash";
+import { isEmpty } from "../utils/helpers";
 
 export class CommandRunner {
   static async run(cmd: string, options?: { silent: boolean }): Promise<void> {

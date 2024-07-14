@@ -1,6 +1,6 @@
 import pc from "picocolors";
 import Table from "cli-table3";
-import { camelCase } from "lodash";
+import { Str } from "../utils/string";
 
 export class ConsoleLogger {
   /**
@@ -68,7 +68,7 @@ export class ConsoleLogger {
           pRows[index] = [] as string[];
         }
 
-        pRows[index].push(row[camelCase(header)]);
+        pRows[index].push(row[Str.camel(header)]);
       }
     }
 
