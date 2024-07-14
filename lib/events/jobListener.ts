@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { SquareboatNestEventConstants } from "./constants";
+import { IntentEventConstants } from "./constants";
 import { EventListenerRunner } from "./runner";
 
 export const JOB_NAME = "__JOB_NAME__";
@@ -15,7 +15,7 @@ export function Job(job: string, options?: Record<string, any>) {
 
 @Injectable()
 export class EventQueueWorker {
-  @Job(SquareboatNestEventConstants.eventJobName)
+  @Job(IntentEventConstants.eventJobName)
   async handle(data: Record<string, any>): Promise<void> {
     const { eventName, eventData } = data;
     const runner = new EventListenerRunner();

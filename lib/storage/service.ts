@@ -46,7 +46,7 @@ export class StorageService {
   static buildDriver(config: S3DiskOptions | LocalDiskOptions): StorageDriver {
     const driver = StorageService.driverMap[config.driver];
     if (!driver) throw new DiskNotFoundException(config);
-    return new driver(config);
+    return new driver("", config);
   }
 
   static getDriver(disk?: string): StorageDriver {

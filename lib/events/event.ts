@@ -1,15 +1,16 @@
-import 'reflect-metadata';
-import { SquareboatNestEventConstants } from './constants';
-import { difference, Package } from './helpers';
-import { GenericFunction } from './interfaces';
-import { EventListenerRunner } from './runner';
+import "reflect-metadata";
+import { IntentEventConstants } from "./constants";
+import { difference } from "./helpers";
+import { EventListenerRunner } from "./runner";
+import { GenericFunction } from "../interfaces";
+import { Dispatch } from "../queue/queue";
 
 export class EmitsEvent {
   private reservedKeyNames = [
-    'fetchPayload',
-    'emit',
-    'reservedKeyNames',
-    'dispatch',
+    "fetchPayload",
+    "emit",
+    "reservedKeyNames",
+    "dispatch",
   ];
 
   /**
@@ -20,16 +21,17 @@ export class EmitsEvent {
     type ObjectKey = keyof typeof this;
 
     const eventName = Reflect.getMetadata(
-      SquareboatNestEventConstants.eventEmitterName,
-      this.constructor,
+      IntentEventConstants.eventEmitterName,
+      this.constructor
     );
 
     const shouldBeQueued = this[
-      'queueOptions' as ObjectKey
+      "queueOptions" as ObjectKey
     ] as unknown as GenericFunction;
 
     if (!shouldBeQueued) {
       const runner = new EventListenerRunner();
+      console.log("runner ===> ", runner);
       await runner.handle(eventName, this.fetchPayload());
       return;
     }
@@ -43,7 +45,7 @@ export class EmitsEvent {
 
     const payloadKeys = difference(
       Object.getOwnPropertyNames(this),
-      this.reservedKeyNames,
+      this.reservedKeyNames
     ) as ObjectKey[];
 
     const payload = {} as { [key: string]: any };
@@ -63,25 +65,20 @@ export class EmitsEvent {
    */
   async dispatch(
     eventName: string,
-    queueConnection: Record<string, any> | Record<string, any>[],
+    queueConnection: Record<string, any> | Record<string, any>[]
   ): Promise<void> {
     const totalJobOptions = Array.isArray(queueConnection)
       ? queueConnection
       : [queueConnection];
 
-    const queuePkg = Package.load('@squareboat/nest-queue') as Record<
-      string,
-      GenericFunction
-    >;
-
     const eventData = this.fetchPayload();
     for (const option of totalJobOptions) {
-      await queuePkg.Dispatch({
-        job: SquareboatNestEventConstants.eventJobName,
+      await Dispatch({
+        job: IntentEventConstants.eventJobName,
         data: {
           eventName,
           eventData,
-          discriminator: '@squareboat/nest-event/queueable_event',
+          discriminator: "intentjs/events/queueable_event",
         },
         ...(option || {}),
       });
