@@ -2,8 +2,9 @@ import "reflect-metadata";
 import { IntentEventConstants } from "./constants";
 import { difference } from "./helpers";
 import { EventListenerRunner } from "./runner";
-import { GenericFunction } from "../interfaces";
 import { Dispatch } from "../queue/queue";
+import { JobOptions } from "../queue/strategy";
+import { isBoolean } from "../utils/helpers";
 
 export class EmitsEvent {
   private reservedKeyNames = [
@@ -14,30 +15,42 @@ export class EmitsEvent {
   ];
 
   /**
+   * Only emit an event if the condition is met
+   */
+  async emitIf(condition: boolean): Promise<void> {
+    condition && (await this.emit());
+  }
+
+  /**
+   * Only emit an event if the condition is not met
+   */
+  async emitUnless(condition: boolean): Promise<void> {
+    !condition && (await this.emit());
+  }
+
+  /**
    * Emit function
    * @returns Promise<void>
    */
   async emit(): Promise<void> {
-    type ObjectKey = keyof typeof this;
-
     const eventName = Reflect.getMetadata(
       IntentEventConstants.eventEmitterName,
       this.constructor
     );
 
-    const shouldBeQueued = this[
-      "queueOptions" as ObjectKey
-    ] as unknown as GenericFunction;
+    const overrideJobOptions =
+      this["shouldBeQueued"] && this["shouldBeQueued"]();
 
-    if (!shouldBeQueued) {
+    if (!overrideJobOptions) {
       const runner = new EventListenerRunner();
-      console.log("runner ===> ", runner);
       await runner.handle(eventName, this.fetchPayload());
       return;
     }
 
-    const queueConnection = shouldBeQueued();
-    await this.dispatch(eventName, queueConnection);
+    await this.dispatch(
+      eventName,
+      !isBoolean(overrideJobOptions) && overrideJobOptions
+    );
   }
 
   fetchPayload(): Record<string, any> {
@@ -48,7 +61,7 @@ export class EmitsEvent {
       this.reservedKeyNames
     ) as ObjectKey[];
 
-    const payload = {} as { [key: string]: any };
+    const payload = {} as Record<string, any>;
     for (const key of payloadKeys) {
       payload[key as string] = this[key];
     }
@@ -65,23 +78,42 @@ export class EmitsEvent {
    */
   async dispatch(
     eventName: string,
-    queueConnection: Record<string, any> | Record<string, any>[]
+    overrideJobOptions: JobOptions
   ): Promise<void> {
-    const totalJobOptions = Array.isArray(queueConnection)
-      ? queueConnection
-      : [queueConnection];
+    const connection =
+      overrideJobOptions && overrideJobOptions["connection"]
+        ? overrideJobOptions["connection"]
+        : this["connection"];
+    const queue =
+      overrideJobOptions && overrideJobOptions["queue"]
+        ? overrideJobOptions["queue"]
+        : this["queue"];
+
+    const delay =
+      overrideJobOptions && overrideJobOptions["delay"]
+        ? +overrideJobOptions["delay"]
+        : this["delay"];
+
+    const tries =
+      overrideJobOptions && overrideJobOptions["tries"]
+        ? +overrideJobOptions["tries"]
+        : this["tries"];
+
+    const jobOptions = {};
+    if (connection) jobOptions["connection"] = connection;
+    if (queue) jobOptions["queue"] = queue;
+    if (delay) jobOptions["delay"] = delay;
+    if (tries) jobOptions["tries"] = tries;
 
     const eventData = this.fetchPayload();
-    for (const option of totalJobOptions) {
-      await Dispatch({
-        job: IntentEventConstants.eventJobName,
-        data: {
-          eventName,
-          eventData,
-          discriminator: "intentjs/events/queueable_event",
-        },
-        ...(option || {}),
-      });
-    }
+    await Dispatch({
+      job: IntentEventConstants.eventJobName,
+      data: {
+        eventName,
+        eventData,
+        discriminator: "intentjs/events/queueable_event",
+      },
+      ...jobOptions,
+    });
   }
 }
