@@ -1,4 +1,4 @@
-import { ModuleMetadata, Type } from "@nestjs/common/interfaces";
+export type StorageDiskType = "s3" | "local";
 
 export interface DiskOptions {
   driver: "s3" | "local";
@@ -12,19 +12,24 @@ export interface DiskOptions {
   fetchRemoteCredentials?: boolean;
 }
 
+export interface S3DiskOptions {
+  driver: "s3";
+  region: string;
+  bucket: string;
+  credentials?: any;
+  accessKey?: string;
+  secretKey?: string;
+  basePath?: string;
+  throwOnFailure?: boolean;
+}
+
+export interface LocalDiskOptions {
+  driver: "local";
+  basePath?: string;
+  throwOnFailure?: boolean;
+}
+
 export interface StorageOptions {
   default: string;
-  disks: Record<string, DiskOptions>;
-}
-
-export interface StorageOptionsFactory {
-  createStorageOptions(): Promise<StorageOptions> | StorageOptions;
-}
-
-export interface StorageAsyncOptions extends Pick<ModuleMetadata, "imports"> {
-  name?: string;
-  useExisting?: Type<StorageOptions>;
-  useClass?: Type<StorageOptions>;
-  useFactory?: (...args: any[]) => Promise<StorageOptions> | StorageOptions;
-  inject?: any[];
+  disks: Record<string, LocalDiskOptions | S3DiskOptions>;
 }

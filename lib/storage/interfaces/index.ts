@@ -1,6 +1,6 @@
-export * from './storageDriver';
-export * from './storageOptions';
-export * from './fileOptions';
+export * from "./storageDriver";
+export * from "./storageOptions";
+export * from "./fileOptions";
 
 export interface StorageDriver$FileMetadataResponse {
   path?: string;

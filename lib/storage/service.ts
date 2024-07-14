@@ -1,36 +1,59 @@
-import { Injectable } from '@nestjs/common';
-import { StorageOptions } from './interfaces';
-import { StorageDriver } from './interfaces';
-import { DriverManager } from './driverManager';
-import { IntentConfig } from '../config/service';
+import { Injectable, Type } from "@nestjs/common";
+import { LocalDiskOptions, S3DiskOptions, StorageOptions } from "./interfaces";
+import { StorageDriver } from "./interfaces";
+import { IntentConfig } from "../config/service";
+import { Local, S3Storage } from "./drivers";
+import { InternalLogger } from "../utils/logger";
+import { DiskNotFoundException } from "./exceptions/diskNotFound";
+import { logTime } from "../utils/helpers";
 
 @Injectable()
 export class StorageService {
-  private static diskDrivers: { [key: string]: any };
+  private static readonly driverMap: Record<string, Type<StorageDriver>> = {
+    local: Local,
+    s3: S3Storage,
+  };
+
+  private static disks: { [key: string]: any };
   private static options: StorageOptions;
-  private static driverManager: DriverManager;
 
   constructor(private config: IntentConfig) {
-    StorageService.options = this.config.get('filesystem');
-    StorageService.diskDrivers = {};
-    StorageService.driverManager = new DriverManager();
+    StorageService.options = this.config.get("filesystem");
+    const disksConfig = StorageService.options.disks;
+    StorageService.disks = {};
+    for (const diskName in StorageService.options.disks) {
+      const time = Date.now();
+      const diskConfig = disksConfig[diskName];
+      const driver = StorageService.driverMap[diskConfig.driver];
+      if (!driver) {
+        InternalLogger.error(
+          "StorageService",
+          `We couldn't find any disk driver associated with the [${diskName}].`
+        );
+        continue;
+      }
+
+      StorageService.disks[diskName] = new driver(diskName, diskConfig);
+      InternalLogger.success(
+        "StorageService",
+        `Disk [${diskName}] successfully initiailized ${logTime(
+          Date.now() - time
+        )}`
+      );
+    }
+  }
+
+  static buildDriver(config: S3DiskOptions | LocalDiskOptions): StorageDriver {
+    const driver = StorageService.driverMap[config.driver];
+    if (!driver) throw new DiskNotFoundException(config);
+    return new driver(config);
   }
 
   static getDriver(disk?: string): StorageDriver {
     disk = disk || this.options.default;
-    if (StorageService.diskDrivers[disk]) {
-      return StorageService.diskDrivers[disk];
+    if (StorageService.disks[disk]) {
+      return StorageService.disks[disk];
     }
-
-    const driver = StorageService.newDriver(disk);
-    StorageService.diskDrivers[disk] = driver;
-    return driver;
-  }
-
-  static newDriver(disk: string): StorageDriver {
-    return StorageService.driverManager.getDriver(
-      disk,
-      StorageService.options.disks[disk],
-    );
+    throw new DiskNotFoundException({ disk });
   }
 }

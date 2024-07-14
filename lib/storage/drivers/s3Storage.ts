@@ -1,48 +1,49 @@
 import {
   StorageDriver,
-  DiskOptions,
   FileOptions,
   StorageDriver$FileMetadataResponse,
   StorageDriver$PutFileResponse,
   StorageDriver$RenameFileResponse,
+  S3DiskOptions,
 } from "../interfaces";
-import { Credentials, S3, SharedIniFileCredentials } from "aws-sdk";
 import { getMimeFromExtension } from "../helpers";
-import { HeadObjectRequest, PutObjectRequest } from "aws-sdk/clients/s3";
 import { ReadStream } from "fs";
+import { CannotParseAsJsonException } from "../exceptions/cannotParseAsJson";
+import { StorageService } from "../service";
+import { CannotPerformFileOpException } from "../exceptions/cannotPerformFileOp";
+import { GenericFunction } from "../../interfaces";
+import { Package } from "../../utils";
+import { Str } from "../../utils/string";
 
 export class S3Storage implements StorageDriver {
   private readonly disk: string;
-  private config: DiskOptions;
-  private client: S3;
+  private config: S3DiskOptions;
+  private client: any;
+  private AWS: any;
+  private getSignedUrlFn: GenericFunction;
 
-  constructor(disk: string, config: DiskOptions) {
+  constructor(disk: string, config: S3DiskOptions) {
     this.disk = disk;
     this.config = config;
-    const options = {
-      signatureVersion: "v4",
+    const { getSignedUrl } = Package.load("@aws-sdk/s3-request-presigner");
+    this.getSignedUrlFn = getSignedUrl;
+    this.AWS = Package.load("@aws-sdk/client-s3");
+    this.client = new this.AWS.S3({
       region: this.config.region,
-    } as Record<string, any>;
-
-    if (config.profile) {
-      options["credentials"] = new SharedIniFileCredentials({
-        profile: config.profile,
-      });
-    } else if (config.accessKey && config.secretKey) {
-      options["credentials"] = new Credentials({
+      credentials: config.credentials || {
         accessKeyId: config.accessKey,
         secretAccessKey: config.secretKey,
-      });
-    }
-
-    this.client = new S3(options);
+      },
+    });
   }
 
   getStream(filePath: string): ReadStream {
+    console.log("file path ===> ", filePath);
     throw new Error("Method not implemented.");
   }
 
   listDir(path: string): Promise<Record<string, any>> {
+    console.log(path);
     throw new Error("Method not implemented.");
   }
 
@@ -64,24 +65,35 @@ export class S3Storage implements StorageDriver {
       Body: fileContent,
       ContentType: mimeType ? mimeType : getMimeFromExtension(path),
       ...(options?.s3Meta || {}),
-    } as PutObjectRequest;
-
-    await this.client.upload(params).promise();
-    return { url: this.url(this.getPath(path)), path: this.getPath(path) };
+    };
+    await this.client.putObject(params);
+    return {
+      url: await this.url(this.getPath(path)),
+      path: this.getPath(path),
+    };
   }
 
   /**
-   * Get Signed Urls
+   * Get Signed Urls for certain actions
    * @param path
    */
-  signedUrl(path: string, expireInMinutes = 20): string {
-    const params = {
-      Bucket: this.config.bucket,
-      Key: this.getPath(path),
-      Expires: 60 * expireInMinutes,
+  async signedUrl(
+    path: string,
+    expireInMinutes = 20,
+    command: "get" | "put" = "get"
+  ): Promise<string> {
+    const commandMap = {
+      get: this.AWS.GetObjectCommand,
+      put: this.AWS.PutObjectCommand,
     };
 
-    const signedUrl = this.client.getSignedUrl("getObject", params);
+    const commandObj = new commandMap[command]({
+      Bucket: this.config.bucket,
+      Key: this.getPath(path),
+    });
+    const signedUrl = await this.getSignedUrlFn(this.client, commandObj, {
+      expiresIn: 60 * expireInMinutes,
+    });
 
     return signedUrl;
   }
@@ -93,12 +105,35 @@ export class S3Storage implements StorageDriver {
    */
   async get(path: string): Promise<Buffer | null> {
     try {
-      const params = {
-        Bucket: this.config.bucket || "",
+      const command = new this.AWS.GetObjectCommand({
+        Bucket: this.config.bucket,
         Key: this.getPath(path),
+      });
+
+      const res = await this.client.send(command);
+      return Buffer.from(await res.Body.transformToByteArray());
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * Get object's metadata
+   * @param path
+   */
+  async meta(path: string): Promise<StorageDriver$FileMetadataResponse> {
+    try {
+      const command = new this.AWS.HeadObjectCommand({
+        Bucket: this.config.bucket,
+        Key: this.getPath(path),
+      });
+      const res = await this.client.send(command);
+      return {
+        path: this.getPath(path),
+        contentType: res.ContentType,
+        contentLength: res.ContentLength,
+        lastModified: res.LastModified,
       };
-      const res = await this.client.getObject(params).promise();
-      return res.Body as Buffer;
     } catch (e) {
       return null;
     }
@@ -111,32 +146,7 @@ export class S3Storage implements StorageDriver {
    */
   async exists(path: string): Promise<boolean> {
     const meta = await this.meta(this.getPath(path));
-    return Object.keys(meta).length > 0 ? true : false;
-  }
-
-  /**
-   * Get object's metadata
-   * @param path
-   */
-  async meta(path: string): Promise<StorageDriver$FileMetadataResponse> {
-    const params = {
-      Bucket: this.config.bucket,
-      Key: this.getPath(path),
-    };
-
-    try {
-      const res = await this.client
-        .headObject(params as HeadObjectRequest)
-        .promise();
-      return {
-        path: this.getPath(path),
-        contentType: res.ContentType,
-        contentLength: res.ContentLength,
-        lastModified: res.LastModified,
-      };
-    } catch (e) {
-      return {};
-    }
+    return !!Object.keys(meta || {}).length;
   }
 
   /**
@@ -146,7 +156,7 @@ export class S3Storage implements StorageDriver {
    */
   async missing(path: string): Promise<boolean> {
     const meta = await this.meta(this.getPath(path));
-    return Object.keys(meta).length === 0 ? true : false;
+    return !!Object.keys(meta || {}).length;
   }
 
   /**
@@ -154,8 +164,9 @@ export class S3Storage implements StorageDriver {
    *
    * @param path
    */
-  url(path: string): string {
-    return this.signedUrl(this.getPath(path), 20).split("?")[0];
+  async url(path: string): Promise<string> {
+    const signedUrl = await this.signedUrl(path, 20, "get");
+    return Str.before(signedUrl, "?");
   }
 
   /**
@@ -163,15 +174,21 @@ export class S3Storage implements StorageDriver {
    *
    * @param path
    */
-  async delete(path: string): Promise<boolean> {
+  async delete(filePath: string): Promise<boolean> {
     const params = {
       Bucket: this.config.bucket || "",
-      Key: this.getPath(path),
+      Key: this.getPath(filePath),
     };
+
     try {
-      await this.client.deleteObject(params).promise();
+      await this.client.deleteObject(params);
       return true;
     } catch (err) {
+      if (this.shouldThrowError()) {
+        throw new CannotPerformFileOpException(
+          `File ${filePath} cannot be deleted due to the reason: ${err["message"]}`
+        );
+      }
       return false;
     }
   }
@@ -183,17 +200,17 @@ export class S3Storage implements StorageDriver {
    * @param newPath
    */
   async copy(
-    path: string,
-    newPath: string
+    sourcePath: string,
+    destinationPath: string
   ): Promise<StorageDriver$RenameFileResponse> {
-    this.client
-      .copyObject({
-        Bucket: this.config.bucket || "",
-        CopySource: this.config.bucket + "/" + this.getPath(path),
-        Key: newPath,
-      })
-      .promise();
-    return { path: newPath, url: this.url(newPath) };
+    const copyCommand = new this.AWS.CopyObjectCommand({
+      Bucket: this.config.bucket || "",
+      CopySource: "/" + this.config.bucket + "/" + this.getPath(sourcePath),
+      Key: destinationPath,
+    });
+
+    await this.client.send(copyCommand);
+    return { path: destinationPath, url: await this.url(destinationPath) };
   }
 
   /**
@@ -208,14 +225,100 @@ export class S3Storage implements StorageDriver {
   ): Promise<StorageDriver$RenameFileResponse> {
     await this.copy(this.getPath(path), newPath);
     await this.delete(this.getPath(path));
-    return { path: newPath, url: this.url(newPath) };
+    return { path: newPath, url: await this.url(newPath) };
+  }
+
+  async copyToDisk(
+    sourcePath: string,
+    destinationDisk: string,
+    destinationPath: string
+  ): Promise<boolean> {
+    try {
+      const buffer = await this.get(sourcePath);
+      const driver = StorageService.getDriver(destinationDisk);
+      await driver.put(destinationPath, buffer);
+      return true;
+    } catch (e) {
+      if (this.shouldThrowError()) {
+        throw new CannotPerformFileOpException(
+          `File cannot be copied from ${sourcePath} to ${destinationDisk} in ${destinationDisk} disk for the reason: ${e["message"]}`
+        );
+      }
+    }
+
+    return false;
+  }
+
+  async moveToDisk(
+    sourcePath: string,
+    destinationDisk: string,
+    destinationPath: string
+  ): Promise<boolean> {
+    try {
+      const buffer = await this.get(sourcePath);
+      const driver = StorageService.getDriver(destinationDisk);
+      await driver.put(destinationPath, buffer);
+      await this.delete(sourcePath);
+      return true;
+    } catch (e) {
+      if (this.shouldThrowError()) {
+        throw new CannotPerformFileOpException(
+          `File cannot be moved from ${sourcePath} to ${destinationDisk} in ${destinationDisk} disk for the reason: ${e["message"]}`
+        );
+      }
+    }
+    return false;
+  }
+
+  async getAsJson(
+    path: string,
+    throwError: boolean = false
+  ): Promise<Record<string, any>> {
+    const buffer = await this.get(path);
+    try {
+      return JSON.parse(buffer.toString());
+    } catch (e) {
+      if (throwError) {
+        throw new CannotParseAsJsonException();
+      }
+      return null;
+    }
+  }
+
+  temporaryUrl(
+    path: string,
+    ttlInMins: number,
+    params?: Record<string, any>
+  ): Promise<string> {
+    console.log(path, ttlInMins, params);
+    throw new Error("Method not implemented.");
+  }
+
+  async size(path: string): Promise<number> {
+    const meta = await this.meta(path);
+    return meta.contentLength;
+  }
+
+  async lastModifiedAt(path: string): Promise<Date> {
+    const meta = await this.meta(path);
+    return meta.lastModified;
+  }
+
+  async mimeType(path: string): Promise<string> {
+    const meta = await this.meta(path);
+    return meta.contentType;
+  }
+
+  async path(path: string): Promise<string> {
+    console.log(path);
+    return this.getPath(path);
   }
 
   /**
    * Get instance of driver's client.
    */
-  getClient(): S3 {
-    return this.client;
+  getClient<T = any>(): T {
+    return this.client as any;
   }
 
   /**
@@ -230,5 +333,11 @@ export class S3Storage implements StorageDriver {
    */
   getPath(path: string): string {
     return this.config.basePath ? `${this.config.basePath}/${path}` : path;
+  }
+
+  shouldThrowError(): boolean {
+    return this.config.throwOnFailure === undefined
+      ? true
+      : this.config.throwOnFailure;
   }
 }

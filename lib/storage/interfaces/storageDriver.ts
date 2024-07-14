@@ -1,11 +1,10 @@
-import { ReadStream } from 'fs';
 import {
   StorageDriver$GetFileResponse,
   StorageDriver$FileMetadataResponse,
   StorageDriver$PutFileResponse,
   StorageDriver$RenameFileResponse,
   FileOptions,
-} from '.';
+} from ".";
 
 export interface StorageDriver {
   /**
@@ -17,7 +16,7 @@ export interface StorageDriver {
   put(
     path: string,
     fileContent: any,
-    options?: FileOptions,
+    options?: FileOptions
   ): Promise<StorageDriver$PutFileResponse>;
 
   /**
@@ -26,8 +25,6 @@ export interface StorageDriver {
    * @param path
    */
   get(path: string): Promise<StorageDriver$GetFileResponse>;
-
-  getStream(filePath: string): ReadStream;
 
   /**
    * Check if file exists at the path.
@@ -48,14 +45,18 @@ export interface StorageDriver {
    *
    * @param path
    */
-  url(path: string): string;
+  url(path: string): Promise<string>;
 
   /**
    * Get Signed Urls
    * @param path
    * @param expireInMinutes
    */
-  signedUrl(path: string, expireInMinutes: number): string;
+  signedUrl(
+    path: string,
+    expireInMinutes: number,
+    command?: "get" | "put"
+  ): Promise<string>;
 
   /**
    * Get object's metadata
@@ -78,7 +79,7 @@ export interface StorageDriver {
    */
   copy(
     path: string,
-    newPath: string,
+    newPath: string
   ): Promise<StorageDriver$RenameFileResponse>;
 
   /**
@@ -89,35 +90,63 @@ export interface StorageDriver {
    */
   move(
     path: string,
-    newPath: string,
+    newPath: string
   ): Promise<StorageDriver$RenameFileResponse>;
 
   listDir(path: string): Promise<Record<string, any>>;
-  // /**
-  //  * Copy object from one path to the same path but on a different disk
-  //  *
-  //  * @param filePath
-  //  * @param destinationDisk
-  //  * @returns
-  //  */
-  // copyToDisk(filePath: string, destinationDisk: string): Promise<boolean>;
 
-  // /**
-  //  * Copy object from one path to the same path but on a different disk
-  //  *
-  //  * @param filePath
-  //  * @param destinationDisk
-  //  * @returns
-  //  */
-  // moveToDisk(filePath: string, destinationDisk: string): Promise<boolean>;
+  /**
+   * Copy object from one path to the same path but on a different disk
+   *
+   * @param filePath
+   * @param destinationDisk
+   * @returns
+   */
+  copyToDisk(
+    sourcePath: string,
+    destinationDisk: string,
+    destinationPath: string
+  ): Promise<boolean>;
+
+  /**
+   * Copy object from one path to the same path but on a different disk
+   *
+   * @param filePath
+   * @param destinationDisk
+   * @returns
+   */
+  moveToDisk(
+    sourcePath: string,
+    destinationDisk: string,
+    destinationPath: string
+  ): Promise<boolean>;
 
   /**
    * Get instance of driver's client.
    */
-  getClient(): any;
+  getClient<T = any>(): T;
 
   /**
    * Get config of the driver's instance.
    */
   getConfig(): Record<string, any>;
+
+  /**
+   * Read file as JSON
+   */
+  getAsJson(path: string, throwError: boolean): Promise<Record<string, any>>;
+
+  temporaryUrl(
+    path: string,
+    ttlInMins: number,
+    params?: Record<string, any>
+  ): Promise<string>;
+
+  size(path: string): Promise<number>;
+
+  lastModifiedAt(path: string): Promise<Date>;
+
+  mimeType(path: string): Promise<string>;
+
+  path(path: string): Promise<string>;
 }
