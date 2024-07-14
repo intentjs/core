@@ -1,7 +1,35 @@
 import { EmitsEvent } from "./event";
 
-export async function EmitEvent(event: EmitsEvent): Promise<void> {
-  await event.emit();
+export async function Emit(...events: EmitsEvent[]): Promise<void> {
+  const promises = [];
+  for (const event of events) {
+    promises.push(event.emit());
+  }
+  await Promise.allSettled(promises);
+  return;
+}
+
+export async function EmitIf(
+  condition: boolean,
+  ...events: EmitsEvent[]
+): Promise<void> {
+  const promises = [];
+  for (const event of events) {
+    promises.push(event.emitIf(condition));
+  }
+  await Promise.allSettled(promises);
+  return;
+}
+
+export async function emitUnless(
+  condition: boolean,
+  ...events: EmitsEvent[]
+): Promise<void> {
+  const promises = [];
+  for (const event of events) {
+    promises.push(event.emitUnless(condition));
+  }
+  await Promise.allSettled(promises);
   return;
 }
 
