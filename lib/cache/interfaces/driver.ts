@@ -5,7 +5,7 @@ export interface CacheDriver {
    * Return the value stored corresponding to the key
    * @param key
    */
-  get(key: string): Promise<any>;
+  get<T = any>(key: string): Promise<T>;
 
   /**
    * Store the value with the passed key
@@ -17,7 +17,7 @@ export interface CacheDriver {
     key: string,
     value: Record<string, any> | string,
     ttlInSec?: number
-  ): Promise<void>;
+  ): Promise<boolean>;
 
   /**
    * Check for existence of a particular key
@@ -25,11 +25,15 @@ export interface CacheDriver {
    */
   has(key: string): Promise<boolean>;
 
-  remember<T>(key: string, cb: GenericFunction, ttlInSec: number): Promise<T>;
+  remember<T = any>(
+    key: string,
+    cb: GenericFunction,
+    ttlInSec: number
+  ): Promise<T>;
 
-  rememberForever<T>(key: string, cb: GenericFunction): Promise<T>;
+  rememberForever<T = any>(key: string, cb: GenericFunction): Promise<T>;
 
-  forget(key: string): Promise<void>;
+  forget(key: string): Promise<boolean>;
 
   getClient<T>(): T;
 }

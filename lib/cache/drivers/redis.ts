@@ -23,14 +23,16 @@ export class RedisDriver implements CacheDriver {
     key: string,
     value: string | number | Record<string, any>,
     ttlInSec?: number
-  ): Promise<void> {
-    const redisKey = `${this.options.prefix}:::${key}`;
-    if (ttlInSec) {
-      await this.client.set(redisKey, JSON.stringify(value), "EX", ttlInSec);
-      return;
+  ): Promise<boolean> {
+    try {
+      const redisKey = `${this.options.prefix}:::${key}`;
+      ttlInSec
+        ? await this.client.set(redisKey, JSON.stringify(value), "EX", ttlInSec)
+        : await this.client.set(redisKey, JSON.stringify(value));
+      return true;
+    } catch {
+      return false;
     }
-
-    await this.client.set(redisKey, JSON.stringify(value));
   }
 
   async has(key: string): Promise<boolean> {
@@ -38,7 +40,7 @@ export class RedisDriver implements CacheDriver {
     return !!num;
   }
 
-  async remember<T>(
+  async remember<T = any>(
     key: string,
     cb: GenericFunction,
     ttlInSec: number
@@ -46,23 +48,25 @@ export class RedisDriver implements CacheDriver {
     const value = await this.get(key);
     if (value) return value;
     const response = await cb();
-    await this.set(key, response, ttlInSec);
+    if (response) await this.set(key, response, ttlInSec);
+
     return response;
   }
 
-  async rememberForever<T>(key: string, cb: GenericFunction): Promise<T> {
+  async rememberForever<T = any>(key: string, cb: GenericFunction): Promise<T> {
     const value = await this.get(key);
     if (value) return value;
     const response = await cb();
-    await this.set(key, response);
+    if (response) await this.set(key, response);
     return response;
   }
 
-  async forget(key: string): Promise<void> {
+  async forget(key: string): Promise<boolean> {
     try {
       await this.client.del(this.storeKey(key));
+      return true;
     } catch (e) {
-      console.error("Error deleting key from redis", e);
+      return false;
     }
   }
 

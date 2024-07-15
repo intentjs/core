@@ -6,7 +6,6 @@ import { DbOperationsCommand } from "./database/commands/migrations";
 import { ObjectionService } from "./database";
 import { EventExplorer } from "./events";
 import { StorageService } from "./storage/service";
-import { CacheMetadata } from "./cache/metadata";
 import { CacheService } from "./cache";
 import { QueueService } from "./queue";
 import { QueueConsoleCommands } from "./queue/console";
@@ -28,7 +27,6 @@ const providers = [
   ObjectionService,
   EventExplorer,
   StorageService,
-  CacheMetadata,
   CacheService,
   QueueService,
   QueueConsoleCommands,

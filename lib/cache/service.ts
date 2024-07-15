@@ -1,30 +1,43 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { RedisDriver } from './drivers/redis';
-import {
-  CacheDriver,
-  InMemoryDriverOption,
-  RedisDriverOption,
-} from './interfaces';
-import { CacheMetadata } from './metadata';
-import { InMemoryDriver } from './drivers/inMemory';
+import { Injectable, OnModuleInit } from "@nestjs/common";
+import { RedisDriver } from "./drivers/redis";
+import { CacheDriver, CacheOptions } from "./interfaces";
+import { InMemoryDriver } from "./drivers/inMemory";
+import { InternalLogger } from "../utils/logger";
+import { IntentConfig } from "../config/service";
+import { logTime } from "../utils/helpers";
 
 @Injectable()
 export class CacheService implements OnModuleInit {
+  static driverMap = { redis: RedisDriver, memory: InMemoryDriver };
+  public static data: CacheOptions;
   static stores: Record<string, CacheDriver>;
 
+  constructor(config: IntentConfig) {
+    CacheService.data = config.get("cache");
+  }
+
   onModuleInit() {
-    const { stores } = CacheMetadata.getData();
+    const { stores } = CacheService.data;
     CacheService.stores = {};
     for (const store in stores) {
-      if (stores[store].driver === 'redis') {
-        CacheService.stores[store] = new RedisDriver(
-          stores[store] as RedisDriverOption,
+      const time = Date.now();
+      const driver = CacheService.driverMap[stores[store].driver];
+
+      if (!driver) {
+        InternalLogger.error(
+          "QueueService",
+          `We couldn't find any driver associated with the "${stores[store].driver}".`
         );
-      } else if (stores[store].driver === 'memory') {
-        CacheService.stores[store] = new InMemoryDriver(
-          stores[store] as InMemoryDriverOption,
-        );
+        continue;
       }
+
+      CacheService.stores[store] = new driver(stores[store] as never);
+      InternalLogger.success(
+        "CacheService",
+        `Cache store [${
+          stores[store].driver
+        }] successfully initiailized ${logTime(Date.now() - time)}`
+      );
     }
   }
 }
