@@ -1,9 +1,14 @@
 import { ModuleMetadata, Type } from "@nestjs/common";
-import { RedisOptions } from "ioredis";
 
-export interface RedisDriverOption extends RedisOptions {
+export interface RedisDriverOption {
   driver: "redis";
-  prefix: string;
+  host?: string;
+  port?: number;
+  url?: string;
+  username?: string;
+  password?: string;
+  database?: number;
+  prefix?: string;
 }
 
 export interface InMemoryDriverOption {

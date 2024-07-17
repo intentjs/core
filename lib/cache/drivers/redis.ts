@@ -1,12 +1,23 @@
-import IORedis from "ioredis";
-import { CacheDriver, RedisDriverOption } from "../interfaces";
 import { GenericFunction } from "../../interfaces";
+import { Package } from "../../utils";
+import { CacheDriver, RedisDriverOption } from "../interfaces";
 
 export class RedisDriver implements CacheDriver {
-  private client: IORedis;
+  private client: any;
 
   constructor(private options: RedisDriverOption) {
-    this.client = new IORedis({ ...options });
+    const IORedis = Package.load("ioredis");
+    if (options.url) {
+      this.client = new IORedis(options.url, { db: options.database || 0 });
+    } else {
+      this.client = new IORedis({
+        host: options.host,
+        port: options.port,
+        username: options.username,
+        password: options.password,
+        db: options.database,
+      });
+    }
   }
 
   async get(key: string): Promise<any> {
