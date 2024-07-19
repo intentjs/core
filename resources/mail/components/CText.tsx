@@ -1,15 +1,7 @@
-import React from "react";
+import * as React from "react";
 import { Text } from "@react-email/components";
+import { ComponentProps } from "./interface";
 
-interface TextProp {
-  className: string;
-  value: string;
-}
-
-export const CText = ({ className, value }: TextProp) => {
-  return (
-    <Text className={className ? className : "text-black text-md"}>
-      {value}
-    </Text>
-  );
+export const CText = ({ value }: ComponentProps) => {
+  return <Text className={"text-txt text-base my-2"}>{value.text}</Text>;
 };

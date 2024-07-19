@@ -1,43 +1,22 @@
-import React from "react";
-import { Img, Section, Text } from "@react-email/components";
+import * as React from "react";
+import { Img, Text } from "@react-email/components";
+import { ComponentProps } from "./interface";
 
-interface FooterProp {
-  className?: string;
-  value?: {
-    logo?: {
-      src: string;
-      alt: string;
-      width: number;
-      height: number;
-    };
-    title?: {
-      text: string;
-      className?: string;
-    };
-    content?: string;
-  };
-}
-
-export const Footer = ({ className, value }: FooterProp) => {
+export const Footer = ({ value }: ComponentProps) => {
+  const { logo, title, appName } = value;
   return (
-    <Section className={className ? className : "flex flex-col"}>
-      <Img
-        src={value?.logo?.src}
-        alt={value?.logo?.alt}
-        width={value?.logo?.width}
-        height={value?.logo?.height}
-      />
-      <Text
-        className={
-          value?.title?.className
-            ? value.title.className
-            : "text-[#666666] text-md"
-        }
-      >
-        {value?.title?.text}
-        <br />
-        {value?.content}
-      </Text>
-    </Section>
+    <>
+      {logo && <Img src={logo?.src} alt={logo?.alt} width={40} />}
+      {/* {title && <Text className={'text-txt text-sm'}>{title?.text}</Text>} */}
+      {/* {subtitle && <Text className={'text-txt text-xs'}>{subtitle?.text}</Text>} */}
+      <div>
+        <Text className="text-txt text-xs text-center">
+          {title}
+          <br />
+          {`Copyright © ${new Date().getFullYear()} ${appName}. All rights
+          reserved.`}
+        </Text>
+      </div>
+    </>
   );
 };

@@ -1,20 +1,17 @@
-import React from "react";
+import * as React from "react";
+
 import { CodeBlock, dracula } from "@react-email/code-block";
+import { Section } from "@react-email/components";
 
-interface ReactComponentProp {
-  value: {
-    code: string;
-    lineNumbers: boolean;
-  };
-}
-
-export const InjectReactComponent = ({ value }: ReactComponentProp) => {
+export const InjectReactComponent = ({ ...props }) => {
   return (
-    <CodeBlock
-      code={value.code}
-      lineNumbers={value.lineNumbers}
-      theme={dracula}
-      language="javascript"
-    />
+    <Section className="mb-[20px]">
+      <CodeBlock
+        code={props.value.code}
+        lineNumbers={props.value.lineNumbers}
+        theme={dracula}
+        language="javascript"
+      />
+    </Section>
   );
 };

@@ -1,24 +1,41 @@
 import * as React from "react";
-import { Row, Column, Section, Hr } from "@react-email/components";
+import { ComponentProps } from "./interface";
 
-interface TableProp {
-  className?: string;
-  value: string[][];
-}
-
-export const Table = ({ className, value }: TableProp) => {
+export const Table = ({ value }: ComponentProps) => {
+  const { header, rows } = value;
   return (
-    <Section className={className ? className : ""}>
-      {value.map((row: string[], i) => {
-        return (
-          <Row key={i}>
-            {row.map((column: string, j) => {
-              return <Column key={j}>{column}</Column>;
-            })}
-            <Hr />
-          </Row>
-        );
-      })}
-    </Section>
+    <table className="table-auto w-full bg-tableBg border-spacing-0 rounded-md pl-5 pr-5 pt-5 pb-5 my-3 border-black border-2 items-center">
+      {header && (
+        <thead className="uppercase">
+          <tr className="w-full text-left text-[#9f9fa8] bg-tableHeader rounded-md">
+            {rows[0].map((h, index) => (
+              <th
+                key={index}
+                className={
+                  (index === 0 && "pl-3 pr-3 pt-2 pb-2 rounded-l-md") ||
+                  (index === header.length - 1 &&
+                    "pl-3 pr-3 pt-2 pb-2 rounded-r-md") ||
+                  "pl-3 pr-3 pt-2 pb-2"
+                }
+              >
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+      )}
+
+      <tbody>
+        {rows.slice(0).map((row, index) => (
+          <tr key={index} className="content-center">
+            {row.map((rowCol, colIndex) => (
+              <td key={colIndex} className="text-txt pl-3 pr-3 pt-2 pb-2">
+                {rowCol}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 };

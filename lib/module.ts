@@ -19,6 +19,7 @@ import { IsUniqueConstraint } from "./validator/decorators/isUnique";
 import { LoggerService } from "./logger/service";
 import { GenericFunction } from "./interfaces";
 import { EventQueueWorker } from "./events/jobListener";
+import { MailerService } from "./mailer";
 
 const providers = [
   ConsoleExplorer,
@@ -39,6 +40,7 @@ const providers = [
   IsUniqueConstraint,
   LoggerService,
   EventQueueWorker,
+  MailerService,
 ];
 const imports = [DiscoveryModule];
 const exportsArr = [IntentConfig];

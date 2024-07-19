@@ -1,48 +1,68 @@
-import React from "react";
+import * as React from "react";
+
 import { Image } from "../components/Image";
 import { Greetings } from "../components/Greetings";
-import { ActionButton } from "../components/ActionButton";
+import { ActionButton } from "../components/button";
 import { Regards } from "../components/Regards";
 import { Table } from "../components/Table";
 import { InjectMarkdown } from "../components/InjectMarkdown";
 import { InjectReactComponent } from "../components/InjectReactComponent";
-import { CodeSnippets } from "../components/CodeSnippets";
+import { CodeSnippets } from "../components/codeBlock";
 import { CText } from "../components/CText";
 import { CLink } from "../components/CLink";
 import { HrLine } from "../components/HrLine";
+import { ICodeInline } from "../components/codeInline";
 
-export const COMPONENTS_MAP = {
-  button: ({ className, value }) => (
-    <ActionButton className={className} value={value} />
-  ),
+export const ComponentBuilder = ({
+  type,
+  value,
+  ...props
+}: Record<string, any>) => {
+  if (type === "button") {
+    return <ActionButton value={value} className={props.className} />;
+  }
 
-  code: ({ className, value }) => (
-    <CodeSnippets className={className} value={value} />
-  ),
+  if (type === "code") {
+    return <CodeSnippets value={value} className={props.className} />;
+  }
 
-  greeting: ({ className, value }) => (
-    <Greetings className={className} value={value} />
-  ),
+  if (type === "greeting") {
+    return <Greetings value={value} {...props} />;
+  }
 
-  image: ({ className, value }) => (
-    <Image className={className} value={value} />
-  ),
+  if (type === "image") {
+    return <Image value={value} {...props} />;
+  }
 
-  line: ({ className }) => <HrLine className={className} />,
+  if (type === "line") {
+    return <HrLine value={value} {...props} />;
+  }
 
-  link: ({ className, value }) => <CLink className={className} value={value} />,
+  if (type === "link") {
+    return <CLink value={value} className={props.className} />;
+  }
 
-  markdown: ({ value }) => <InjectMarkdown value={value} />,
+  if (type === "markdown") {
+    return <InjectMarkdown value={value} className={props.className} />;
+  }
 
-  reactComponent: ({ value }) => <InjectReactComponent value={value} />,
+  if (type === "component") {
+    return <InjectReactComponent {...props} />;
+  }
 
-  regard: ({ className, value }) => (
-    <Regards className={className} value={value} />
-  ),
+  if (type === "regard") {
+    return <Regards value={value} {...props} />;
+  }
 
-  table: ({ className, value }) => (
-    <Table className={className} value={value} />
-  ),
+  if (type === "table") {
+    return <Table value={value} {...props} />;
+  }
 
-  text: ({ className, value }) => <CText className={className} value={value} />,
+  if (type === "text") {
+    return <CText value={value} className={props.className} />;
+  }
+
+  if (type === "code-inline") {
+    return <ICodeInline value={value} />;
+  }
 };
