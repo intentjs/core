@@ -14,6 +14,7 @@ export class ObjectionService implements OnModuleInit {
 
   constructor(config: IntentConfig) {
     const dbConfig = config.get("db") as DatabaseOptions;
+    if (!dbConfig) return;
     const defaultConnection = dbConfig.connections[dbConfig.default];
     ObjectionService.config = dbConfig;
     ObjectionService.dbConnections = {};

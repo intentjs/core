@@ -21,7 +21,6 @@ export class LoggerService {
   constructor(private readonly config: IntentConfig) {
     const options = config.get<IntentLoggerOptions>("logger");
     LoggerService.config = options;
-    console.log("conifg options=============>", options);
     for (const conn in options.loggers) {
       LoggerService.options[conn] = LoggerService.createLogger(
         options.loggers[conn]

@@ -17,6 +17,7 @@ export class CacheService implements OnModuleInit {
   }
 
   onModuleInit() {
+    if (!CacheService.data) return;
     const { stores } = CacheService.data;
     CacheService.stores = {};
     for (const store in stores) {

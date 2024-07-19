@@ -21,6 +21,7 @@ export class QueueService {
 
   constructor(private config: IntentConfig) {
     const options = this.config.get<QueueOptions>("queue");
+    if (!options) return;
     for (const connName in options.connections) {
       const time = Date.now();
       const connection = options.connections[connName];
