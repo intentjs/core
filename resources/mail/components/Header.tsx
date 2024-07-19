@@ -1,40 +1,18 @@
-import React from "react";
-import { Img, Section, Text } from "@react-email/components";
+import * as React from "react";
 
-interface HeaderProp {
-  className?: string;
-  value?: {
-    logo?: {
-      src: string;
-      alt: string;
-      width: number;
-      height: number;
-    };
-    title?: {
-      text: string;
-      className?: string;
-    };
-  };
-}
+import { Heading, Img, Section } from "@react-email/components";
+import { ComponentProps } from "./interface";
 
-export const Header = ({ className, value }: HeaderProp) => {
+export const Header = ({ value, className }: ComponentProps) => {
+  const { logo, title } = value;
   return (
-    <Section className={className ? className : "flex flex-col"}>
-      <Img
-        src={value?.logo?.src}
-        alt={value?.logo?.alt}
-        width={value?.logo?.width}
-        height={value?.logo?.height}
-      />
-      <Text
-        className={
-          value?.title?.className
-            ? value.title.className
-            : "text-[#000000] text-2xl font-bold"
-        }
-      >
-        {value?.title?.text}
-      </Text>
+    <Section className={className ?? "flex flex-col"}>
+      {logo && <Img src={logo?.src} alt={logo?.alt} height={32} />}
+      {title && (
+        <Heading className={"text-txt font-bold"} as="h2">
+          {title}
+        </Heading>
+      )}
     </Section>
   );
 };

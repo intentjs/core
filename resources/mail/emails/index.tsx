@@ -1,159 +1,84 @@
 import {
+  Html,
+  Head,
+  Font,
+  Preview,
   Body,
   Container,
-  Html,
-  Tailwind,
-  Head,
-  Preview,
-  Font,
   Section,
+  Hr,
 } from "@react-email/components";
 import { Footer } from "../components/Footer";
+import { ComponentBuilder } from "./components";
 import { Header } from "../components/Header";
-import * as React from "react";
-import { COMPONENTS_MAP } from "./components";
+import { Tailwind } from "@react-email/tailwind";
 
-const EmailData = {
-  header: {
-    value: {
-      logo: {
-        src: "https://avatars.githubusercontent.com/u/159687000?s=200&v=4",
-        alt: "logo",
-        width: 32,
-        height: 32,
-      },
-      title: {
-        text: "IntentJs",
-        className: "",
-      },
-    },
-    className: "",
-  },
-  footer: {
-    value: {
-      logo: {
-        src: "https://avatars.githubusercontent.com/u/159687000?s=200&v=4",
-        alt: "logo",
-        width: 32,
-        height: 32,
-      },
-      title: {
-        text: "IntentJs",
-        className: "",
-      },
-      content: "for your notes, tasks, wikis, and databases.",
-    },
-    className: "",
-  },
-  components: [
-    {
-      type: "link",
-      value: {
-        link: "/",
-        title: "Click here to log in with this magic link",
-      },
-      className: "",
-    },
-    {
-      type: "text",
-      value:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-      className: "",
-    },
-    {
-      type: "code",
-      value: "sparo-ndigo-amurt-secan",
-      className: "",
-    },
-    {
-      type: "greeting",
-      value: "Jhon",
-      className: "",
-    },
-    {
-      type: "button",
-      value: {
-        link: "/",
-        title: "Click here to log in with this magic link",
-      },
-      className: "",
-    },
-    {
-      type: "markdown",
-      value: "## What is Intent?",
-    },
-    {
-      type: "reactComponent",
-      value: {
-        code: `export default async (req, res) => {
-  try {
-    const html = await renderAsync(
-      EmailTemplate({ firstName: 'John' })
-    );
-    return NextResponse.json({ html });
-  } catch (error) {
-    return NextResponse.json({ error });
-  }
-}`,
-        lineNumbers: true,
-      },
-    },
-    {
-      type: "table",
-      value: [
-        ["hello", "hello", "hello", "hello"],
-        ["world", "world", "world", "world"],
-        ["hello", "hello", "hello", "hello"],
-      ],
-      className: "",
-    },
-    {
-      type: "regard",
-      value: "Intent Team",
-      className: "",
-    },
-  ],
-};
-
-export const App = () => {
+export const BaseMail = (props?: Record<string, any>) => {
+  const {
+    components,
+    header,
+    footer,
+    theme: { isDarkThemed },
+  } = props;
   return (
     <Html>
       <Head>
-        <title>IntentJs</title>
         <Font
-          fontFamily="Urbanist"
-          fallbackFontFamily="sans-serif"
+          fontFamily="Open Sans"
+          fallbackFontFamily="Verdana"
           webFont={{
-            url: "https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap",
+            url: "https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap",
             format: "woff2",
           }}
+          fontWeight={400}
+          fontStyle="normal"
         />
       </Head>
       <Preview>Welcome to IntentJs</Preview>
-
-      <Tailwind>
-        <Body className="bg-white">
-          <Container className="px-3 mx-auto">
-            <Header
-              className={EmailData.header.className}
-              value={EmailData.header.value}
-            />
-
-            {EmailData.components.map((item, index) => {
-              const { type, className, value } = item;
-              return (
-                <Section key={index} className="mb-5">
-                  {COMPONENTS_MAP[type]
-                    ? COMPONENTS_MAP[type]({ className, value })
-                    : null}
-                </Section>
-              );
-            })}
-
-            <Footer
-              className={EmailData.header.className}
-              value={EmailData.header.value}
-            />
+      <Tailwind
+        config={{
+          theme: {
+            extend: {
+              colors: {
+                bodyColor: isDarkThemed ? "" : "#f6f9fc",
+                bgColor: isDarkThemed ? "#000000" : "#ffffff",
+                brand: isDarkThemed ? "#27272a" : "#656ee8",
+                txt: isDarkThemed ? "#ffffff" : "#525f7f",
+                tableBg: isDarkThemed ? "#18181b" : "#fbfbf9",
+                tableHeader: isDarkThemed ? "#27272a" : "#f4f4f5",
+                textPrimary: isDarkThemed ? "#ffffff" : "#525f7f",
+                link: isDarkThemed ? "#006fee" : "#006fee",
+                button: isDarkThemed ? "#006FEE" : "#006FEE",
+                code: isDarkThemed ? "#282c34" : "#f4f4f4",
+              },
+            },
+          },
+        }}
+      >
+        <Body style={main} className="bg-bodyColor">
+          <Container className="bg-bgColor px-10 py-5 mx-auto rounded-md">
+            <Section>
+              {header && (
+                <>
+                  <Header {...header} />
+                  <Hr />
+                </>
+              )}
+              {components?.map((item, index) => (
+                <ComponentBuilder
+                  value={item.value}
+                  type={item.type}
+                  // className={item.className}
+                  key={`email-comp-${index}`}
+                />
+              ))}
+              {footer && (
+                <>
+                  <Hr />
+                  <Footer {...footer} />
+                </>
+              )}
+            </Section>
           </Container>
         </Body>
       </Tailwind>
@@ -161,4 +86,9 @@ export const App = () => {
   );
 };
 
-export default App;
+const main = {
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+};
+
+export default BaseMail;

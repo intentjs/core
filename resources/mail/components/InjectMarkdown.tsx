@@ -1,14 +1,22 @@
-import React from "react";
-import { Markdown, Html } from "@react-email/components";
+import * as React from "react";
+import { Markdown } from "@react-email/components";
+import { ComponentProps } from "./interface";
 
-interface MarkdownProp {
-  value: string;
-}
-
-export const InjectMarkdown = ({ value }: MarkdownProp) => {
+export const InjectMarkdown = ({ value }: ComponentProps) => {
   return (
-    <Html lang="en" dir="ltr">
-      <Markdown>{value}</Markdown>
-    </Html>
+    <Markdown
+      markdownCustomStyles={{
+        h1: { color: "#525f7f" },
+        h2: { color: "#525f7f" },
+        h3: { color: "#525f7f" },
+        h4: { color: "#525f7f" },
+        h5: { color: "#525f7f" },
+        h6: { color: "#525f7f" },
+        p: { color: "#525f7f" },
+        codeInline: { background: "grey" },
+      }}
+    >
+      {value.content}
+    </Markdown>
   );
 };

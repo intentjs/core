@@ -1,15 +1,11 @@
-import React from "react";
+import * as React from "react";
 import { Heading } from "@react-email/components";
+import { ComponentProps } from "./interface";
 
-interface GreetingsProp {
-  className?: string;
-  value: string;
-}
-
-export const Greetings = ({ className, value }: GreetingsProp) => {
+export const Greetings = ({ value }: ComponentProps) => {
   return (
-    <Heading className={className ? className : "text-black text-xl p-0 mx-0"}>
-      Hello <strong>{value},</strong>
+    <Heading as="h3" className="text-bold text-txt">
+      {value.text}
     </Heading>
   );
 };

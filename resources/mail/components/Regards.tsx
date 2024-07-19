@@ -1,17 +1,15 @@
-import React from "react";
-import { Text } from "@react-email/components";
+import * as React from "react";
 
-interface RegardPorp {
-  className?: string;
-  value: string;
-}
+import { Section, Text } from "@react-email/components";
 
-export const Regards = ({ className, value }: RegardPorp) => {
+export const Regards = ({ ...props }) => {
   return (
-    <Text className={className ? className : "text-md"}>
-      Best,
-      <br />
-      {value}
-    </Text>
+    <Section className="">
+      <Text className={props.className ? props.className : "text-txt text-sm"}>
+        Best,
+        <br />
+        {props.value}
+      </Text>
+    </Section>
   );
 };
