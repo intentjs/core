@@ -1,4 +1,4 @@
-import { DatabaseRepository, InjectModel } from '@libs/intent/database';
+import { DatabaseRepository, InjectModel } from '@intentjs/core';
 import { Injectable } from '@nestjs/common';
 import { <%= it.modelName %> } from '<%= it.modelFilePath %>';
 

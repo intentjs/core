@@ -11,3 +11,4 @@ export * from "./localization";
 export * from "./logger";
 export * from "./queue";
 export * from "./console";
+export * from "./database";

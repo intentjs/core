@@ -12,7 +12,7 @@ export class CodegenService {
   constructor() {
     this.templateEngine = new Eta({
       cache: true,
-      views: join(path, "resources/stubs"),
+      views: join(__dirname, "../../../resources/stubs"),
     });
   }
 
