@@ -269,12 +269,13 @@ export class CodegenCommand {
   }
 
   @Command(
-    "make:listener {name : Name of the listener} {--E|event= : Name of the event to which the listener will listen to}",
+    "make:listener {name: Name of the listener} {--E|event= : Name of the event to which the listener will listen to}",
     { desc: "Command to create an event listener class" }
   )
   async makeListener(_cli: ConsoleIO): Promise<void> {
     _cli.info("Creating a listener class");
     const name = _cli.argument<string>("name");
+    console.log("name", name, _cli.values);
     const eventName = _cli.option<string>("event_name");
     const className = Str.pascal(`${name}_listener`);
     const fileNameWithoutEx = Str.camel(`${name}_listener`);

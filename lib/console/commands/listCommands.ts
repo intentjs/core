@@ -55,7 +55,7 @@ export class ListCommands {
     console.log();
     console.log(
       pc.white(
-        ` IntentJS ${packageJson.dependencies["@intent/core"] || "0.0.1"}`
+        ` IntentJS ${packageJson.dependencies["@intentjs/core"] || "0.0.1"}`
       )
     );
     console.log();
