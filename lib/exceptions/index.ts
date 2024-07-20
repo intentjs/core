@@ -4,4 +4,4 @@ export * from "./validationfailed";
 export * from "./genericException";
 export * from "./intentExceptionFilter";
 export * from "./invalidValue";
-export * from "./intentExceptionFilter";
+export * from "./invalidValueType";

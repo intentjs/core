@@ -1,4 +1,4 @@
-import { ArgumentsHost, HttpException, Type } from "@nestjs/common";
+import { ArgumentsHost, HttpException, HttpStatus, Type } from "@nestjs/common";
 import { BaseExceptionFilter } from "@nestjs/core";
 import { ValidationFailed } from "./validationfailed";
 import { Package } from "../utils";
@@ -21,24 +21,20 @@ export class IntentExceptionFilter extends BaseExceptionFilter {
     sentryConfig?.dsn && this.reportToSentry(exception);
 
     if (exception instanceof ValidationFailed) {
-      return response.status(exception.getStatus()).json({
-        success: false,
-        message: exception.message,
-        errors: exception.getErrors(),
-      });
+      return response.status(exception.getStatus()).send(exception);
     }
 
-    let message =
-      exception.message || "Something went wrong. Please try again later";
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const status = exception.status ? exception.status : 500;
-    message = exception.status ? message : "Internal Server Error";
+    const message =
+      exception instanceof HttpException
+        ? exception.getResponse()
+        : "Internal Server Error";
 
-    return response.status(status).json({
-      success: false,
-      code: status,
-      message,
-    });
+    return response.status(status).send(message);
   }
 
   reportToSentry(exception: any): void {
