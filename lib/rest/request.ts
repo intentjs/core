@@ -1,9 +1,8 @@
-// import { Str } from '../utils/str';
 import { Type } from "@nestjs/common";
 import { Request as ERequest } from "express";
 import { Validator } from "../validator";
 import { ulid } from "ulid";
-import { isEmpty } from "../utils/helpers";
+import { isEmpty } from "lodash";
 
 export class Request {
   private $payload: Record<string, any>;
@@ -192,7 +191,10 @@ export class Request {
   }
 
   hasHeaders(...keys: string[]): boolean {
-    console.log("has header keys ===> ", keys);
-    return false;
+    for (const key of keys) {
+      if (!(key in this.$headers)) return false;
+    }
+
+    return true;
   }
 }

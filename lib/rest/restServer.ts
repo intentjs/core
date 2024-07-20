@@ -7,9 +7,6 @@ import { requestMiddleware } from "./middlewares/requestSerializer";
 import { Obj, Package } from "../utils";
 
 export class RestServer {
-  private module: any;
-  private options: ServerOptions;
-
   /**
    * Create instance of fastify lambda server
    * @returns Promise<INestApplication>
@@ -22,7 +19,8 @@ export class RestServer {
       useContainer(app.select(module), { fallbackOnErrors: true });
     }
 
-    app.enableCors({ origin: true });
+    options?.cors && app.enableCors(options.cors);
+
     app.use(requestMiddleware);
 
     const config = app.get(IntentConfig, { strict: false });
