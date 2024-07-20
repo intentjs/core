@@ -8,10 +8,11 @@ export enum Transports {
   Stream,
 }
 
-export type TransportOptions = transports.ConsoleTransportOptions &
-  transports.HttpTransportOptions &
-  transports.FileTransportOptions &
-  transports.StreamTransportOptions;
+export type TransportOptions =
+  | transports.ConsoleTransportOptions
+  | transports.HttpTransportOptions
+  | transports.FileTransportOptions
+  | transports.StreamTransportOptions;
 
 export enum Formats {
   Default,
@@ -39,16 +40,7 @@ export interface LoggerConfig {
   transports?: {
     format?: Formats | Formats[];
     transport?: Transports | transport;
-    filename?: string;
-    options?: {
-      level?: LogLevel;
-      silent?: boolean;
-      handleExceptions?: boolean;
-      handleRejections?: boolean;
-      log?(info: any, next: () => void): any;
-      logv?(info: any, next: () => void): any;
-      close?(): void;
-    };
+    options?: TransportOptions;
   }[];
 }
 export const defaultLoggerOptions = (): {
@@ -60,7 +52,6 @@ export const defaultLoggerOptions = (): {
 });
 
 export interface IntentLoggerOptions {
-  isGlobal: boolean;
   default: string;
   disableConsole: boolean;
   loggers: {

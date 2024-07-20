@@ -14,6 +14,7 @@ import { IntentConfig } from "../config/service";
 import { Num } from "../utils/number";
 import { path } from "app-root-path";
 import { join } from "path";
+import { Obj } from "../utils";
 
 @Injectable()
 export class LoggerService {
@@ -41,6 +42,14 @@ export class LoggerService {
     const transportsConfig = [];
     for (const transportOptions of options.transports) {
       let transport = transportOptions.transport;
+
+      if (
+        LoggerService.config.disableConsole &&
+        transport === Transports.Console
+      ) {
+        continue;
+      }
+
       const formats = Num.isInteger(transportOptions.format)
         ? [transportOptions.format]
         : transportOptions.format;
@@ -51,12 +60,22 @@ export class LoggerService {
 
       transport = transport as winston.transport;
       const options = {
+        ...Obj.except(transportOptions.options, ["format"]),
         format: this.buildFormatter(formats as Formats[]),
-        filename: join(path, "storage/logs", transportOptions.filename ?? ""),
       } as TransportOptions;
 
+      if (transportOptions.transport === Transports.File) {
+        options["filename"] = join(
+          path,
+          "storage/logs",
+          transportOptions.options?.["filename"]
+        );
+      }
+
       transportsConfig.push(
-        new TransportsMap[transportOptions.transport as Transports](options)
+        new TransportsMap[transportOptions.transport as Transports](
+          options as any
+        )
       );
     }
 
