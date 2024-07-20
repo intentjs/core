@@ -1,7 +1,10 @@
-import { NodemailerProvider } from './nodemailer';
-import { SendgridProvider } from './sendgrid';
+import { MailgunProvider } from "./mailgun";
+import { NodemailerProvider } from "./nodemailer";
+import { ResendMailProvider } from "./resend";
+// import { SendgridProvider } from './sendgrid';
 
 export const MAIL_PROVIDER_MAP = {
-  sendgrid: SendgridProvider,
   smtp: NodemailerProvider,
+  mailgun: MailgunProvider,
+  resend: ResendMailProvider,
 };

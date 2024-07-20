@@ -22,13 +22,21 @@ export interface BaseProviderConfigOptions {
 }
 
 export interface SendgridApiOptions extends BaseProviderConfigOptions {
-  provider: 'sendgrid';
+  provider: "sendgrid";
   apiKey: string;
   from: string;
 }
 
+export interface MailgunOptions extends BaseProviderConfigOptions {
+  provider: "mailgun";
+  username: string;
+  key: string;
+  domain: string;
+  from: string;
+}
+
 export interface NodemailerOptions extends BaseProviderConfigOptions {
-  provider: 'smtp';
+  provider: "smtp";
   host: string;
   port: string;
   username: string;
@@ -37,11 +45,17 @@ export interface NodemailerOptions extends BaseProviderConfigOptions {
   requireTLS?: boolean;
 }
 
+export interface ResendOptions extends BaseProviderConfigOptions {
+  provider: "resend";
+  apiKey: string;
+  from: string;
+}
+
 export interface MailerOptions {
   default: string;
   template: { baseComponent: any };
   channels: {
-    [key: string]: SendgridApiOptions | NodemailerOptions;
+    [key: string]: NodemailerOptions | MailgunOptions | ResendOptions;
   };
 }
 
@@ -51,4 +65,4 @@ export interface GenericTemplateField {
   className?: string;
 }
 
-export type MailType = 'RAW' | 'VIEW_BASED' | 'GENERIC';
+export type MailType = "RAW" | "VIEW_BASED" | "GENERIC";

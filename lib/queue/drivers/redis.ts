@@ -1,10 +1,10 @@
-import { v4 } from "uuid";
 import { InternalMessage } from "../strategy";
 import { RedisJob } from "../interfaces/redisJob";
 import { RedisQueueOptionsDto } from "../schema";
 import { PollQueueDriver } from "../strategy/pollQueueDriver";
 import { validateOptions } from "../../utils/helpers";
 import { Package } from "../../utils";
+import { ulid } from "ulid";
 
 const FIND_DELAYED_JOB = `
 local source_key = KEYS[1]
@@ -97,7 +97,7 @@ export class RedisQueueDriver implements PollQueueDriver {
 
   getProcessedMessage(message: string): string {
     const data = JSON.parse(message);
-    data.id = v4();
+    data.id = ulid();
     return JSON.stringify(data);
   }
 

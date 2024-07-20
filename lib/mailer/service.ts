@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { MailData, MailerOptions } from './interfaces';
-import { IntentConfig } from '../config/service';
-import { BaseProvider, BaseProviderSendOptions } from './interfaces/provider';
-import { MAIL_PROVIDER_MAP } from './providers';
+import { Injectable } from "@nestjs/common";
+import { MailData, MailerOptions } from "./interfaces";
+import { IntentConfig } from "../config/service";
+import { BaseProvider, BaseProviderSendOptions } from "./interfaces/provider";
+import { MAIL_PROVIDER_MAP } from "./providers";
 
 @Injectable()
 export class MailerService {
@@ -10,7 +10,7 @@ export class MailerService {
   private static channels: Record<string, BaseProvider>;
 
   constructor(private config: IntentConfig) {
-    const options = this.config.get('mailers') as MailerOptions;
+    const options = this.config.get("mailers") as MailerOptions;
 
     MailerService.options = options;
     MailerService.channels = {};
@@ -50,8 +50,6 @@ export class MailerService {
     if (options.inReplyTo) {
       mail.inReplyTo = options.inReplyTo;
     }
-
-    console.log(mail);
 
     const provider = MailerService.channels[providerName];
     await provider.send(mail);

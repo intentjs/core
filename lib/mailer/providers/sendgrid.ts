@@ -1,15 +1,20 @@
-import { SendgridApiOptions } from '../interfaces';
-import { BaseProvider, BaseProviderSendOptions } from '../interfaces/provider';
+import { Package } from "../../utils";
+import { SendgridApiOptions } from "../interfaces";
+import { BaseProvider, BaseProviderSendOptions } from "../interfaces/provider";
 
 export class SendgridProvider implements BaseProvider {
-  constructor(private options: SendgridApiOptions) {}
+  protected client: any;
+  constructor(private options: SendgridApiOptions) {
+    const sendgrid = Package.load("@sendgrid/mail");
+    this.client = sendgrid.setApiKey(options.apiKey);
+  }
 
   send(payload: BaseProviderSendOptions): Promise<void> {
     console.log(payload);
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   getClient<T>(): T {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 }

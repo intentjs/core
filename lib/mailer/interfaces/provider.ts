@@ -1,14 +1,19 @@
-import { MailMessage } from '../message';
+import { MailMessage } from "../message";
 
+export interface AttachmentOptions {
+  filename: string;
+  url?: string;
+  content?: Buffer;
+}
 export interface BaseProviderSendOptions {
   sender: string;
   to: string | string[];
   cc: string | string[];
   bcc: string | string[];
-  from?: string | Record<string, any>;
+  from?: string;
   html?: string;
   subject?: string;
-  attachments?: Record<string, any>[];
+  attachments?: AttachmentOptions[];
   inReplyTo?: string;
   replyTo?: string | string[];
   mail: MailMessage;
