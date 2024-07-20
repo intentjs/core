@@ -12,6 +12,8 @@ import {
 import * as winston from "winston";
 import { IntentConfig } from "../config/service";
 import { Num } from "../utils/number";
+import { path } from "app-root-path";
+import { join } from "path";
 
 @Injectable()
 export class LoggerService {
@@ -19,7 +21,7 @@ export class LoggerService {
   private static options: any = {};
 
   constructor(private readonly config: IntentConfig) {
-    const options = config.get<IntentLoggerOptions>("logger");
+    const options = this.config.get<IntentLoggerOptions>("logger");
     LoggerService.config = options;
     for (const conn in options.loggers) {
       LoggerService.options[conn] = LoggerService.createLogger(
@@ -34,40 +36,51 @@ export class LoggerService {
   }
 
   static createLogger(options: LoggerConfig) {
-    options = {
-      ...defaultLoggerOptions(),
-      ...options,
-    };
+    options = { ...defaultLoggerOptions(), ...options };
+
     const transportsConfig = [];
     for (const transportOptions of options.transports) {
       let transport = transportOptions.transport;
-      let format = transportOptions.format;
+      const formats = Num.isInteger(transportOptions.format)
+        ? [transportOptions.format]
+        : transportOptions.format;
 
-      if (Num.isInteger(transportOptions.format)) {
-        format = FormatsMap[transportOptions.format as Formats];
-      }
       if (Num.isInteger(transport)) {
         transport = TransportsMap[transportOptions.transport as Transports];
       }
-      format = format as (options?: any) => winston.Logform.Format;
+
       transport = transport as winston.transport;
       const options = {
-        format: format(),
-        filename: transportOptions.filename,
+        format: this.buildFormatter(formats as Formats[]),
+        filename: join(path, "storage/logs", transportOptions.filename ?? ""),
       } as TransportOptions;
 
       transportsConfig.push(
         new TransportsMap[transportOptions.transport as Transports](options)
       );
     }
+
     options.transports = transportsConfig;
     return winston.createLogger({
       transports: transportsConfig,
       level: options.level,
-    } as any);
+    });
   }
 
   static logger(conn?: string): winston.Logger {
     return LoggerService.getConnection(conn);
+  }
+
+  private static buildFormatter(formats: Formats[]) {
+    const formatters = [];
+    for (const formatEnum of formats) {
+      const formatter = FormatsMap[formatEnum as Formats] as any;
+      formatters.push(formatter());
+    }
+
+    return winston.format.combine(
+      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+      ...formatters
+    );
   }
 }

@@ -1,6 +1,4 @@
-import { ModuleMetadata, Type } from "@nestjs/common";
-import { Logform, transports, format, transport } from "winston";
-import { Str } from "../utils/string";
+import { transports, format, transport } from "winston";
 
 export enum Transports {
   Default,
@@ -39,7 +37,7 @@ export enum Formats {
 export interface LoggerConfig {
   level?: string;
   transports?: {
-    format?: Formats | ((options?: any) => Logform.Format);
+    format?: Formats | Formats[];
     transport?: Transports | transport;
     filename?: string;
     options?: {
@@ -55,12 +53,7 @@ export interface LoggerConfig {
 }
 export const defaultLoggerOptions = () => ({
   level: "debug",
-  transports: [
-    {
-      transport: Transports.Default,
-      format: Formats.Default,
-    },
-  ],
+  transports: [{ transport: Transports.Default, format: Formats.Default }],
 });
 
 export interface IntentLoggerOptions {
@@ -72,22 +65,6 @@ export interface IntentLoggerOptions {
   };
 }
 
-export interface LoggerAsyncOptionsFactory {
-  createLoggerOptions(): Promise<IntentLoggerOptions> | IntentLoggerOptions;
-}
-
-export interface IntentLoggerAsyncOptions
-  extends Pick<ModuleMetadata, "imports"> {
-  name?: string;
-  isGlobal: boolean;
-  useExisting?: Type<IntentLoggerOptions>;
-  useClass?: Type<LoggerAsyncOptionsFactory>;
-  useFactory?: (
-    ...args: any[]
-  ) => Promise<IntentLoggerOptions> | IntentLoggerOptions;
-  inject?: any[];
-}
-
 export const TransportsMap = {
   [Transports.Default]: transports.Console,
   [Transports.Console]: transports.Console,
@@ -95,14 +72,11 @@ export const TransportsMap = {
   [Transports.Http]: transports.Http,
   [Transports.Stream]: transports.Stream,
 };
+
 const defaultFormat = () => {
   const date = new Date().toISOString();
   const logFormat = format.printf((info) => {
-    return `${date} - ${info.level}: ${
-      Str.isString(info.message)
-        ? info.message
-        : JSON.stringify(info.message, null, 4)
-    }`;
+    return `[${info.level}] ${date} : ${JSON.stringify(info.message)}`;
   });
   return format.combine(format.colorize(), logFormat);
 };
