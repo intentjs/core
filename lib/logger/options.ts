@@ -35,13 +35,13 @@ export enum Formats {
 }
 
 export interface LoggerConfig {
-  level?: string;
+  level?: LogLevel;
   transports?: {
     format?: Formats | Formats[];
     transport?: Transports | transport;
     filename?: string;
     options?: {
-      level?: string;
+      level?: LogLevel;
       silent?: boolean;
       handleExceptions?: boolean;
       handleRejections?: boolean;
@@ -51,8 +51,11 @@ export interface LoggerConfig {
     };
   }[];
 }
-export const defaultLoggerOptions = () => ({
-  level: "debug",
+export const defaultLoggerOptions = (): {
+  level: LogLevel;
+  [key: string]: any;
+} => ({
+  level: LogLevel.debug,
   transports: [{ transport: Transports.Default, format: Formats.Default }],
 });
 
@@ -101,3 +104,12 @@ export const FormatsMap = {
   [Formats.Timestamp]: format.timestamp,
   [Formats.Uncolorize]: format.uncolorize,
 };
+
+export enum LogLevel {
+  error = "error",
+  warn = "warn",
+  info = "info",
+  http = "http",
+  verbose = "verbose",
+  debug = "debug",
+}

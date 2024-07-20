@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 import {
   Formats,
   FormatsMap,
@@ -8,12 +8,12 @@ import {
   TransportsMap,
   TransportOptions,
   defaultLoggerOptions,
-} from './options';
-import * as winston from 'winston';
-import { IntentConfig } from '../config/service';
-import { Num } from '../utils/number';
-import { path } from 'app-root-path';
-import { join } from 'path';
+} from "./options";
+import * as winston from "winston";
+import { IntentConfig } from "../config/service";
+import { Num } from "../utils/number";
+import { path } from "app-root-path";
+import { join } from "path";
 
 @Injectable()
 export class LoggerService {
@@ -21,11 +21,11 @@ export class LoggerService {
   private static options: any = {};
 
   constructor(private readonly config: IntentConfig) {
-    const options = this.config.get<IntentLoggerOptions>('logger');
+    const options = this.config.get<IntentLoggerOptions>("logger");
     LoggerService.config = options;
     for (const conn in options.loggers) {
       LoggerService.options[conn] = LoggerService.createLogger(
-        options.loggers[conn],
+        options.loggers[conn]
       );
     }
   }
@@ -52,11 +52,11 @@ export class LoggerService {
       transport = transport as winston.transport;
       const options = {
         format: this.buildFormatter(formats as Formats[]),
-        filename: join(path, 'storage/logs', transportOptions.filename ?? ''),
+        filename: join(path, "storage/logs", transportOptions.filename ?? ""),
       } as TransportOptions;
 
       transportsConfig.push(
-        new TransportsMap[transportOptions.transport as Transports](options),
+        new TransportsMap[transportOptions.transport as Transports](options)
       );
     }
 
@@ -79,8 +79,9 @@ export class LoggerService {
     }
 
     return winston.format.combine(
-      winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-      ...formatters,
+      winston.format.errors({ stack: true }),
+      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+      ...formatters
     );
   }
 }
