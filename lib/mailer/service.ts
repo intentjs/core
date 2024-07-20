@@ -3,6 +3,8 @@ import { MailData, MailerOptions } from "./interfaces";
 import { IntentConfig } from "../config/service";
 import { BaseProvider, BaseProviderSendOptions } from "./interfaces/provider";
 import { MAIL_PROVIDER_MAP } from "./providers";
+import { InternalLogger } from "../utils/logger";
+import { logTime } from "../utils/helpers";
 
 @Injectable()
 export class MailerService {
@@ -15,13 +17,27 @@ export class MailerService {
     MailerService.options = options;
     MailerService.channels = {};
     for (const channel in options.channels) {
+      const time = Date.now();
       const cOptions = options.channels[channel];
-      MailerService.channels[channel] = new MAIL_PROVIDER_MAP[
-        cOptions.provider
-      ](cOptions as unknown as never);
-    }
+      const driver = MAIL_PROVIDER_MAP[cOptions.provider];
+      if (!driver) {
+        InternalLogger.error(
+          "MailerService",
+          `We couldn't find any channel driver associated with the [${channel}].`
+        );
+        continue;
+      }
 
-    console.log(MailerService.channels);
+      MailerService.channels[channel] = new driver(
+        cOptions as unknown as never
+      );
+      InternalLogger.success(
+        "MailerService",
+        `Channel [${channel}] successfully initiailized ${logTime(
+          Date.now() - time
+        )}`
+      );
+    }
   }
 
   static getConfig(): MailerOptions {
