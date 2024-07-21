@@ -14,3 +14,4 @@ export * from "./console";
 export * from "./database";
 export * from "./serializers/validationErrorSerializer";
 export * from "./mailer";
+export * from "./events";

@@ -1,5 +1,5 @@
 import { GenericFunction } from "../../interfaces";
-import { Package } from "../../utils";
+import { Package } from "../../utils/packageLoader";
 import { CacheDriver, InMemoryDriverOption } from "../interfaces";
 
 export class InMemoryDriver implements CacheDriver {
