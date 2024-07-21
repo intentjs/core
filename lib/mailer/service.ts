@@ -4,7 +4,7 @@ import { IntentConfig } from "../config/service";
 import { BaseProvider, BaseProviderSendOptions } from "./interfaces/provider";
 import { MAIL_PROVIDER_MAP } from "./providers";
 import { InternalLogger } from "../utils/logger";
-import { logTime } from "../utils/helpers";
+import { logTime } from "../utils";
 
 @Injectable()
 export class MailerService {
@@ -53,14 +53,14 @@ export class MailerService {
       to: options.to,
       cc: options.cc,
       bcc: options.bcc,
-      from: options.sender || providerConfig.from,
+      from: options.sender || providerConfig["from"],
       html: mailData.html,
       subject: mailData.subject,
       attachments: mailData.attachments,
     } as BaseProviderSendOptions;
 
-    if (options.replyTo || providerConfig.replyTo) {
-      mail.replyTo = options.replyTo || providerConfig.replyTo;
+    if (options.replyTo || providerConfig["replyTo"]) {
+      mail.replyTo = options.replyTo || providerConfig["replyTo"];
     }
 
     if (options.inReplyTo) {

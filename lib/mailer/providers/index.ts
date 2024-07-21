@@ -1,3 +1,4 @@
+import { LoggerProvider } from "./logger";
 import { MailgunProvider } from "./mailgun";
 import { NodemailerProvider } from "./nodemailer";
 import { ResendMailProvider } from "./resend";
@@ -7,4 +8,5 @@ export const MAIL_PROVIDER_MAP = {
   smtp: NodemailerProvider,
   mailgun: MailgunProvider,
   resend: ResendMailProvider,
+  logger: LoggerProvider,
 };

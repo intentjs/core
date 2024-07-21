@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { readdirSync, readFileSync } from "fs";
+import { readdirSync, readFileSync } from "fs-extra";
 import { ConfigService } from "@nestjs/config";
 import { Obj } from "../utils";
 import { Str } from "../utils/string";

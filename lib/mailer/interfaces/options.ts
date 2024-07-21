@@ -45,6 +45,10 @@ export interface NodemailerOptions extends BaseProviderConfigOptions {
   requireTLS?: boolean;
 }
 
+export interface MailLoggerProviderOptions {
+  provider: "logger";
+}
+
 export interface ResendOptions extends BaseProviderConfigOptions {
   provider: "resend";
   apiKey: string;
@@ -55,7 +59,11 @@ export interface MailerOptions {
   default: string;
   template: { baseComponent: any };
   channels: {
-    [key: string]: NodemailerOptions | MailgunOptions | ResendOptions;
+    [key: string]:
+      | NodemailerOptions
+      | MailgunOptions
+      | ResendOptions
+      | MailLoggerProviderOptions;
   };
 }
 
