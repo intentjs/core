@@ -27,9 +27,7 @@ export class RestServer {
 
     app.use(requestMiddleware);
 
-    if (config.get("app.sentry.dsn")) {
-      this.configureErrorReporter(config.get("app.sentry"));
-    }
+    this.configureErrorReporter(config.get("app.sentry"));
 
     if (options.exceptionFilter) {
       const { httpAdapter } = app.get(HttpAdapterHost);
@@ -44,13 +42,13 @@ export class RestServer {
   static configureErrorReporter(config: Record<string, any>) {
     if (!config) return;
 
-    if (Obj.isObj(config.sentry) && config.sentry?.dsn) {
+    if (Obj.isObj(config) && config?.dsn) {
       const {
         dsn,
         tracesSampleRate,
         integrateNodeProfile,
         profilesSampleRate,
-      } = config.sentry;
+      } = config;
 
       if (dsn) {
         const Sentry = Package.load("@sentry/node");

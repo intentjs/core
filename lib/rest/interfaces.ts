@@ -2,7 +2,7 @@ import { CorsOptions } from "@nestjs/common/interfaces/external/cors-options.int
 import { AbstractHttpAdapter, BaseExceptionFilter } from "@nestjs/core";
 import { Request as BaseRequest } from "express";
 
-export interface Request extends BaseRequest {
+export interface IRequest extends BaseRequest {
   /**
    * Get all inputs from the request object
    */

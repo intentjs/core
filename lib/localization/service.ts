@@ -50,7 +50,7 @@ export class LocalizationService {
     }
 
     let text = Obj.get(langData, key, "") as string;
-    if (!text || typeof text !== "string") return `ERR::INVALID KEY ==> ${key}`;
+    if (!text || typeof text !== "string") return `${key}`;
 
     if (options) {
       for (const k in options) {

@@ -51,7 +51,7 @@ export class Validator<T> {
    */
   async processErrorsFromValidation(errors: ValidationError[]): Promise<void> {
     const serializerClass = IntentConfig.get(
-      "app.errors.validationErrorSerializer"
+      "app.error.validationErrorSerializer"
     );
     if (!serializerClass) throw new ValidationFailed(errors);
     const serializer = new serializerClass();

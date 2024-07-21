@@ -1,11 +1,13 @@
-import { ArgumentsHost, HttpException, HttpStatus, Type } from "@nestjs/common";
+import { ArgumentsHost, HttpException, Type } from "@nestjs/common";
 import { BaseExceptionFilter } from "@nestjs/core";
-import { ValidationFailed } from "./validationfailed";
 import { Package } from "../utils";
 import { IntentConfig } from "../config/service";
 import { Log } from "../logger";
+import { Request, Response } from "../rest";
 
-export class IntentExceptionFilter extends BaseExceptionFilter {
+export abstract class IntentExceptionFilter extends BaseExceptionFilter {
+  abstract handleHttp(exception: any, req: Request, res: Response);
+
   doNotReport(): Array<Type<HttpException>> {
     return [];
   }
@@ -16,37 +18,28 @@ export class IntentExceptionFilter extends BaseExceptionFilter {
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
+    const request = ctx.getRequest<any>();
     const response = ctx.getResponse<any>();
 
-    const sentryConfig = IntentConfig.get("app.sentry");
-    sentryConfig?.dsn && this.reportToSentry(exception);
-
-    if (exception instanceof ValidationFailed) {
-      return response.status(exception.getStatus()).send(exception);
-    }
-
-    const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
-
-    const message =
-      exception instanceof HttpException
-        ? exception.getResponse()
-        : "Internal Server Error";
+    this.reportToSentry(exception);
 
     Log().error("", exception);
 
-    return response.status(status).send(message);
+    return this.handleHttp(exception, request.intent.req(), response);
   }
 
   reportToSentry(exception: any): void {
+    const sentryConfig = IntentConfig.get("app.sentry");
+    console.log(sentryConfig);
+    if (!sentryConfig?.dsn) return;
+
     const exceptionConstructor = exception?.constructor;
     const sentry = Package.load("@sentry/node");
     if (
       exceptionConstructor &&
       !this.doNotReport().includes(exceptionConstructor)
     ) {
+      console.log(exceptionConstructor);
       sentry.captureException(exception);
     }
   }
