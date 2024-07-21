@@ -1,0 +1,13 @@
+import { MailMessage } from '@intentjs/core';
+
+export class <%= it.className %> extends MailMessage {
+  constructor() {
+    super();
+  }
+
+  handle(): this {
+    return this.greeting('Hello there')
+        .subject('Add your subject here')
+        .preview('Add your preview here');
+  }
+}

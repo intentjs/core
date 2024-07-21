@@ -1,0 +1,14 @@
+import { Command, ConsoleIO } from '@intentjs/core';
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+@Command('<%= it.commandName %>', {
+  desc: '',
+})
+export class <%= it.className %> {
+  constructor() {}
+
+  async handle(_cli: ConsoleIO): Promise<void> {
+    _cli.error('Command not implemented');
+  }
+}

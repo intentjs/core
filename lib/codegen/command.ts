@@ -3,7 +3,6 @@ import { Command, CommandRunner, ConsoleIO } from "../console";
 import { CodegenService } from "./service";
 import { getClassNamesFromFilePath } from "./utils";
 import { join } from "path";
-import { dim } from "picocolors";
 import { Str } from "../utils/string";
 
 @Injectable()
@@ -230,6 +229,52 @@ export class CodegenCommand {
     };
     try {
       await this.service.createListener(options);
+      _cli.success(`Successfully created ${filePath}`);
+    } catch (e) {
+      _cli.error(e["message"]);
+      return;
+    }
+  }
+
+  @Command(
+    "make:command {name : Name of the command by which it will be invoked}",
+    { desc: "Command to create a console command class" }
+  )
+  async makeCommand(_cli: ConsoleIO): Promise<void> {
+    const name = _cli.argument<string>("name");
+    const validClassToken = Str.replace(name, ":", "");
+    const className = Str.pascal(`${validClassToken}_command`);
+    const fileNameWithoutEx = Str.camel(`${validClassToken}_command`);
+    const filePath = `app/console/${fileNameWithoutEx}.ts`;
+    const options = {
+      input: { className, commandName: name },
+      filePath,
+      fileNameWithoutEx,
+    };
+    try {
+      await this.service.createCommand(options);
+      _cli.success(`Successfully created ${filePath}`);
+    } catch (e) {
+      _cli.error(e["message"]);
+      return;
+    }
+  }
+
+  @Command("make:mail {name}", {
+    desc: "Command to create a mail class",
+  })
+  async makeMail(_cli: ConsoleIO): Promise<void> {
+    const name = _cli.argument<string>("name");
+    const className = Str.pascal(`${name}_mail`);
+    const fileNameWithoutEx = Str.camel(`${name}_mail`);
+    const filePath = `app/mails/${fileNameWithoutEx}.ts`;
+    const options = {
+      input: { className, eventName: name },
+      filePath,
+      fileNameWithoutEx,
+    };
+    try {
+      await this.service.createMail(options);
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e["message"]);

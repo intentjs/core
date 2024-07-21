@@ -318,4 +318,60 @@ export class CodegenService {
 
     await moduleFile.save();
   }
+
+  async createCommand(options: Record<string, any>): Promise<void> {
+    const { input, filePath, fileNameWithoutEx } = options;
+    await this.checkIfFileAlreadyExists(filePath);
+
+    const project = new Project();
+    const content = await this.templateEngine.renderAsync("command", input);
+    const newController = project.createSourceFile(
+      join(path, filePath),
+      content,
+      { overwrite: false }
+    );
+    await newController.save();
+
+    // update module.ts
+    const moduleFile = project.addSourceFileAtPath(
+      join(path, "app", "module.ts")
+    );
+    const classDeclaration = moduleFile.getClassOrThrow("AppModule");
+    const moduleDecorator = classDeclaration.getDecoratorOrThrow("Module");
+    const moduleDecoratorArg = moduleDecorator.getArguments()[0];
+
+    const moduleObjectLiteral = moduleDecoratorArg.asKindOrThrow(
+      SyntaxKind.ObjectLiteralExpression
+    );
+
+    const controllersProperty = moduleObjectLiteral.getProperty("providers");
+
+    if (Node.isPropertyAssignment(controllersProperty)) {
+      const controllersArray = controllersProperty
+        .getInitializer()
+        .asKindOrThrow(SyntaxKind.ArrayLiteralExpression);
+      controllersArray.addElement(input.className);
+    }
+
+    moduleFile.addImportDeclaration({
+      namedImports: [input.className],
+      moduleSpecifier: `./console/${fileNameWithoutEx}`,
+    });
+
+    await moduleFile.save();
+  }
+
+  async createMail(options: Record<string, any>): Promise<void> {
+    const { input, filePath } = options;
+    await this.checkIfFileAlreadyExists(filePath);
+
+    const project = new Project();
+    const content = await this.templateEngine.renderAsync("mail", input);
+    const newException = project.createSourceFile(
+      join(path, filePath),
+      content,
+      { overwrite: false }
+    );
+    await newException.save();
+  }
 }
