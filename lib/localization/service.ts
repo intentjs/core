@@ -28,7 +28,6 @@ export class LocalizationService {
     LocalizationService.readFiles(
       join(path, dir),
       function (filename: string, content: any) {
-        console.log("content===>", content, filename);
         data[filename.split(".")[0]] = JSON.parse(content);
       }
     );
@@ -182,7 +181,6 @@ export class LocalizationService {
   private static readFiles(dirname: string, onFileContent: any) {
     const fss = readdirSync(dirname);
     fss.forEach((filename: string) => {
-      console.log("reading file data ==> ");
       const fileData = readFileSync(dirname + "/" + filename, {
         encoding: "utf-8",
       });
