@@ -13,7 +13,7 @@ export const Table = ({ value }: ComponentProps) => {
                 key={index}
                 className={
                   (index === 0 && "pl-3 pr-3 pt-2 pb-2 rounded-l-md") ||
-                  (index === header.length - 1 &&
+                  (index === rows[0].length - 1 &&
                     "pl-3 pr-3 pt-2 pb-2 rounded-r-md") ||
                   "pl-3 pr-3 pt-2 pb-2"
                 }
@@ -26,7 +26,7 @@ export const Table = ({ value }: ComponentProps) => {
       )}
 
       <tbody>
-        {rows.slice(0).map((row, index) => (
+        {rows.slice(1).map((row, index) => (
           <tr key={index} className="content-center">
             {row.map((rowCol, colIndex) => (
               <td key={colIndex} className="text-txt pl-3 pr-3 pt-2 pb-2">

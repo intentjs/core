@@ -13,13 +13,15 @@ import { ComponentBuilder } from "./components";
 import { Header } from "../components/Header";
 import { Tailwind } from "@react-email/tailwind";
 
-export const BaseMail = (props?: Record<string, any>) => {
+export const IntentMailComponent = (props?: Record<string, any>) => {
   const {
     components,
     header,
     footer,
+    preview,
     theme: { isDarkThemed },
   } = props;
+  console.log("preview ==> ", preview);
   return (
     <Html>
       <Head>
@@ -34,14 +36,14 @@ export const BaseMail = (props?: Record<string, any>) => {
           fontStyle="normal"
         />
       </Head>
-      <Preview>Welcome to IntentJs</Preview>
+      {preview && <Preview>{preview}</Preview>}
       <Tailwind
         config={{
           theme: {
             extend: {
               colors: {
-                bodyColor: isDarkThemed ? "" : "#f6f9fc",
-                bgColor: isDarkThemed ? "#000000" : "#ffffff",
+                bodyColor: isDarkThemed ? "#000000" : "#f6f9fc",
+                bgColor: isDarkThemed ? "#121212" : "#ffffff",
                 brand: isDarkThemed ? "#27272a" : "#656ee8",
                 txt: isDarkThemed ? "#ffffff" : "#525f7f",
                 tableBg: isDarkThemed ? "#18181b" : "#fbfbf9",
@@ -91,4 +93,4 @@ const main = {
     '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
 };
 
-export default BaseMail;
+export default IntentMailComponent;

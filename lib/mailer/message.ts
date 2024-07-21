@@ -9,6 +9,7 @@ import { MailerService } from "./service";
 import { render } from "@react-email/render";
 import { IntentConfig } from "../config/service";
 import { AttachmentOptions } from "./interfaces/provider";
+import IntentMailComponent from "../../resources/mail/emails";
 
 export class MailMessage {
   private mailSubject?: string;
@@ -207,17 +208,9 @@ export class MailMessage {
     const config = MailerService.getConfig();
 
     if (this.mailType === GENERIC_MAIL) {
-      const component = config.template?.baseComponent;
-
-      if (!component) {
-        throw new Error(
-          "BaseComponent not found for generic view, please check if you have set the baseComponent attribute in config correctly."
-        );
-      }
-
       const templateConfig = IntentConfig.get("mailers.template");
       const html = render(
-        component({
+        IntentMailComponent({
           header: { value: { title: templateConfig.appName } },
           footer: {
             value: {
