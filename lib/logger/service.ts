@@ -61,7 +61,10 @@ export class LoggerService {
       transport = transport as winston.transport;
       const options = {
         ...Obj.except(transportOptions.options, ["format"]),
-        format: this.buildFormatter(formats as Formats[]),
+        format: this.buildFormatter(
+          formats as Formats[],
+          transportOptions.labels
+        ),
       } as TransportOptions;
 
       if (transportOptions.transport === Transports.File) {
@@ -90,12 +93,16 @@ export class LoggerService {
     return LoggerService.getConnection(conn);
   }
 
-  private static buildFormatter(formats: Formats[]) {
+  private static buildFormatter(
+    formats: Formats[],
+    labels?: Record<string, any>
+  ) {
     const formatters = [];
     for (const formatEnum of formats) {
       const formatter = FormatsMap[formatEnum as Formats] as any;
       formatters.push(formatter());
     }
+    labels && formatters.push(winston.format.label(labels));
 
     return winston.format.combine(
       winston.format.errors({ stack: true }),

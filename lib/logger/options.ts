@@ -40,6 +40,7 @@ export interface LoggerConfig {
   transports?: {
     format?: Formats | Formats[];
     transport?: Transports | transport;
+    labels?: Record<string, any>;
     options?: TransportOptions;
   }[];
 }
