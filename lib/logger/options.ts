@@ -48,7 +48,7 @@ export const defaultLoggerOptions = (): {
   level: LogLevel;
   [key: string]: any;
 } => ({
-  level: LogLevel.debug,
+  level: "debug",
   transports: [{ transport: Transports.Default, format: Formats.Default }],
 });
 
@@ -97,11 +97,4 @@ export const FormatsMap = {
   [Formats.Uncolorize]: format.uncolorize,
 };
 
-export enum LogLevel {
-  error = "error",
-  warn = "warn",
-  info = "info",
-  http = "http",
-  verbose = "verbose",
-  debug = "debug",
-}
+export type LogLevel = "error" | "warn" | "info" | "http" | "verbose" | "debug";
