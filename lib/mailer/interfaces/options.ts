@@ -57,7 +57,10 @@ export interface ResendOptions extends BaseProviderConfigOptions {
 
 export interface MailerOptions {
   default: string;
-  template: { baseComponent: any };
+  template: {
+    appName?: string;
+    footer?: { title?: string };
+  };
   channels: {
     [key: string]:
       | NodemailerOptions
