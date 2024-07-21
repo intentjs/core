@@ -1,4 +1,4 @@
-import { ValidationError } from "@nestjs/common";
+import { ValidationError } from "class-validator";
 import { isEmpty } from "../utils/helpers";
 import { Str } from "../utils/string";
 
