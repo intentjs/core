@@ -1,5 +1,5 @@
+import { Str } from "../utils";
 import { InternalLogger } from "../utils/logger";
-import { Str } from "../utils/string";
 import { ArgumentOptionObject, ArgumentParserOutput } from "./interfaces";
 
 export class ArgumentParser {
@@ -60,8 +60,8 @@ export class ArgumentParser {
       reservedArgumentsAndOptions[alias] = 1;
     }
     return {
-      name: aliasedExp.pop(),
-      alias: aliasedExp,
+      name: aliasedExp.pop().trim(),
+      alias: aliasedExp.map((a) => a.trim()),
       isRequired: !Str.contains(arg, "?"),
       isArray: Str.contains(arg, "*"),
       defaultValue: ![" ", null].includes(defaultValue) && defaultValue,

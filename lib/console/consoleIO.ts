@@ -110,6 +110,10 @@ export class ConsoleIO {
     ConsoleLogger.error(msg);
   }
 
+  warn(msg: string) {
+    ConsoleLogger.warn(msg);
+  }
+
   /**
    * Use this method to print a success message
    * @param msg

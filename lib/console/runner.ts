@@ -38,6 +38,10 @@ export class CommandRunner {
       return;
     }
 
+    if (args.debug) {
+      console.log(_cli);
+    }
+
     await command.target(_cli);
     return;
   }
