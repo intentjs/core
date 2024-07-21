@@ -17,7 +17,7 @@ export class IntentExceptionFilter extends BaseExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<any>();
 
-    const sentryConfig = IntentConfig.get("errors.sentry");
+    const sentryConfig = IntentConfig.get("app.sentry");
     sentryConfig?.dsn && this.reportToSentry(exception);
 
     if (exception instanceof ValidationFailed) {

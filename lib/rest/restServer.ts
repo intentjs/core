@@ -18,15 +18,17 @@ export class RestServer {
     if (options?.addValidationContainer) {
       useContainer(app.select(module), { fallbackOnErrors: true });
     }
+    const config = app.get(IntentConfig, { strict: false });
 
-    options?.cors && app.enableCors(options.cors);
+    if (config.get("app.cors") || options?.cors) {
+      const corsRule = options?.cors ?? config.get("app.cors");
+      app.enable(corsRule);
+    }
 
     app.use(requestMiddleware);
 
-    const config = app.get(IntentConfig, { strict: false });
-
-    if (config.get("errors")) {
-      this.configureErrorReporter(config.get("errors"));
+    if (config.get("app.sentry.dsn")) {
+      this.configureErrorReporter(config.get("app.sentry"));
     }
 
     if (options.exceptionFilter) {
@@ -42,7 +44,7 @@ export class RestServer {
   static configureErrorReporter(config: Record<string, any>) {
     if (!config) return;
 
-    if (Obj.isObj(config.sentry)) {
+    if (Obj.isObj(config.sentry) && config.sentry?.dsn) {
       const {
         dsn,
         tracesSampleRate,
