@@ -3,6 +3,7 @@ import { BaseExceptionFilter } from "@nestjs/core";
 import { ValidationFailed } from "./validationfailed";
 import { Package } from "../utils";
 import { IntentConfig } from "../config/service";
+import { Log } from "../logger";
 
 export class IntentExceptionFilter extends BaseExceptionFilter {
   doNotReport(): Array<Type<HttpException>> {
@@ -33,6 +34,8 @@ export class IntentExceptionFilter extends BaseExceptionFilter {
       exception instanceof HttpException
         ? exception.getResponse()
         : "Internal Server Error";
+
+    Log().error("", exception);
 
     return response.status(status).send(message);
   }

@@ -20,6 +20,7 @@ import { LoggerService } from "./logger/service";
 import { GenericFunction } from "./interfaces";
 import { EventQueueWorker } from "./events/jobListener";
 import { MailerService } from "./mailer";
+import { LocalizationService } from "./localization";
 
 const providers = [
   ConsoleExplorer,
@@ -41,6 +42,7 @@ const providers = [
   LoggerService,
   EventQueueWorker,
   MailerService,
+  LocalizationService,
 ];
 const imports = [DiscoveryModule];
 const exportsArr = [IntentConfig];

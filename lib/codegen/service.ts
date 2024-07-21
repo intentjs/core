@@ -95,7 +95,7 @@ export class CodegenService {
 
     moduleFile.addImportDeclaration({
       namedImports: [input.controllerName],
-      moduleSpecifier: `./controllers/${fileNameWithoutEx}`,
+      moduleSpecifier: `./http/controllers/${fileNameWithoutEx}`,
     });
 
     await moduleFile.save();

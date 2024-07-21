@@ -1,9 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { readdirSync, readFileSync } from "fs-extra";
-import { ConfigService } from "@nestjs/config";
 import { Obj } from "../utils";
 import { Str } from "../utils/string";
 import { Num } from "../utils/number";
+import { IntentConfig } from "../config/service";
+import { LocalizationOptions } from "./interfaces";
+import { join } from "path";
+import { path } from "app-root-path";
 
 @Injectable()
 export class LocalizationService {
@@ -16,14 +19,16 @@ export class LocalizationService {
     UNKNOWN: 0,
   };
 
-  constructor(private config: ConfigService) {
-    const options = config.get("localization");
-    const { path, fallbackLang } = options;
+  constructor(private config: IntentConfig) {
+    const options = config.get<LocalizationOptions>("localization");
+
+    const { path: dir, fallbackLang } = options;
     const data: Record<string, any> = {};
 
     LocalizationService.readFiles(
-      path,
+      join(path, dir),
       function (filename: string, content: any) {
+        console.log("content===>", content, filename);
         data[filename.split(".")[0]] = JSON.parse(content);
       }
     );
@@ -177,9 +182,11 @@ export class LocalizationService {
   private static readFiles(dirname: string, onFileContent: any) {
     const fss = readdirSync(dirname);
     fss.forEach((filename: string) => {
+      console.log("reading file data ==> ");
       const fileData = readFileSync(dirname + "/" + filename, {
         encoding: "utf-8",
       });
+
       onFileContent(filename, fileData);
     });
   }

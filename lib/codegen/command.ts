@@ -3,7 +3,6 @@ import { Command, CommandRunner, ConsoleIO } from "../console";
 import { CodegenService } from "./service";
 import { getClassNamesFromFilePath } from "./utils";
 import { join } from "path";
-import { Listr, delay } from "listr2";
 import { dim } from "picocolors";
 import { Str } from "../utils/string";
 
@@ -41,7 +40,7 @@ export class CodegenCommand {
     const routeName = name;
     const controllerName = Str.pascal(`${name}_controller`);
     const fileNameWithoutEx = Str.camel(`${name}_controller`);
-    const filePath = `app/controllers/${fileNameWithoutEx}.ts`;
+    const filePath = `app/http/controllers/${fileNameWithoutEx}.ts`;
     const options = {
       input: { routeName, controllerName },
       filePath,
@@ -103,7 +102,11 @@ export class CodegenCommand {
     const className = Str.pascal(`${name}_model`);
     const fileNameWithoutEx = Str.camel(`${name}_model`);
     const filePath = `app/models/${fileNameWithoutEx}.ts`;
-    const options = { input: { className }, filePath, fileNameWithoutEx };
+    const options = {
+      input: { className, tableName: Str.pluralize(name) },
+      filePath,
+      fileNameWithoutEx,
+    };
     try {
       await this.service.createModel(options);
       _cli.success(`Successfully created ${filePath}`);
@@ -172,73 +175,13 @@ export class CodegenCommand {
   async makeResource(_cli: ConsoleIO): Promise<void> {
     _cli.info("Creating resource file");
     const name = _cli.argument<string>("name");
-    const tasks = new Listr([], {
-      concurrent: false,
-      exitOnError: true,
-      ctx: { name, modelFileName: "" },
-    });
-    tasks.add({
-      title: "Creating Controller",
-      task: async (_, task) => {
-        const then = Date.now();
-        await CommandRunner.run(`make:controller ${name}`, { silent: true });
-        const fileNameWithoutEx = Str.camel(`${name}_controller`);
-        const filePath = `app/controllers/${fileNameWithoutEx}.ts`;
-        delay(2000);
-        task.title = `Controller created: ${filePath} (${dim(
-          Date.now() - then + "ms"
-        )})`;
-      },
-    });
-
-    tasks.add({
-      title: "Creating Service",
-      task: async (ctx, task) => {
-        const then = Date.now();
-        await CommandRunner.run(`make:service ${name}`, { silent: true });
-        const fileNameWithoutEx = Str.camel(`${name}_service`);
-        const filePath = `app/services/${fileNameWithoutEx}.ts`;
-        delay(2000);
-        task.title = `Service created: ${filePath} (${dim(
-          Date.now() - then + "ms"
-        )})`;
-      },
-    });
-
-    tasks.add({
-      title: "Creating Model",
-      task: async (_, task) => {
-        const then = Date.now();
-        await CommandRunner.run(`make:model ${name}`, { silent: true });
-        const fileNameWithoutEx = Str.camel(`${name}_model`);
-        const filePath = `app/models/${fileNameWithoutEx}.ts`;
-        task.title = `Model created: ${filePath} (${dim(
-          Date.now() - then + "ms"
-        )})`;
-        delay(2000);
-        _.modelFileName = fileNameWithoutEx;
-      },
-    });
-
-    tasks.add({
-      title: "Creating Repository",
-      task: async (_, task) => {
-        const then = Date.now();
-        await CommandRunner.run(`make:repo ${name} ${_.modelFileName}`, {
-          silent: true,
-        });
-        const fileNameWithoutEx = Str.camel(`${name}_Db_Repository`);
-        const filePath = `app/repositories/${fileNameWithoutEx}.ts`;
-        delay(2000);
-        task.title = `Repository created: ${filePath} (${dim(
-          Date.now() - then + "ms"
-        )})`;
-      },
-    });
-
-    await tasks.run({ name, modelFileName: "" });
 
     try {
+      await CommandRunner.run(`make:model ${name}`);
+      const modelName = Str.camel(`${name}_model`);
+      await CommandRunner.run(`make:repo ${name} ${modelName}`);
+      await CommandRunner.run(`make:controller ${name}`);
+      await CommandRunner.run(`make:service ${name}`, { silent: true });
     } catch (e) {
       _cli.error(e["message"]);
       return;

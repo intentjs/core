@@ -21,7 +21,7 @@ export const IntentMailComponent = (props?: Record<string, any>) => {
     preview,
     theme: { isDarkThemed },
   } = props;
-  console.log("preview ==> ", preview);
+
   return (
     <Html>
       <Head>
