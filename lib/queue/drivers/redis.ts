@@ -1,10 +1,9 @@
 import { InternalMessage } from "../strategy";
-import { RedisJob } from "../interfaces/redisJob";
 import { RedisQueueOptionsDto } from "../schema";
 import { PollQueueDriver } from "../strategy/pollQueueDriver";
-import { validateOptions } from "../../utils/helpers";
-import { Package } from "../../utils";
 import { ulid } from "ulid";
+import { Package, validateOptions } from "../../utils";
+import { RedisJob } from "../interfaces/job";
 
 const FIND_DELAYED_JOB = `
 local source_key = KEYS[1]
@@ -52,7 +51,7 @@ export class RedisQueueDriver implements PollQueueDriver {
   async init(): Promise<void> {}
 
   async push(message: string, rawPayload: InternalMessage): Promise<void> {
-    if ((rawPayload.delay || 0) > 0) {
+    if (rawPayload.delay > Date.now()) {
       await this.pushToDelayedQueue(message, rawPayload);
       return;
     }
@@ -89,7 +88,7 @@ export class RedisQueueDriver implements PollQueueDriver {
   ): Promise<void> {
     await this.client.zadd(
       this.getDelayedQueue(`${rawPayload.queue}`),
-      Date.now() + rawPayload.delay * 1000,
+      rawPayload.delay,
       this.getProcessedMessage(message)
     );
     return;

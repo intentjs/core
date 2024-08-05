@@ -1,7 +1,7 @@
 export type Payload = Record<string, any> | string | number;
 
 export interface JobOptions {
-  delay?: number;
+  delay?: number | string | Date;
   tries?: number;
   queue?: string;
   timeout?: number;
@@ -15,4 +15,6 @@ export interface Message extends JobOptions {
 
 export interface InternalMessage extends Message {
   attemptCount: number;
+  id: string;
+  delay?: number;
 }

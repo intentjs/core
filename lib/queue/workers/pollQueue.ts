@@ -11,6 +11,7 @@ import { JobStatusEnum } from "../constants";
 import { JobMaxRetriesExceeed } from "../events/jobMaxRetries";
 import { EmitsEvent } from "../../events";
 import { logTime } from "../../utils/helpers";
+import { Obj } from "../../utils";
 
 export class PollQueueWorker extends BaseQueueWorker {
   protected options: ListenerOptions;
@@ -186,6 +187,7 @@ export class PollQueueWorker extends BaseQueueWorker {
    * @param job
    */
   fetchMessage(job: DriverJob): InternalMessage {
-    return JSON.parse(job.getMessage());
+    const message = job.getMessage();
+    return Obj.isObj(message) ? message : JSON.parse(job.getMessage());
   }
 }
