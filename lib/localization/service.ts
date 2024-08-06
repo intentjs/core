@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { readdirSync, readFileSync } from 'fs-extra';
-import { Obj } from '../utils';
-import { Str } from '../utils/string';
-import { Num } from '../utils/number';
-import { IntentConfig } from '../config/service';
-import { LocalizationOptions } from './interfaces';
 import { join } from 'path';
+import { Injectable } from '@nestjs/common';
 import { path } from 'app-root-path';
+import { readdirSync, readFileSync } from 'fs-extra';
+import { IntentConfig } from '../config/service';
+import { Obj } from '../utils';
+import { Num } from '../utils/number';
+import { Str } from '../utils/string';
+import { LocalizationOptions } from './interfaces';
 
 @Injectable()
 export class LocalizationService {

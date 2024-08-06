@@ -1,3 +1,6 @@
+import { render } from '@react-email/render';
+import IntentMailComponent from '../../resources/mail/emails';
+import { IntentConfig } from '../config/service';
 import { GENERIC_MAIL, RAW_MAIL, VIEW_BASED_MAIL } from './constants';
 import {
   MailData,
@@ -5,11 +8,8 @@ import {
   MailType,
   MailMessagePayload,
 } from './interfaces';
-import { MailerService } from './service';
-import { render } from '@react-email/render';
-import { IntentConfig } from '../config/service';
 import { AttachmentOptions } from './interfaces/provider';
-import IntentMailComponent from '../../resources/mail/emails';
+import { MailerService } from './service';
 
 export class MailMessage {
   private mailSubject?: string;
@@ -186,7 +186,7 @@ export class MailMessage {
     return this;
   }
 
-  dark(dark: boolean = true): this {
+  dark(dark = true): this {
     this.payload.meta = { ...this.payload.meta, isDarkThemed: dark };
     return this;
   }

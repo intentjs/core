@@ -1,10 +1,10 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
-import { useContainer } from 'class-validator';
-import { ServerOptions } from './interfaces';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { useContainer } from 'class-validator';
 import { IntentConfig } from '../config/service';
-import { requestMiddleware } from './middlewares/requestSerializer';
 import { Obj, Package } from '../utils';
+import { ServerOptions } from './interfaces';
+import { requestMiddleware } from './middlewares/requestSerializer';
 
 export class RestServer {
   /**

@@ -1,11 +1,11 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { DatabaseOptions, DbConnectionOptions } from './options';
 import Knex, { Knex as KnexType } from 'knex';
-import { ConnectionNotFound } from './exceptions';
-import { BaseModel } from './baseModel';
 import { IntentConfig } from '../config/service';
-import { InternalLogger } from '../utils/logger';
 import { logTime } from '../utils/helpers';
+import { InternalLogger } from '../utils/logger';
+import { BaseModel } from './baseModel';
+import { ConnectionNotFound } from './exceptions';
+import { DatabaseOptions, DbConnectionOptions } from './options';
 
 @Injectable()
 export class ObjectionService implements OnModuleInit {

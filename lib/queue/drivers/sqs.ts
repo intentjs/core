@@ -1,9 +1,9 @@
-import { SqsJob } from '../interfaces/sqsJob';
-import { InternalMessage } from '../strategy';
-import { SqsQueueOptionsDto } from '../schema';
-import { PollQueueDriver } from '../strategy/pollQueueDriver';
 import { Package } from '../../utils';
 import { joinUrl, validateOptions } from '../../utils/helpers';
+import { SqsJob } from '../interfaces/sqsJob';
+import { SqsQueueOptionsDto } from '../schema';
+import { InternalMessage } from '../strategy';
+import { PollQueueDriver } from '../strategy/pollQueueDriver';
 
 export class SqsQueueDriver implements PollQueueDriver {
   private client: any;

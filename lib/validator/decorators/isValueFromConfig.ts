@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
   registerDecorator,
   ValidationOptions,
@@ -5,11 +6,10 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { Injectable } from '@nestjs/common';
 import { IntentConfig } from '../../config/service';
-import { isEmpty } from '../../utils/helpers';
-import { Arr } from '../../utils/array';
 import { Obj } from '../../utils';
+import { Arr } from '../../utils/array';
+import { isEmpty } from '../../utils/helpers';
 
 @Injectable()
 @ValidatorConstraint({ async: false })

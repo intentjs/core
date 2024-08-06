@@ -3,7 +3,7 @@ import { Arr } from '../../utils/array';
 
 export const genKeyFromObj = (
   obj: Record<string, any>,
-  dontHash: boolean = false,
+  dontHash = false,
 ): string => {
   const keys = Object.keys(obj).sort();
   const keyStr = [];
@@ -14,8 +14,7 @@ export const genKeyFromObj = (
 
   const str = keyStr.join(',');
   if (str.length > 10000 && !dontHash) {
-    const hash = createHash('sha1').update(str).digest('hex');
-    return hash;
+    return createHash('sha1').update(str).digest('hex');
   }
 
   return str;

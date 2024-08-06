@@ -7,10 +7,10 @@ import {
   ClassSerializerContextOptions,
   PlainLiteralObject,
 } from '@nestjs/common';
-import { Observable, map } from 'rxjs';
-import { IntentResponse } from '../response';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { Observable, map } from 'rxjs';
 import { Obj } from '../../utils';
+import { IntentResponse } from '../response';
 
 @Injectable()
 export class ResponseSerializerInterceptor implements NestInterceptor {

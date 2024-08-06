@@ -1,9 +1,9 @@
 import { Type } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { ValidationError, validate } from 'class-validator';
-import { Obj } from '../utils';
-import { ValidationFailed } from '../exceptions/validationfailed';
 import { IntentConfig } from '../config/service';
+import { ValidationFailed } from '../exceptions/validationfailed';
+import { Obj } from '../utils';
 
 export class Validator<T> {
   private meta: Record<string, any>;

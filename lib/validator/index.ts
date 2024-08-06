@@ -5,8 +5,8 @@ import {
   applyDecorators,
   createParamDecorator,
 } from '@nestjs/common';
-import { IntentValidationGuard } from './validationGuard';
 import { Request } from '../rest/request';
+import { IntentValidationGuard } from './validationGuard';
 
 export * from './validator';
 export * from './decorators';

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { QueueOptions } from './interfaces';
-import { GenericFunction } from '../interfaces';
-import { JobOptions } from './strategy';
 import { IntentConfig } from '../config/service';
+import { GenericFunction } from '../interfaces';
+import { QueueOptions } from './interfaces';
+import { JobOptions } from './strategy';
 
 interface JobTarget {
   options: JobOptions;

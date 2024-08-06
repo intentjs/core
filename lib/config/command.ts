@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import * as pc from 'picocolors';
 import { Command, ConsoleIO } from '../console';
 import { Obj } from '../utils';
 import { Arr } from '../utils/array';
-import { IntentConfig } from './service';
 import { columnify } from '../utils/columnify';
-import * as pc from 'picocolors';
+import { IntentConfig } from './service';
 
 @Injectable()
 export class ViewConfigCommand {

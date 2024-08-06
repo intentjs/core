@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { Command } from '../decorators';
-import { CommandMeta } from '../metadata';
-import * as pc from 'picocolors';
 import { readFileSync } from 'fs';
-import { path } from 'app-root-path';
 import { join } from 'path';
+import { Injectable } from '@nestjs/common';
+import { path } from 'app-root-path';
+import * as pc from 'picocolors';
 import { columnify } from '../../utils/columnify';
 import { Str } from '../../utils/string';
+import { Command } from '../decorators';
+import { CommandMeta } from '../metadata';
 
 @Injectable()
 @Command('list', { desc: 'Command to list all the commands' })

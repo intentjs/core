@@ -1,8 +1,8 @@
 import { Type } from '@nestjs/common';
 import { Request as ERequest } from 'express';
-import { Validator } from '../validator';
-import { ulid } from 'ulid';
 import { isEmpty } from 'lodash';
+import { ulid } from 'ulid';
+import { Validator } from '../validator';
 
 export class Request {
   private $payload: Record<string, any>;

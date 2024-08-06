@@ -1,8 +1,8 @@
+import { JobStatusEnum } from '../constants';
 import { ListenerOptions } from '../interfaces';
 import { QueueMetadata } from '../metadata';
 import { InternalMessage } from '../strategy';
 import { PollQueueDriver } from '../strategy/pollQueueDriver';
-import { JobStatusEnum } from '../constants';
 
 export class JobRunner {
   constructor(

@@ -1,11 +1,11 @@
 import * as pc from 'picocolors';
-import { CommandObject } from './interfaces';
-import { ConsoleIO } from './consoleIO';
-import { ConsoleLogger } from './logger';
 import yargsParser from 'yargs-parser';
-import { CommandMeta } from './metadata';
 import { columnify } from '../utils/columnify';
 import { isEmpty } from '../utils/helpers';
+import { ConsoleIO } from './consoleIO';
+import { CommandObject } from './interfaces';
+import { ConsoleLogger } from './logger';
+import { CommandMeta } from './metadata';
 
 export class CommandRunner {
   static async run(cmd: string, options?: { silent: boolean }): Promise<void> {

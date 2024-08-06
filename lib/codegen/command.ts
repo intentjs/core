@@ -1,9 +1,9 @@
+import { join } from 'path';
 import { Injectable } from '@nestjs/common';
 import { Command, CommandRunner, ConsoleIO } from '../console';
+import { Str } from '../utils/string';
 import { CodegenService } from './service';
 import { getClassNamesFromFilePath } from './utils';
-import { join } from 'path';
-import { Str } from '../utils/string';
 
 @Injectable()
 export class CodegenCommand {

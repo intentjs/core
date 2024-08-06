@@ -1,5 +1,5 @@
-import { MailerService } from './service';
 import { MailMessage } from './message';
+import { MailerService } from './service';
 
 export class Mail {
   private receipents: string | string[];

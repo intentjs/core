@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { MailData, MailerOptions } from './interfaces';
 import { IntentConfig } from '../config/service';
+import { logTime } from '../utils';
+import { InternalLogger } from '../utils/logger';
+import { MailData, MailerOptions } from './interfaces';
 import { BaseProvider, BaseProviderSendOptions } from './interfaces/provider';
 import { MAIL_PROVIDER_MAP } from './providers';
-import { InternalLogger } from '../utils/logger';
-import { logTime } from '../utils';
 
 @Injectable()
 export class MailerService {

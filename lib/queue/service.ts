@@ -1,13 +1,13 @@
 import { Injectable, Type } from '@nestjs/common';
+import { IntentConfig } from '../config/service';
+import { logTime } from '../utils/helpers';
+import { InternalLogger } from '../utils/logger';
+import { Str } from '../utils/string';
+import { SqsQueueDriver, SyncQueueDriver } from './drivers';
+import { RedisQueueDriver } from './drivers/redis';
 import { QueueDriverOptions, QueueOptions } from './interfaces';
 import { QueueMetadata } from './metadata';
-import { IntentConfig } from '../config/service';
-import { SqsQueueDriver, SyncQueueDriver } from './drivers';
-import { Str } from '../utils/string';
-import { InternalLogger } from '../utils/logger';
 import { QueueDrivers } from './strategy';
-import { RedisQueueDriver } from './drivers/redis';
-import { logTime } from '../utils/helpers';
 
 @Injectable()
 export class QueueService {

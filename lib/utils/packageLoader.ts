@@ -1,5 +1,5 @@
-import { InternalLogger } from './logger';
 import * as pc from 'picocolors';
+import { InternalLogger } from './logger';
 
 export class Package {
   static load(pkgName: string): any {

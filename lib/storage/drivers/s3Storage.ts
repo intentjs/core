@@ -1,3 +1,10 @@
+import { ReadStream } from 'fs';
+import { GenericFunction } from '../../interfaces';
+import { Package } from '../../utils';
+import { Str } from '../../utils/string';
+import { CannotParseAsJsonException } from '../exceptions/cannotParseAsJson';
+import { CannotPerformFileOpException } from '../exceptions/cannotPerformFileOp';
+import { getMimeFromExtension } from '../helpers';
 import {
   StorageDriver,
   FileOptions,
@@ -6,14 +13,7 @@ import {
   StorageDriver$RenameFileResponse,
   S3DiskOptions,
 } from '../interfaces';
-import { getMimeFromExtension } from '../helpers';
-import { ReadStream } from 'fs';
-import { CannotParseAsJsonException } from '../exceptions/cannotParseAsJson';
 import { StorageService } from '../service';
-import { CannotPerformFileOpException } from '../exceptions/cannotPerformFileOp';
-import { GenericFunction } from '../../interfaces';
-import { Package } from '../../utils';
-import { Str } from '../../utils/string';
 
 export class S3Storage implements StorageDriver {
   private readonly disk: string;
@@ -91,11 +91,9 @@ export class S3Storage implements StorageDriver {
       Bucket: this.config.bucket,
       Key: this.getPath(path),
     });
-    const signedUrl = await this.getSignedUrlFn(this.client, commandObj, {
+    return await this.getSignedUrlFn(this.client, commandObj, {
       expiresIn: 60 * expireInMinutes,
     });
-
-    return signedUrl;
   }
 
   /**
@@ -272,7 +270,7 @@ export class S3Storage implements StorageDriver {
 
   async getAsJson(
     path: string,
-    throwError: boolean = false,
+    throwError = false,
   ): Promise<Record<string, any>> {
     const buffer = await this.get(path);
     try {

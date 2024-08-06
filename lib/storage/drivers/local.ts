@@ -1,5 +1,9 @@
+import { ReadStream, createReadStream } from 'fs';
 import { extname, join } from 'path';
 import * as fs from 'fs-extra';
+import { CannotParseAsJsonException } from '../exceptions/cannotParseAsJson';
+import { CannotPerformFileOpException } from '../exceptions/cannotPerformFileOp';
+import { getMimeTypeFromExtention } from '../helpers';
 import {
   LocalDiskOptions,
   StorageDriver,
@@ -7,11 +11,7 @@ import {
   StorageDriver$PutFileResponse,
   StorageDriver$RenameFileResponse,
 } from '../interfaces';
-import { ReadStream, createReadStream } from 'fs';
-import { getMimeTypeFromExtention } from '../helpers';
-import { CannotParseAsJsonException } from '../exceptions/cannotParseAsJson';
 import { StorageService } from '../service';
-import { CannotPerformFileOpException } from '../exceptions/cannotPerformFileOp';
 
 export class Local implements StorageDriver {
   constructor(
@@ -123,8 +123,7 @@ export class Local implements StorageDriver {
   }
 
   getStream(filePath: string): ReadStream {
-    const file = createReadStream(join(this.config.basePath || '', filePath));
-    return file;
+    return createReadStream(join(this.config.basePath || '', filePath));
   }
 
   /**

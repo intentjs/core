@@ -1,11 +1,10 @@
 import { Injectable, Type } from '@nestjs/common';
-import { LocalDiskOptions, S3DiskOptions, StorageOptions } from './interfaces';
-import { StorageDriver } from './interfaces';
 import { IntentConfig } from '../config/service';
-import { Local, S3Storage } from './drivers';
-import { InternalLogger } from '../utils/logger';
-import { DiskNotFoundException } from './exceptions/diskNotFound';
 import { logTime } from '../utils/helpers';
+import { InternalLogger } from '../utils/logger';
+import { Local, S3Storage } from './drivers';
+import { DiskNotFoundException } from './exceptions/diskNotFound';
+import { LocalDiskOptions, S3DiskOptions, StorageOptions , StorageDriver } from './interfaces';
 
 @Injectable()
 export class StorageService {

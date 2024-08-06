@@ -1,26 +1,26 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DiscoveryModule } from '@nestjs/core';
-import { ConsoleExplorer, ListCommands } from './console';
-import { DbOperationsCommand } from './database/commands/migrations';
-import { ObjectionService } from './database';
-import { EventExplorer } from './events';
-import { StorageService } from './storage/service';
 import { CacheService } from './cache';
-import { QueueService } from './queue';
-import { QueueConsoleCommands } from './queue/console';
-import { QueueExplorer } from './queue/explorer';
 import { CodegenCommand } from './codegen/command';
 import { CodegenService } from './codegen/service';
 import { ViewConfigCommand } from './config/command';
 import { IntentConfig } from './config/service';
+import { ConsoleExplorer, ListCommands } from './console';
+import { ObjectionService } from './database';
+import { DbOperationsCommand } from './database/commands/migrations';
+import { EventExplorer } from './events';
+import { EventQueueWorker } from './events/jobListener';
+import { GenericFunction } from './interfaces';
+import { LocalizationService } from './localization';
+import { LoggerService } from './logger/service';
+import { MailerService } from './mailer';
+import { QueueService } from './queue';
+import { QueueConsoleCommands } from './queue/console';
+import { QueueExplorer } from './queue/explorer';
+import { StorageService } from './storage/service';
 import { ExistsConstraint } from './validator/decorators/exists';
 import { IsUniqueConstraint } from './validator/decorators/isUnique';
-import { LoggerService } from './logger/service';
-import { GenericFunction } from './interfaces';
-import { EventQueueWorker } from './events/jobListener';
-import { MailerService } from './mailer';
-import { LocalizationService } from './localization';
 
 const providers = [
   ConsoleExplorer,

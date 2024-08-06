@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
+import { GenericFunction } from '../interfaces';
 import { JOB_NAME, JOB_OPTIONS } from './constants';
 import { QueueMetadata } from './metadata';
-import { GenericFunction } from '../interfaces';
 
 @Injectable()
 export class QueueExplorer implements OnModuleInit {

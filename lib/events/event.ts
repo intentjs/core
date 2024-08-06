@@ -1,10 +1,10 @@
 import 'reflect-metadata';
-import { IntentEventConstants } from './constants';
-import { difference } from './helpers';
-import { EventListenerRunner } from './runner';
 import { Dispatch } from '../queue/queue';
 import { JobOptions } from '../queue/strategy';
 import { isBoolean } from '../utils/helpers';
+import { IntentEventConstants } from './constants';
+import { difference } from './helpers';
+import { EventListenerRunner } from './runner';
 
 export class EmitsEvent {
   private reservedKeyNames = [

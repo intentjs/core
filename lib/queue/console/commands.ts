@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { QueueWorker } from '../worker';
 import { Command, ConsoleIO } from '../../console';
+import { QueueWorker } from '../worker';
 
 @Injectable()
 export class QueueConsoleCommands {

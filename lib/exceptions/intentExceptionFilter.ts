@@ -1,9 +1,9 @@
 import { ArgumentsHost, HttpException, Type } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
-import { Package } from '../utils';
 import { IntentConfig } from '../config/service';
 import { Log } from '../logger';
 import { Request, Response } from '../rest';
+import { Package } from '../utils';
 
 export abstract class IntentExceptionFilter extends BaseExceptionFilter {
   abstract handleHttp(exception: any, req: Request, res: Response);

@@ -1,4 +1,10 @@
+import { join } from 'path';
 import { Injectable } from '@nestjs/common';
+import { path } from 'app-root-path';
+import * as winston from 'winston';
+import { IntentConfig } from '../config/service';
+import { Obj } from '../utils';
+import { Num } from '../utils/number';
 import {
   Formats,
   FormatsMap,
@@ -9,12 +15,6 @@ import {
   TransportOptions,
   defaultLoggerOptions,
 } from './options';
-import * as winston from 'winston';
-import { IntentConfig } from '../config/service';
-import { Num } from '../utils/number';
-import { path } from 'app-root-path';
-import { join } from 'path';
-import { Obj } from '../utils';
 
 @Injectable()
 export class LoggerService {

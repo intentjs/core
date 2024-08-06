@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { events, JOB_NAME, JOB_OPTIONS } from './constants';
 import { ListensTo } from '../events';
+import { events, JOB_NAME, JOB_OPTIONS } from './constants';
 import { JobOptions } from './strategy';
 
 export function Job(job: string, options?: JobOptions) {

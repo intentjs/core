@@ -1,10 +1,10 @@
-import { InternalMessage } from '../strategy';
+import { ulid } from 'ulid';
+import { Package } from '../../utils';
+import { validateOptions } from '../../utils/helpers';
 import { RedisJob } from '../interfaces/redisJob';
 import { RedisQueueOptionsDto } from '../schema';
+import { InternalMessage } from '../strategy';
 import { PollQueueDriver } from '../strategy/pollQueueDriver';
-import { validateOptions } from '../../utils/helpers';
-import { Package } from '../../utils';
-import { ulid } from 'ulid';
 
 const FIND_DELAYED_JOB = `
 local source_key = KEYS[1]
@@ -79,8 +79,7 @@ export class RedisQueueDriver implements PollQueueDriver {
   }
 
   async count(options: Record<string, any>): Promise<number> {
-    const data = await this.client.llen(this.getQueue(options.queue));
-    return data;
+    return await this.client.llen(this.getQueue(options.queue));
   }
 
   async pushToDelayedQueue(

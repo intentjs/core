@@ -1,8 +1,8 @@
+import { Obj } from '../../utils';
 import { ListenerOptions } from '../interfaces';
-import { SubscribeQueueDriver } from '../strategy/subscribeQueueDriver';
 import { QueueMetadata } from '../metadata';
 import { QueueService } from '../service';
-import { Obj } from '../../utils';
+import { SubscribeQueueDriver } from '../strategy/subscribeQueueDriver';
 
 export interface PubSubWorkerOptions extends ListenerOptions {
   listenerId?: string;

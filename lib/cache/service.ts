@@ -1,10 +1,10 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { RedisDriver } from './drivers/redis';
-import { CacheDriver, CacheOptions } from './interfaces';
-import { InMemoryDriver } from './drivers/inMemory';
-import { InternalLogger } from '../utils/logger';
 import { IntentConfig } from '../config/service';
 import { logTime } from '../utils/helpers';
+import { InternalLogger } from '../utils/logger';
+import { InMemoryDriver } from './drivers/inMemory';
+import { RedisDriver } from './drivers/redis';
+import { CacheDriver, CacheOptions } from './interfaces';
 
 @Injectable()
 export class CacheService implements OnModuleInit {

@@ -6,8 +6,8 @@ import {
   PrimitiveValue,
   Expression,
 } from 'objection';
-import { Pagination } from '../interfaces';
 import { GenericFunction } from '../../interfaces';
+import { Pagination } from '../interfaces';
 
 export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   M,
@@ -51,7 +51,7 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   async chunk(cb: GenericFunction, size: number): Promise<void> {
     let offset = 0;
     let hasMore = true;
-    while (!!!offset || hasMore) {
+    while (!offset || hasMore) {
       const query = structuredClone(this);
       const records = (await query
         .offset(offset)

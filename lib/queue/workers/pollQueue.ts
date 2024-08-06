@@ -1,16 +1,16 @@
+import { EmitsEvent } from '../../events';
+import { logTime } from '../../utils/helpers';
+import { JobStatusEnum } from '../constants';
+import { JobFailed, JobProcessed, JobProcessing } from '../events';
+import { JobMaxRetriesExceeed } from '../events/jobMaxRetries';
 import { ListenerOptions } from '../interfaces';
+import { JobRunner } from '../jobRunners/base';
 import { QueueMetadata } from '../metadata';
+import { Dispatch } from '../queue';
 import { QueueService } from '../service';
 import { DriverJob, InternalMessage } from '../strategy';
 import { PollQueueDriver } from '../strategy/pollQueueDriver';
 import { BaseQueueWorker } from './baseWorker';
-import { JobRunner } from '../jobRunners/base';
-import { JobFailed, JobProcessed, JobProcessing } from '../events';
-import { Dispatch } from '../queue';
-import { JobStatusEnum } from '../constants';
-import { JobMaxRetriesExceeed } from '../events/jobMaxRetries';
-import { EmitsEvent } from '../../events';
-import { logTime } from '../../utils/helpers';
 
 export class PollQueueWorker extends BaseQueueWorker {
   protected options: ListenerOptions;

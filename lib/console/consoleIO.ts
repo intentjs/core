@@ -1,8 +1,8 @@
-import { ArgumentParserOutput } from './interfaces';
+import { Obj } from '../utils';
 import { ArgumentParser } from './argumentParser';
 import { Inquirer } from './inquirer';
+import { ArgumentParserOutput } from './interfaces';
 import { ConsoleLogger } from './logger';
-import { Obj } from '../utils';
 
 export class ConsoleIO {
   schema: ArgumentParserOutput;

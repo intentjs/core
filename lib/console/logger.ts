@@ -1,5 +1,5 @@
-import pc from 'picocolors';
 import Table from 'cli-table3';
+import pc from 'picocolors';
 import { Str } from '../utils/string';
 
 export class ConsoleLogger {

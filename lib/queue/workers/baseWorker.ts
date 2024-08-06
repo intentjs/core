@@ -1,14 +1,14 @@
+import * as pc from 'picocolors';
 import { getTimestampForLog } from '../../utils/helpers';
 import { ListenerOptions } from '../interfaces';
 import { QueueDrivers } from '../strategy';
-import * as pc from 'picocolors';
 
 export class BaseQueueWorker {
   protected silent: boolean;
   protected options: ListenerOptions;
   protected connection: QueueDrivers;
 
-  logInfo(msg: string, silentLabel: boolean = false): void {
+  logInfo(msg: string, silentLabel = false): void {
     if (!silentLabel) {
       const level = pc.bgCyan(pc.black('[INFO]'));
       console.log(`${level} ${getTimestampForLog()} ${this.shallowLog()}`);
@@ -17,7 +17,7 @@ export class BaseQueueWorker {
     console.log(pc.cyan(msg));
   }
 
-  logSuccess(msg: string, silentLabel: boolean = false): void {
+  logSuccess(msg: string, silentLabel = false): void {
     if (!silentLabel) {
       const level = pc.bgCyan(pc.black('[INFO]'));
       console.log(`${level} ${getTimestampForLog()} ${this.shallowLog()}`);
@@ -26,7 +26,7 @@ export class BaseQueueWorker {
     console.log(pc.green(msg));
   }
 
-  logError(msg: string, silentLabel: boolean = false): void {
+  logError(msg: string, silentLabel = false): void {
     if (!silentLabel) {
       const level = pc.bgCyan(pc.black('[INFO]'));
       console.log(`${level} ${getTimestampForLog()} ${this.shallowLog()}`);
@@ -34,7 +34,7 @@ export class BaseQueueWorker {
     console.log(pc.red(msg));
   }
 
-  logWarn(msg: string, silentLabel: boolean = false): void {
+  logWarn(msg: string, silentLabel = false): void {
     if (!silentLabel) {
       const level = pc.bgYellow(pc.black('[WARN]'));
       console.log(`${level} ${getTimestampForLog()} ${this.shallowLog()}`);

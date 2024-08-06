@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
   registerDecorator,
   ValidationOptions,
@@ -5,7 +6,6 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { Injectable } from '@nestjs/common';
 import { ObjectionService } from '../../database';
 import { isEmpty } from '../../utils/helpers';
 

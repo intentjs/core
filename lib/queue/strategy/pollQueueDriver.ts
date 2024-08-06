@@ -1,5 +1,5 @@
-import { DriverJob, Message } from '.';
 import { BaseQueueDriver } from './subscribeQueueDriver';
+import { DriverJob, Message } from '.';
 
 export interface PollQueueDriver extends BaseQueueDriver {
   push(message: string, rawMessage: Message): Promise<void>;
