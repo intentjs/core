@@ -17,7 +17,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.json && npm run copy:assets",
     "format": "prettier --write \"**/*.ts\"",
-    "format:check": "prettier --check \"app/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
+    "format:check": "prettier --check \"lib/**/*.ts\" \"tests/**/*.ts\"",
     "lint": "eslint \"{lib,tests}/**/*.ts\" --fix",
     "lint:check": "eslint \"{lib,tests}/**/*.ts\" --output-file eslint_report.json --format json",
     "prepublish:npm": "npm run build",
