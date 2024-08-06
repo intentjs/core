@@ -29,18 +29,15 @@ module.exports = {
     '.debug',
   ],
   rules: {
-    'no-console': 'warn',
+    'no-console': 'error',
     '@typescript-eslint/no-inferrable-types': 'error',
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
     'no-eval': 'error',
     'no-implied-eval': 'error',
     'prefer-promise-reject-errors': 'warn',
     complexity: ['error', 20],
     'import/no-unresolved': 'error',
-    'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': ['error'],
     'import/order': [
       'error',
       {
