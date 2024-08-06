@@ -40,6 +40,14 @@ export interface RedisQueueDriverOptions {
   prefix: string;
 }
 
+export interface DbQueueDriverOptions {
+  listenerType: "poll";
+  driver: "db";
+  connection?: string;
+  table: string;
+  queue: string;
+}
+
 export interface QueueOptions {
   isGlobal?: boolean;
   default: string;
@@ -48,7 +56,8 @@ export interface QueueOptions {
       | SyncQueueDriverOptions
       | SqsQueueDriverOptions
       | RedisQueueDriverOptions
-      | QueueDriverOptions;
+      | QueueDriverOptions
+      | DbQueueDriverOptions;
   };
 }
 

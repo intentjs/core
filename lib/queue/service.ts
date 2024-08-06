@@ -2,7 +2,11 @@ import { Injectable, Type } from "@nestjs/common";
 import { QueueDriverOptions, QueueOptions } from "./interfaces";
 import { QueueMetadata } from "./metadata";
 import { IntentConfig } from "../config/service";
-import { SqsQueueDriver, SyncQueueDriver } from "./drivers";
+import {
+  DatabaseQueueDriver,
+  SqsQueueDriver,
+  SyncQueueDriver,
+} from "./drivers";
 import { Str } from "../utils/string";
 import { InternalLogger } from "../utils/logger";
 import { QueueDrivers } from "./strategy";
@@ -15,6 +19,7 @@ export class QueueService {
     sync: SyncQueueDriver,
     sqs: SqsQueueDriver,
     redis: RedisQueueDriver,
+    db: DatabaseQueueDriver,
   };
 
   private static connections: Record<string, any> = {};
