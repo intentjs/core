@@ -1,16 +1,16 @@
-import { ListenerOptions } from "../interfaces";
-import { QueueMetadata } from "../metadata";
-import { QueueService } from "../service";
-import { DriverJob, InternalMessage } from "../strategy";
-import { PollQueueDriver } from "../strategy/pollQueueDriver";
-import { BaseQueueWorker } from "./baseWorker";
-import { JobRunner } from "../jobRunners/base";
-import { JobFailed, JobProcessed, JobProcessing } from "../events";
-import { Dispatch } from "../queue";
-import { JobStatusEnum } from "../constants";
-import { JobMaxRetriesExceeed } from "../events/jobMaxRetries";
-import { EmitsEvent } from "../../events";
-import { logTime } from "../../utils/helpers";
+import { ListenerOptions } from '../interfaces';
+import { QueueMetadata } from '../metadata';
+import { QueueService } from '../service';
+import { DriverJob, InternalMessage } from '../strategy';
+import { PollQueueDriver } from '../strategy/pollQueueDriver';
+import { BaseQueueWorker } from './baseWorker';
+import { JobRunner } from '../jobRunners/base';
+import { JobFailed, JobProcessed, JobProcessing } from '../events';
+import { Dispatch } from '../queue';
+import { JobStatusEnum } from '../constants';
+import { JobMaxRetriesExceeed } from '../events/jobMaxRetries';
+import { EmitsEvent } from '../../events';
+import { logTime } from '../../utils/helpers';
 
 export class PollQueueWorker extends BaseQueueWorker {
   protected options: ListenerOptions;
@@ -29,7 +29,7 @@ export class PollQueueWorker extends BaseQueueWorker {
 
     if (!this.options.queue) {
       const data = QueueMetadata.getData();
-      this.options["queue"] = data.connections[
+      this.options['queue'] = data.connections[
         this.options.connection || defaultOptions.connection
       ].queue as string;
     }
@@ -47,11 +47,11 @@ export class PollQueueWorker extends BaseQueueWorker {
    * Listen to the queue
    */
   async listen() {
-    this.logInfo("Poll Queue Worker Initialised");
-    this.logInfo("Listening for messages...");
+    this.logInfo('Poll Queue Worker Initialised');
+    this.logInfo('Listening for messages...');
 
     const connection = QueueService.getConnectionClient<PollQueueDriver>(
-      this.options.connection
+      this.options.connection,
     );
 
     // perform scheduled task of the driver
@@ -61,7 +61,7 @@ export class PollQueueWorker extends BaseQueueWorker {
     while (1) {
       const jobs = await this.poll(connection);
       if (!jobs.length) {
-        await new Promise((resolve) => setTimeout(resolve, this.options.sleep));
+        await new Promise(resolve => setTimeout(resolve, this.options.sleep));
         continue;
       }
 
@@ -89,12 +89,12 @@ export class PollQueueWorker extends BaseQueueWorker {
     message: InternalMessage,
     job: DriverJob,
     error: Error,
-    startTime: number
+    startTime: number,
   ): Promise<void> {
     if (status === JobStatusEnum.jobNotFound) {
       this.logWarn(
         `Job [${message.job}] not found. Please ensure that you have a job running for this connection`,
-        true
+        true,
       );
       return;
     }
@@ -103,7 +103,7 @@ export class PollQueueWorker extends BaseQueueWorker {
       await this.success(message, job);
       this.logSuccess(
         `[${message.job}] Job Processed ... ${logTime(Date.now() - startTime)}`,
-        true
+        true,
       );
       return;
     }
@@ -111,8 +111,8 @@ export class PollQueueWorker extends BaseQueueWorker {
     if (status === JobStatusEnum.retry) {
       await this.retry(message, job);
       this.logError(
-        `[${message.job}] Job Failed... | ${error["message"]}`,
-        true
+        `[${message.job}] Job Failed... | ${error['message']}`,
+        true,
       );
       return;
     }
@@ -125,20 +125,20 @@ export class PollQueueWorker extends BaseQueueWorker {
         connection.scheduledTask
           ? await connection.scheduledTask(this.options)
           : null,
-      this.options.schedulerInterval || 30000
+      this.options.schedulerInterval || 30000,
     );
   }
 
   async purge(): Promise<void> {
     const connection = QueueService.getConnectionClient<PollQueueDriver>(
-      this.options.connection
+      this.options.connection,
     );
     await connection.purge({ queue: this.options.queue });
   }
 
   async count(): Promise<number> {
     const connection = QueueService.getConnectionClient<PollQueueDriver>(
-      this.options.connection
+      this.options.connection,
     );
     return await connection.count({ queue: this.options.queue });
   }
@@ -176,7 +176,7 @@ export class PollQueueWorker extends BaseQueueWorker {
    */
   async removeJobFromQueue(job: DriverJob): Promise<void> {
     const connection = QueueService.getConnectionClient<PollQueueDriver>(
-      this.options.connection
+      this.options.connection,
     );
     await connection.remove(job, this.options);
   }

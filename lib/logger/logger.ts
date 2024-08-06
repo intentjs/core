@@ -1,4 +1,4 @@
-import { LoggerService } from "./service";
+import { LoggerService } from './service';
 
 export const Log = (conn?: string) => {
   const logger = LoggerService.getConnection(conn);
@@ -7,5 +7,5 @@ export const Log = (conn?: string) => {
 
 export const log = (payload: any, level?: string) => {
   const logger = Log();
-  return logger[level ?? "debug"](payload);
+  return logger[level ?? 'debug'](payload);
 };

@@ -1,7 +1,7 @@
-import { MimeTypes } from "../data/mime-db";
+import { MimeTypes } from '../data/mime-db';
 
 export const getMimeFromExtension = (fileName: string): string => {
-  const fileSplit = fileName.split(".");
+  const fileSplit = fileName.split('.');
   const fileExtension = fileSplit[fileSplit.length - 1];
 
   for (const mimeType in MimeTypes) {
@@ -11,11 +11,11 @@ export const getMimeFromExtension = (fileName: string): string => {
     }
   }
 
-  return "";
+  return '';
 };
 
 export const getMimeTypeFromExtention = (fileName: string): string => {
-  const fileSplit = fileName.split(".");
+  const fileSplit = fileName.split('.');
   const fileExtension = fileSplit[fileSplit.length - 1];
 
   for (const mimeType in MimeTypes) {

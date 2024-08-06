@@ -1,23 +1,23 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import { DiscoveryService, MetadataScanner } from "@nestjs/core";
-import { JOB_NAME, JOB_OPTIONS } from "./constants";
-import { QueueMetadata } from "./metadata";
-import { GenericFunction } from "../interfaces";
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { DiscoveryService, MetadataScanner } from '@nestjs/core';
+import { JOB_NAME, JOB_OPTIONS } from './constants';
+import { QueueMetadata } from './metadata';
+import { GenericFunction } from '../interfaces';
 
 @Injectable()
 export class QueueExplorer implements OnModuleInit {
   constructor(
     private readonly discovery: DiscoveryService,
-    private readonly metadataScanner: MetadataScanner
+    private readonly metadataScanner: MetadataScanner,
   ) {}
 
   onModuleInit() {
     const wrappers = this.discovery.getProviders();
-    wrappers.forEach((w) => {
+    wrappers.forEach(w => {
       const { instance } = w;
       if (
         !instance ||
-        typeof instance === "string" ||
+        typeof instance === 'string' ||
         !Object.getPrototypeOf(instance)
       ) {
         return;
@@ -25,7 +25,7 @@ export class QueueExplorer implements OnModuleInit {
       this.metadataScanner.scanFromPrototype(
         instance,
         Object.getPrototypeOf(instance),
-        (key: string) => this.lookupJobs(instance, key)
+        (key: string) => this.lookupJobs(instance, key),
       );
     });
   }

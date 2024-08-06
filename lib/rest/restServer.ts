@@ -1,10 +1,10 @@
-import { HttpAdapterHost, NestFactory } from "@nestjs/core";
-import { useContainer } from "class-validator";
-import { ServerOptions } from "./interfaces";
-import { NestExpressApplication } from "@nestjs/platform-express";
-import { IntentConfig } from "../config/service";
-import { requestMiddleware } from "./middlewares/requestSerializer";
-import { Obj, Package } from "../utils";
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { useContainer } from 'class-validator';
+import { ServerOptions } from './interfaces';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { IntentConfig } from '../config/service';
+import { requestMiddleware } from './middlewares/requestSerializer';
+import { Obj, Package } from '../utils';
 
 export class RestServer {
   /**
@@ -20,14 +20,14 @@ export class RestServer {
     }
     const config = app.get(IntentConfig, { strict: false });
 
-    if (config.get("app.cors") || options?.cors) {
-      const corsRule = options?.cors ?? config.get("app.cors");
+    if (config.get('app.cors') || options?.cors) {
+      const corsRule = options?.cors ?? config.get('app.cors');
       app.enable(corsRule);
     }
 
     app.use(requestMiddleware);
 
-    this.configureErrorReporter(config.get("app.sentry"));
+    this.configureErrorReporter(config.get('app.sentry'));
 
     if (options.exceptionFilter) {
       const { httpAdapter } = app.get(HttpAdapterHost);
@@ -36,7 +36,7 @@ export class RestServer {
 
     options?.globalPrefix && app.setGlobalPrefix(options.globalPrefix);
 
-    await app.listen(options?.port || config.get<number>("app.port"));
+    await app.listen(options?.port || config.get<number>('app.port'));
   }
 
   static configureErrorReporter(config: Record<string, any>) {
@@ -51,14 +51,14 @@ export class RestServer {
       } = config;
 
       if (dsn) {
-        const Sentry = Package.load("@sentry/node");
+        const Sentry = Package.load('@sentry/node');
         const integrations = [];
         /**
          * Load integrations
          */
         if (integrateNodeProfile) {
           const { nodeProfilingIntegration } = Package.load(
-            "@sentry/profiling-node"
+            '@sentry/profiling-node',
           );
 
           integrations.push(nodeProfilingIntegration());

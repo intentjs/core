@@ -1,8 +1,8 @@
-import { Type } from "@nestjs/common";
-import { Request as ERequest } from "express";
-import { Validator } from "../validator";
-import { ulid } from "ulid";
-import { isEmpty } from "lodash";
+import { Type } from '@nestjs/common';
+import { Request as ERequest } from 'express';
+import { Validator } from '../validator';
+import { ulid } from 'ulid';
+import { isEmpty } from 'lodash';
 
 export class Request {
   private $payload: Record<string, any>;
@@ -58,7 +58,7 @@ export class Request {
 
   boolean(name: string): boolean {
     const val = this.$payload[name] as string;
-    return [true, "yes", "on", "1", 1, "true"].includes(val.toLowerCase());
+    return [true, 'yes', 'on', '1', 1, 'true'].includes(val.toLowerCase());
   }
 
   query<T = Record<string, any>>(name?: string): T {
@@ -82,13 +82,13 @@ export class Request {
   }
 
   bearerToken(): string {
-    const authHeader = this.$headers["authorization"];
-    const asArray = authHeader?.split(" ");
-    return !isEmpty(asArray) && asArray(" ")[1];
+    const authHeader = this.$headers['authorization'];
+    const asArray = authHeader?.split(' ');
+    return !isEmpty(asArray) && asArray(' ')[1];
   }
 
   host(): string {
-    return this.request.get("host");
+    return this.request.get('host');
   }
 
   httpHost(): string {
@@ -96,11 +96,11 @@ export class Request {
   }
 
   isHttp(): boolean {
-    return this.httpHost() === "http";
+    return this.httpHost() === 'http';
   }
 
   isHttps(): boolean {
-    return this.httpHost() === "https";
+    return this.httpHost() === 'https';
   }
 
   url(): string {
@@ -128,18 +128,18 @@ export class Request {
   }
 
   getAcceptableContentTypes(): string[] {
-    const accept = this.$headers["accept"];
-    return accept.split(",");
+    const accept = this.$headers['accept'];
+    return accept.split(',');
   }
 
   accepts(contentTypes: string[]): boolean {
-    const accept = this.$headers["accept"];
-    if (accept == "*/*") return true;
+    const accept = this.$headers['accept'];
+    if (accept == '*/*') return true;
     return contentTypes.includes(accept);
   }
 
   expectsJson(): boolean {
-    return this.$headers["accept"];
+    return this.$headers['accept'];
   }
 
   async validate<T>(dto: Type<T>): Promise<T> {
@@ -166,7 +166,7 @@ export class Request {
   }
 
   has(...keys: string[]): boolean {
-    console.log("kjeys ===> ", keys);
+    console.log('kjeys ===> ', keys);
     for (const key of keys) {
       if (!(key in this.$payload)) return false;
     }

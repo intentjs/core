@@ -1,6 +1,6 @@
-import { CacheDriver } from "./interfaces";
-import { CacheService } from "./service";
-import { genKeyFromObj } from "./utils/genKey";
+import { CacheDriver } from './interfaces';
+import { CacheService } from './service';
+import { genKeyFromObj } from './utils/genKey';
 
 export class Cache {
   static store(store?: string): CacheDriver {

@@ -4,10 +4,10 @@ import {
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-} from "class-validator";
-import { Injectable } from "@nestjs/common";
-import { ObjectionService } from "../../database";
-import { isEmpty } from "../../utils/helpers";
+} from 'class-validator';
+import { Injectable } from '@nestjs/common';
+import { ObjectionService } from '../../database';
+import { isEmpty } from '../../utils/helpers';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
@@ -16,7 +16,7 @@ export class ExistsConstraint implements ValidatorConstraintInterface {
 
   public async validate(
     value: string | string[],
-    args: ValidationArguments
+    args: ValidationArguments,
   ): Promise<boolean> {
     if (!value && isEmpty(value)) return false;
     const [{ table, column, dbCon }] = args.constraints;
@@ -51,7 +51,7 @@ export function Exists(
     column: string;
     dbCon?: string;
   },
-  validationOptions?: ValidationOptions
+  validationOptions?: ValidationOptions,
 ) {
   return function (object: Record<string, any>, propertyName: string): void {
     registerDecorator({

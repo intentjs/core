@@ -6,18 +6,18 @@ import {
   StreamableFile,
   ClassSerializerContextOptions,
   PlainLiteralObject,
-} from "@nestjs/common";
-import { Observable, map } from "rxjs";
-import { IntentResponse } from "../response";
-import { instanceToPlain, plainToInstance } from "class-transformer";
-import { Obj } from "../../utils";
+} from '@nestjs/common';
+import { Observable, map } from 'rxjs';
+import { IntentResponse } from '../response';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { Obj } from '../../utils';
 
 @Injectable()
 export class ResponseSerializerInterceptor implements NestInterceptor {
   constructor() {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    return next.handle().pipe(map((data) => this.serialize(data)));
+    return next.handle().pipe(map(data => this.serialize(data)));
   }
 
   serialize(response: any): any {

@@ -1,4 +1,4 @@
-import { GenericFunction } from "../../interfaces";
+import { GenericFunction } from '../../interfaces';
 
 /**
  * Creates a function that memoizes the result of `func`. If `resolver` is
@@ -44,10 +44,10 @@ import { GenericFunction } from "../../interfaces";
  */
 function memoize(this: any, func: any, resolver: any): any {
   if (
-    typeof func !== "function" ||
-    (resolver != null && typeof resolver !== "function")
+    typeof func !== 'function' ||
+    (resolver != null && typeof resolver !== 'function')
   ) {
-    throw new TypeError("Expected a function");
+    throw new TypeError('Expected a function');
   }
 
   const that = this;

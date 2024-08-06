@@ -14,7 +14,7 @@ export class ConsoleExplorer {
 
   onModuleInit() {
     const wrappers = this.discovery.getProviders();
-    wrappers.forEach((w) => {
+    wrappers.forEach(w => {
       const { instance } = w;
       if (
         !instance ||
