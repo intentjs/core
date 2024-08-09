@@ -1,5 +1,5 @@
-import { MailerService } from "./service";
-import { MailMessage } from "./message";
+import { MailMessage } from './message';
+import { MailerService } from './service';
 
 export class Mail {
   private receipents: string | string[];
@@ -11,12 +11,12 @@ export class Mail {
   private provider: string;
 
   private constructor(provider?: string) {
-    this.fromAddress = "";
-    this._replyTo = "";
-    this._inReplyTo = "";
-    this.receipents = "";
-    this.ccReceipents = "";
-    this.bccReceipents = "";
+    this.fromAddress = '';
+    this._replyTo = '';
+    this._inReplyTo = '';
+    this.receipents = '';
+    this.ccReceipents = '';
+    this.bccReceipents = '';
     this.provider = provider;
   }
 
@@ -99,7 +99,7 @@ export class Mail {
         inReplyTo: this._inReplyTo,
         to: this.receipents,
       },
-      this.provider
+      this.provider,
     );
   }
 }

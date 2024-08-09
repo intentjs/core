@@ -1,8 +1,8 @@
-import { ClassSerializerContextOptions, StreamableFile } from "@nestjs/common";
-import { StreamableFileOptions } from "@nestjs/common/file-stream/interfaces";
-import { instanceToPlain, plainToInstance } from "class-transformer";
-import { Response } from "express";
-import { ReadStream } from "fs";
+import { ReadStream } from 'fs';
+import { ClassSerializerContextOptions, StreamableFile } from '@nestjs/common';
+import { StreamableFileOptions } from '@nestjs/common/file-stream/interfaces';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { Response } from 'express';
 
 export class IntentResponse {
   private $headers: Record<string, any>;
@@ -15,7 +15,7 @@ export class IntentResponse {
     this.$statusCode = 200;
   }
 
-  send(data: any, statusCode: number = 200): this {
+  send(data: any, statusCode = 200): this {
     this.$data = data;
     this.response.status(statusCode);
     return this;
@@ -27,7 +27,7 @@ export class IntentResponse {
     return this;
   }
 
-  status(status: number = 200): this {
+  status(status = 200): this {
     this.response.status(status);
     return this;
   }
@@ -48,7 +48,7 @@ export class IntentResponse {
 
   transformToPlain(
     plainOrClass: any,
-    options: ClassSerializerContextOptions
+    options: ClassSerializerContextOptions,
   ): Record<string, any> {
     if (!plainOrClass) {
       return plainOrClass;

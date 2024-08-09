@@ -1,4 +1,4 @@
-import { prompt } from "enquirer";
+import { prompt } from 'enquirer';
 
 export class Inquirer {
   /**
@@ -8,10 +8,10 @@ export class Inquirer {
    */
   static async ask(question: string): Promise<string> {
     const answers = await prompt([
-      { name: "question", message: question, type: "input" },
+      { name: 'question', message: question, type: 'input' },
     ]);
     console.log(answers);
-    return answers["question"];
+    return answers['question'];
   }
 
   /**
@@ -20,15 +20,15 @@ export class Inquirer {
    */
   static async confirm(message: string): Promise<boolean> {
     const answer = await prompt([
-      { name: "confirm_once", message, type: "confirm" },
+      { name: 'confirm_once', message, type: 'confirm' },
     ]);
 
-    return answer["confirm_once"];
+    return answer['confirm_once'];
   }
 
   static async number(message: string): Promise<number> {
-    const answer = await prompt([{ name: "q", message, type: "numeral" }]);
-    return answer["q"];
+    const answer = await prompt([{ name: 'q', message, type: 'numeral' }]);
+    return answer['q'];
   }
 
   /**
@@ -38,9 +38,9 @@ export class Inquirer {
    * @returns Promise<string>
    */
   static async select(message: string, choices: string[]): Promise<string> {
-    const name = "command";
-    const answers = await prompt([{ type: "select", name, message, choices }]);
-    return answers["command"];
+    const name = 'command';
+    const answers = await prompt([{ type: 'select', name, message, choices }]);
+    return answers['command'];
   }
 
   /**
@@ -51,13 +51,13 @@ export class Inquirer {
    */
   static async multiSelect(
     message: string,
-    choices: string[]
+    choices: string[],
   ): Promise<string | string[]> {
-    const name = "command";
+    const name = 'command';
     const answers = await prompt([
-      { type: "multiselect", name, message, choices, multiple: true },
+      { type: 'multiselect', name, message, choices, multiple: true },
     ]);
-    return answers["command"];
+    return answers['command'];
   }
 
   /**
@@ -66,8 +66,8 @@ export class Inquirer {
    * @param mask
    */
   static async password(message: string): Promise<string> {
-    const name = "command";
-    const answers = await prompt([{ type: "password", name, message }]);
+    const name = 'command';
+    const answers = await prompt([{ type: 'password', name, message }]);
     return answers[name];
   }
 }

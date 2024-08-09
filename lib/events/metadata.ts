@@ -1,4 +1,4 @@
-import { GenericFunction } from "../interfaces";
+import { GenericFunction } from '../interfaces';
 
 export class EventMetadata {
   private static store: Record<string, any> = { events: {}, listeners: {} };

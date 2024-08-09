@@ -1,16 +1,16 @@
-import { Arr } from "./array";
-import { Obj } from "./object";
-import { Str } from "./string";
-import { InternalLogger } from "./logger";
-import { validateSync, ValidationError } from "class-validator";
-import { GenericClass } from "../interfaces";
-import { plainToInstance } from "class-transformer";
-import { Type } from "@nestjs/common";
-import * as pc from "picocolors";
+import { Type } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import { validateSync, ValidationError } from 'class-validator';
+import * as pc from 'picocolors';
+import { GenericClass } from '../interfaces';
+import { Arr } from './array';
+import { InternalLogger } from './logger';
+import { Obj } from './object';
+import { Str } from './string';
 
 export const isEmpty = (value: any) => {
   if (Str.isString(value)) {
-    return value === "";
+    return value === '';
   }
 
   if (Arr.isArray(value)) {
@@ -29,17 +29,17 @@ export const isEmpty = (value: any) => {
 };
 
 export const isBoolean = (value: any): boolean => {
-  return typeof value === "boolean";
+  return typeof value === 'boolean';
 };
 
 export const toBoolean = (value: any) => {
-  if (!Str.isString(value) || typeof value !== "boolean") return undefined;
+  if (!Str.isString(value) || typeof value !== 'boolean') return undefined;
   const val = String(value);
-  return [true, "yes", "on", "1", 1, "true"].includes(val?.toLowerCase());
+  return [true, 'yes', 'on', '1', 1, 'true'].includes(val?.toLowerCase());
 };
 
 export const joinUrl = (url: string, appendString: string): string => {
-  return url.endsWith("/") ? `${url}${appendString}` : `${url}/${appendString}`;
+  return url.endsWith('/') ? `${url}${appendString}` : `${url}/${appendString}`;
 };
 
 export const logTime = (time: number): string => {
@@ -47,23 +47,23 @@ export const logTime = (time: number): string => {
 };
 
 export const getTimestampForLog = (): string => {
-  const timestamp = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
+  const timestamp = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
     hour12: true,
   }).format(new Date());
 
-  return pc.bgGreen(pc.black(" " + timestamp + " "));
+  return pc.bgGreen(pc.black(' ' + timestamp + ' '));
 };
 
 export const validateOptions = (
   payload: Record<string, any>,
   schema: Type<GenericClass>,
-  meta: Record<string, any> = {}
+  meta: Record<string, any> = {},
 ): void => {
   const dto = plainToInstance(schema, payload);
   const errors = validateSync(dto);
@@ -87,14 +87,14 @@ export const validateOptions = (
   for (const key in bag) {
     errorStatement.push(
       `${pc.bold(pc.yellow(key))} ${pc.dim(
-        pc.white("[" + bag[key].join(", ") + "]")
-      )}`
+        pc.white('[' + bag[key].join(', ') + ']'),
+      )}`,
     );
   }
 
   InternalLogger.error(
     meta.cls,
-    `The config is missing some required options - ${errorStatement.join(", ")}`
+    `The config is missing some required options - ${errorStatement.join(', ')}`,
   );
 };
 
@@ -104,8 +104,8 @@ const parseError = (error: ValidationError) => {
     children.push(parseError(child));
   }
 
-  const messages = Object.values(error.constraints || {}).map((m) =>
-    Str.replace(m, error.property, Str.title(error.property))
+  const messages = Object.values(error.constraints || {}).map(m =>
+    Str.replace(m, error.property, Str.title(error.property)),
   );
 
   const errors = {};

@@ -1,11 +1,11 @@
-import { ListenerOptions } from "./interfaces";
-import { QueueMetadata } from "./metadata";
-import { QueueService } from "./service";
-import { PollQueueWorker } from "./workers/pollQueue";
-import { SubscribeQueueWorker } from "./workers/subscribeQueue";
+import { ListenerOptions } from './interfaces';
+import { QueueMetadata } from './metadata';
+import { QueueService } from './service';
+import { PollQueueWorker } from './workers/pollQueue';
+import { SubscribeQueueWorker } from './workers/subscribeQueue';
 
 interface QueueWorkerOptions extends ListenerOptions {
-  listenerType: "poll" | "subscribe";
+  listenerType: 'poll' | 'subscribe';
   meta?: Record<string, any>;
   listenerId?: string;
 }
@@ -13,7 +13,7 @@ interface QueueWorkerOptions extends ListenerOptions {
 export class QueueWorker {
   private options: Record<string, any>;
 
-  constructor(args: Omit<QueueWorkerOptions, "listenerType">) {
+  constructor(args: Omit<QueueWorkerOptions, 'listenerType'>) {
     const defaultOptions = QueueMetadata.getDefaultOptions();
     this.options = {
       ...defaultOptions,
@@ -28,26 +28,26 @@ export class QueueWorker {
 
     if (!this.options.queue) {
       const data = QueueMetadata.getData();
-      this.options["queue"] = data.connections[
+      this.options['queue'] = data.connections[
         this.options.connection || defaultOptions.connection
       ].queue as string;
     }
   }
 
-  static init(options: Omit<QueueWorkerOptions, "listenerType">): QueueWorker {
+  static init(options: Omit<QueueWorkerOptions, 'listenerType'>): QueueWorker {
     return new QueueWorker(options);
   }
 
   async listen(): Promise<void> {
     const options = { ...this.options };
 
-    if (this.options.listenerType === "poll") {
+    if (this.options.listenerType === 'poll') {
       await PollQueueWorker.init(options).listen();
     }
 
-    if (this.options.listenerType === "subscribe") {
+    if (this.options.listenerType === 'subscribe') {
       await SubscribeQueueWorker.init({
-        listenerId: options?.listenerId ?? "intent-queue-listener",
+        listenerId: options?.listenerId ?? 'intent-queue-listener',
         ...options,
       });
     }

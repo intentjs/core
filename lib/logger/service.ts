@@ -1,4 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { join } from 'path';
+import { Injectable } from '@nestjs/common';
+import { path } from 'app-root-path';
+import * as winston from 'winston';
+import { IntentConfig } from '../config/service';
+import { Obj } from '../utils';
+import { Num } from '../utils/number';
 import {
   Formats,
   FormatsMap,
@@ -8,13 +14,7 @@ import {
   TransportsMap,
   TransportOptions,
   defaultLoggerOptions,
-} from "./options";
-import * as winston from "winston";
-import { IntentConfig } from "../config/service";
-import { Num } from "../utils/number";
-import { path } from "app-root-path";
-import { join } from "path";
-import { Obj } from "../utils";
+} from './options';
 
 @Injectable()
 export class LoggerService {
@@ -22,11 +22,11 @@ export class LoggerService {
   private static options: any = {};
 
   constructor(private readonly config: IntentConfig) {
-    const options = this.config.get<IntentLoggerOptions>("logger");
+    const options = this.config.get<IntentLoggerOptions>('logger');
     LoggerService.config = options;
     for (const conn in options.loggers) {
       LoggerService.options[conn] = LoggerService.createLogger(
-        options.loggers[conn]
+        options.loggers[conn],
       );
     }
   }
@@ -60,25 +60,25 @@ export class LoggerService {
 
       transport = transport as winston.transport;
       const options = {
-        ...Obj.except(transportOptions.options, ["format"]),
+        ...Obj.except(transportOptions.options, ['format']),
         format: this.buildFormatter(
           formats as Formats[],
-          transportOptions.labels
+          transportOptions.labels,
         ),
       } as TransportOptions;
 
       if (transportOptions.transport === Transports.File) {
-        options["filename"] = join(
+        options['filename'] = join(
           path,
-          "storage/logs",
-          transportOptions.options?.["filename"]
+          'storage/logs',
+          transportOptions.options?.['filename'],
         );
       }
 
       transportsConfig.push(
         new TransportsMap[transportOptions.transport as Transports](
-          options as any
-        )
+          options as any,
+        ),
       );
     }
 
@@ -95,7 +95,7 @@ export class LoggerService {
 
   private static buildFormatter(
     formats: Formats[],
-    labels?: Record<string, any>
+    labels?: Record<string, any>,
   ) {
     const formatters = [];
     for (const formatEnum of formats) {
@@ -106,8 +106,8 @@ export class LoggerService {
 
     return winston.format.combine(
       winston.format.errors({ stack: true }),
-      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-      ...formatters
+      winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+      ...formatters,
     );
   }
 }

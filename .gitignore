@@ -18,6 +18,9 @@ npm-debug.log
 # dist
 dist
 
+# temporary reports
+eslint_report.json
+
 #yarn
 .pnp.*
 .yarn/*

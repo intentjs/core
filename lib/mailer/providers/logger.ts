@@ -1,6 +1,6 @@
-import { Log } from "../../logger";
-import { NodemailerOptions } from "../interfaces";
-import { BaseProvider, BaseProviderSendOptions } from "../interfaces/provider";
+import { Log } from '../../logger';
+import { NodemailerOptions } from '../interfaces';
+import { BaseProvider, BaseProviderSendOptions } from '../interfaces/provider';
 
 export class LoggerProvider implements BaseProvider {
   private client: any;

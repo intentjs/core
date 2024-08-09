@@ -1,11 +1,11 @@
-import * as pc from "picocolors";
-import { CommandObject } from "./interfaces";
-import { ConsoleIO } from "./consoleIO";
-import { ConsoleLogger } from "./logger";
-import yargsParser from "yargs-parser";
-import { CommandMeta } from "./metadata";
-import { columnify } from "../utils/columnify";
-import { isEmpty } from "../utils/helpers";
+import * as pc from 'picocolors';
+import yargsParser from 'yargs-parser';
+import { columnify } from '../utils/columnify';
+import { isEmpty } from '../utils/helpers';
+import { ConsoleIO } from './consoleIO';
+import { CommandObject } from './interfaces';
+import { ConsoleLogger } from './logger';
+import { CommandMeta } from './metadata';
 
 export class CommandRunner {
   static async run(cmd: string, options?: { silent: boolean }): Promise<void> {
@@ -16,10 +16,10 @@ export class CommandRunner {
 
   static async handle(
     command: CommandObject | null,
-    args: Record<string, any>
+    args: Record<string, any>,
   ): Promise<void> {
     if (command == null) {
-      ConsoleLogger.error("No command found");
+      ConsoleLogger.error('No command found');
       return;
     }
 
@@ -34,7 +34,7 @@ export class CommandRunner {
 
     const _cli = ConsoleIO.from(command.expression, args);
     if (_cli.hasErrors && _cli.missingArguments.length > 0) {
-      _cli.error(` Missing Arguments: ${_cli.missingArguments.join(", ")} `);
+      _cli.error(` Missing Arguments: ${_cli.missingArguments.join(', ')} `);
       return;
     }
 
@@ -47,21 +47,21 @@ export class CommandRunner {
   }
 
   static printOptions(command: CommandObject) {
-    console.log(pc.yellow("Command: ") + command.name);
+    console.log(pc.yellow('Command: ') + command.name);
     if (command.meta.desc) {
-      console.log(pc.yellow("Description: ") + command.meta.desc);
+      console.log(pc.yellow('Description: ') + command.meta.desc);
     }
 
     if (command.arguments.length) {
       console.log();
-      console.log(pc.yellow("Arguments:"));
+      console.log(pc.yellow('Arguments:'));
       const rows = [];
       for (const option of command.arguments) {
         let key = option.name;
         key = option.defaultValue ? `${key}[=${option.defaultValue}]` : key;
-        let desc = option.description || "No description passed";
+        let desc = option.description || 'No description passed';
         desc = option.isArray
-          ? `${desc} ${pc.yellow("[multiple values allowed]")}`
+          ? `${desc} ${pc.yellow('[multiple values allowed]')}`
           : desc;
 
         rows.push({ key, description: desc });
@@ -69,25 +69,25 @@ export class CommandRunner {
       const printRows = [];
       const formattedRows = columnify(rows, { padStart: 2 });
       for (const row of formattedRows) {
-        printRows.push([pc.green(row[0]), row[1]].join(""));
+        printRows.push([pc.green(row[0]), row[1]].join(''));
       }
 
-      console.log(printRows.join("\n"));
+      console.log(printRows.join('\n'));
     }
 
     if (command.options.length) {
       console.log();
-      console.log(pc.yellow("Options:"));
+      console.log(pc.yellow('Options:'));
       const rows = [];
       for (const option of command.options) {
-        let key = option.alias?.length ? `-${option.alias.join("|")}, ` : ``;
+        let key = option.alias?.length ? `-${option.alias.join('|')}, ` : ``;
         key = `${key}--${option.name}`;
         key = isEmpty(option.defaultValue)
           ? `${key}[=${option.defaultValue}]`
           : key;
-        let desc = option.description || "No description passed";
+        let desc = option.description || 'No description passed';
         desc = option.isArray
-          ? `${desc} ${pc.yellow("[multiple values allowed]")}`
+          ? `${desc} ${pc.yellow('[multiple values allowed]')}`
           : desc;
 
         rows.push({ key, description: desc });
@@ -95,10 +95,10 @@ export class CommandRunner {
       const printRows = [];
       const formattedRows = columnify(rows, { padStart: 2 });
       for (const row of formattedRows) {
-        printRows.push([pc.green(row[0]), row[1]].join(""));
+        printRows.push([pc.green(row[0]), row[1]].join(''));
       }
 
-      console.log(printRows.join("\n"));
+      console.log(printRows.join('\n'));
     }
 
     // if (command.arguments.length > 0) {

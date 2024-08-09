@@ -1,3 +1,10 @@
+import { ReadStream } from 'fs';
+import { GenericFunction } from '../../interfaces';
+import { Package } from '../../utils';
+import { Str } from '../../utils/string';
+import { CannotParseAsJsonException } from '../exceptions/cannotParseAsJson';
+import { CannotPerformFileOpException } from '../exceptions/cannotPerformFileOp';
+import { getMimeFromExtension } from '../helpers';
 import {
   StorageDriver,
   FileOptions,
@@ -5,15 +12,8 @@ import {
   StorageDriver$PutFileResponse,
   StorageDriver$RenameFileResponse,
   S3DiskOptions,
-} from "../interfaces";
-import { getMimeFromExtension } from "../helpers";
-import { ReadStream } from "fs";
-import { CannotParseAsJsonException } from "../exceptions/cannotParseAsJson";
-import { StorageService } from "../service";
-import { CannotPerformFileOpException } from "../exceptions/cannotPerformFileOp";
-import { GenericFunction } from "../../interfaces";
-import { Package } from "../../utils";
-import { Str } from "../../utils/string";
+} from '../interfaces';
+import { StorageService } from '../service';
 
 export class S3Storage implements StorageDriver {
   private readonly disk: string;
@@ -25,9 +25,9 @@ export class S3Storage implements StorageDriver {
   constructor(disk: string, config: S3DiskOptions) {
     this.disk = disk;
     this.config = config;
-    const { getSignedUrl } = Package.load("@aws-sdk/s3-request-presigner");
+    const { getSignedUrl } = Package.load('@aws-sdk/s3-request-presigner');
     this.getSignedUrlFn = getSignedUrl;
-    this.AWS = Package.load("@aws-sdk/client-s3");
+    this.AWS = Package.load('@aws-sdk/client-s3');
     this.client = new this.AWS.S3({
       region: this.config.region,
       credentials: config.credentials || {
@@ -38,13 +38,13 @@ export class S3Storage implements StorageDriver {
   }
 
   getStream(filePath: string): ReadStream {
-    console.log("file path ===> ", filePath);
-    throw new Error("Method not implemented.");
+    console.log('file path ===> ', filePath);
+    throw new Error('Method not implemented.');
   }
 
   listDir(path: string): Promise<Record<string, any>> {
     console.log(path);
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   /**
@@ -56,7 +56,7 @@ export class S3Storage implements StorageDriver {
   async put(
     path: string,
     fileContent: any,
-    options?: FileOptions
+    options?: FileOptions,
   ): Promise<StorageDriver$PutFileResponse> {
     const { mimeType } = options || {};
     const params = {
@@ -80,7 +80,7 @@ export class S3Storage implements StorageDriver {
   async signedUrl(
     path: string,
     expireInMinutes = 20,
-    command: "get" | "put" = "get"
+    command: 'get' | 'put' = 'get',
   ): Promise<string> {
     const commandMap = {
       get: this.AWS.GetObjectCommand,
@@ -91,11 +91,9 @@ export class S3Storage implements StorageDriver {
       Bucket: this.config.bucket,
       Key: this.getPath(path),
     });
-    const signedUrl = await this.getSignedUrlFn(this.client, commandObj, {
+    return await this.getSignedUrlFn(this.client, commandObj, {
       expiresIn: 60 * expireInMinutes,
     });
-
-    return signedUrl;
   }
 
   /**
@@ -165,8 +163,8 @@ export class S3Storage implements StorageDriver {
    * @param path
    */
   async url(path: string): Promise<string> {
-    const signedUrl = await this.signedUrl(path, 20, "get");
-    return Str.before(signedUrl, "?");
+    const signedUrl = await this.signedUrl(path, 20, 'get');
+    return Str.before(signedUrl, '?');
   }
 
   /**
@@ -176,7 +174,7 @@ export class S3Storage implements StorageDriver {
    */
   async delete(filePath: string): Promise<boolean> {
     const params = {
-      Bucket: this.config.bucket || "",
+      Bucket: this.config.bucket || '',
       Key: this.getPath(filePath),
     };
 
@@ -186,7 +184,7 @@ export class S3Storage implements StorageDriver {
     } catch (err) {
       if (this.shouldThrowError()) {
         throw new CannotPerformFileOpException(
-          `File ${filePath} cannot be deleted due to the reason: ${err["message"]}`
+          `File ${filePath} cannot be deleted due to the reason: ${err['message']}`,
         );
       }
       return false;
@@ -201,11 +199,11 @@ export class S3Storage implements StorageDriver {
    */
   async copy(
     sourcePath: string,
-    destinationPath: string
+    destinationPath: string,
   ): Promise<StorageDriver$RenameFileResponse> {
     const copyCommand = new this.AWS.CopyObjectCommand({
-      Bucket: this.config.bucket || "",
-      CopySource: "/" + this.config.bucket + "/" + this.getPath(sourcePath),
+      Bucket: this.config.bucket || '',
+      CopySource: '/' + this.config.bucket + '/' + this.getPath(sourcePath),
       Key: destinationPath,
     });
 
@@ -221,7 +219,7 @@ export class S3Storage implements StorageDriver {
    */
   async move(
     path: string,
-    newPath: string
+    newPath: string,
   ): Promise<StorageDriver$RenameFileResponse> {
     await this.copy(this.getPath(path), newPath);
     await this.delete(this.getPath(path));
@@ -231,7 +229,7 @@ export class S3Storage implements StorageDriver {
   async copyToDisk(
     sourcePath: string,
     destinationDisk: string,
-    destinationPath: string
+    destinationPath: string,
   ): Promise<boolean> {
     try {
       const buffer = await this.get(sourcePath);
@@ -241,7 +239,7 @@ export class S3Storage implements StorageDriver {
     } catch (e) {
       if (this.shouldThrowError()) {
         throw new CannotPerformFileOpException(
-          `File cannot be copied from ${sourcePath} to ${destinationDisk} in ${destinationDisk} disk for the reason: ${e["message"]}`
+          `File cannot be copied from ${sourcePath} to ${destinationDisk} in ${destinationDisk} disk for the reason: ${e['message']}`,
         );
       }
     }
@@ -252,7 +250,7 @@ export class S3Storage implements StorageDriver {
   async moveToDisk(
     sourcePath: string,
     destinationDisk: string,
-    destinationPath: string
+    destinationPath: string,
   ): Promise<boolean> {
     try {
       const buffer = await this.get(sourcePath);
@@ -263,7 +261,7 @@ export class S3Storage implements StorageDriver {
     } catch (e) {
       if (this.shouldThrowError()) {
         throw new CannotPerformFileOpException(
-          `File cannot be moved from ${sourcePath} to ${destinationDisk} in ${destinationDisk} disk for the reason: ${e["message"]}`
+          `File cannot be moved from ${sourcePath} to ${destinationDisk} in ${destinationDisk} disk for the reason: ${e['message']}`,
         );
       }
     }
@@ -272,7 +270,7 @@ export class S3Storage implements StorageDriver {
 
   async getAsJson(
     path: string,
-    throwError: boolean = false
+    throwError = false,
   ): Promise<Record<string, any>> {
     const buffer = await this.get(path);
     try {
@@ -288,10 +286,10 @@ export class S3Storage implements StorageDriver {
   temporaryUrl(
     path: string,
     ttlInMins: number,
-    params?: Record<string, any>
+    params?: Record<string, any>,
   ): Promise<string> {
     console.log(path, ttlInMins, params);
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   async size(path: string): Promise<number> {

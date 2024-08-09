@@ -1,22 +1,22 @@
-import { Injectable } from "@nestjs/common";
-import { DiscoveryService, MetadataScanner } from "@nestjs/core";
-import { IntentEventConstants } from "./constants";
-import { EventMetadata } from "./metadata";
+import { Injectable } from '@nestjs/common';
+import { DiscoveryService, MetadataScanner } from '@nestjs/core';
+import { IntentEventConstants } from './constants';
+import { EventMetadata } from './metadata';
 
 @Injectable()
 export class EventExplorer {
   constructor(
     private readonly discovery: DiscoveryService,
-    private readonly metadataScanner: MetadataScanner
+    private readonly metadataScanner: MetadataScanner,
   ) {}
 
   onModuleInit() {
     const wrappers = this.discovery.getProviders();
-    wrappers.forEach((w) => {
+    wrappers.forEach(w => {
       const { instance } = w;
       if (
         !instance ||
-        typeof instance === "string" ||
+        typeof instance === 'string' ||
         !Object.getPrototypeOf(instance)
       ) {
         return;
@@ -24,7 +24,7 @@ export class EventExplorer {
       this.metadataScanner.scanFromPrototype(
         instance,
         Object.getPrototypeOf(instance),
-        (key: string) => this.lookupListeners(instance, key)
+        (key: string) => this.lookupListeners(instance, key),
       );
     });
   }
@@ -34,13 +34,13 @@ export class EventExplorer {
     const hasEventMeta = Reflect.hasMetadata(
       IntentEventConstants.eventName,
       instance,
-      key
+      key,
     );
     if (!hasEventMeta) return;
     const eventName = Reflect.getMetadata(
       IntentEventConstants.eventName,
       instance,
-      key
+      key,
     );
     EventMetadata.addListener(eventName, methodRef.bind(instance));
   }

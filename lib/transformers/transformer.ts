@@ -1,6 +1,6 @@
-import { Transformer$IncludeMethodOptions } from "../interfaces";
-import { ExpParser } from "../utils/expParser";
-import { TransformerContext } from "./interfaces";
+import { Transformer$IncludeMethodOptions } from '../interfaces';
+import { ExpParser } from '../utils/expParser';
+import { TransformerContext } from './interfaces';
 
 export abstract class Transformer {
   public availableIncludes = [];
@@ -26,7 +26,7 @@ export abstract class Transformer {
   async item(
     obj: Record<string, any>,
     transformer: Transformer,
-    options?: Transformer$IncludeMethodOptions
+    options?: Transformer$IncludeMethodOptions,
   ): Promise<Record<string, any> | null> {
     if (!obj) return null;
     transformer = this.applyOptions(transformer, options);
@@ -44,7 +44,7 @@ export abstract class Transformer {
   async collection(
     arr: Array<Record<string, any> | string>,
     transformer: Transformer,
-    options?: Transformer$IncludeMethodOptions
+    options?: Transformer$IncludeMethodOptions,
   ): Promise<Array<any>> {
     if (!arr || arr.length === 0) return [];
     transformer = this.applyOptions(transformer, options);
@@ -58,18 +58,18 @@ export abstract class Transformer {
 
   applyOptions(
     transformer: Transformer,
-    options?: Transformer$IncludeMethodOptions
+    options?: Transformer$IncludeMethodOptions,
   ): Transformer {
     options = options || {};
     transformer.setContext(
-      new TransformerContext({ include: options.include?.join(",") })
+      new TransformerContext({ include: options.include?.join(',') }),
     );
     return transformer;
   }
 
   parseIncludes(): this {
     this.includes = ExpParser.from(
-      this.ctx?.getPayload()?.include || ""
+      this.ctx?.getPayload()?.include || '',
     ).toObj();
     for (const include of this.defaultIncludes) {
       if (!(include in this.includes)) {
@@ -81,7 +81,7 @@ export abstract class Transformer {
   }
 
   async work(
-    data: any
+    data: any,
   ): Promise<Record<string, any> | Array<Record<string, any>>> {
     if (!data) return null;
     this.parseIncludes();
@@ -91,14 +91,14 @@ export abstract class Transformer {
     }
 
     const handlerName = (name: string) =>
-      "include" + name.charAt(0).toUpperCase() + name.slice(1);
+      'include' + name.charAt(0).toUpperCase() + name.slice(1);
 
     for (const include in this.includes) {
       const handler = handlerName(include);
       const nestedIncludes = this.includes[include];
       if (this[handler]) {
         result[include] = await this[handler](data, {
-          include: nestedIncludes || "",
+          include: nestedIncludes || '',
         });
       }
     }

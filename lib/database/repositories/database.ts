@@ -1,13 +1,12 @@
-import { RepositoryContract } from './contract';
-import { BaseModel } from '../baseModel';
-import { ModelKeys } from '../interfaces';
-import { Expression } from 'objection';
-import { PrimitiveValue } from 'objection';
-import { ObjectionService } from '../service';
 import { Knex, Knex as KnexType } from 'knex';
+import { PrimitiveValue , Expression } from 'objection';
+import { BaseModel } from '../baseModel';
 import { ModelNotFound } from '../exceptions';
 import { RepositoryError } from '../exceptions/repoError';
+import { ModelKeys } from '../interfaces';
 import { CustomQueryBuilder } from '../queryBuilders/custom';
+import { ObjectionService } from '../service';
+import { RepositoryContract } from './contract';
 
 export class DatabaseRepository<T extends BaseModel>
   implements RepositoryContract<T>

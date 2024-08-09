@@ -1,4 +1,4 @@
-import { ConsoleIO } from "../consoleIO";
+import { ConsoleIO } from '../consoleIO';
 
 export interface CommandMetaOptions {
   desc?: string;
