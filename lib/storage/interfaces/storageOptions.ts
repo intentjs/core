@@ -1,7 +1,7 @@
-export type StorageDiskType = "s3" | "local";
+export type StorageDiskType = 's3' | 'local';
 
 export interface DiskOptions {
-  driver: "s3" | "local";
+  driver: 's3' | 'local';
   profile?: string;
   region?: string;
   bucket?: string;
@@ -13,7 +13,7 @@ export interface DiskOptions {
 }
 
 export interface S3DiskOptions {
-  driver: "s3";
+  driver: 's3';
   region: string;
   bucket: string;
   credentials?: any;
@@ -24,7 +24,7 @@ export interface S3DiskOptions {
 }
 
 export interface LocalDiskOptions {
-  driver: "local";
+  driver: 'local';
   basePath?: string;
   throwOnFailure?: boolean;
 }

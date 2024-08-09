@@ -1,6 +1,6 @@
-import { ValidationError } from "class-validator";
-import { isEmpty } from "../utils/helpers";
-import { Str } from "../utils/string";
+import { ValidationError } from 'class-validator';
+import { isEmpty } from '../utils/helpers';
+import { Str } from '../utils/string';
 
 export class ValidationErrorSerializer {
   async handle(errors: ValidationError[]): Promise<Record<string, any>> {
@@ -25,8 +25,8 @@ export class ValidationErrorSerializer {
       children.push(this.parseError(child));
     }
 
-    const messages = Object.values(error.constraints || {}).map((m) =>
-      Str.replace(m, error.property, Str.title(error.property))
+    const messages = Object.values(error.constraints || {}).map(m =>
+      Str.replace(m, error.property, Str.title(error.property)),
     );
 
     const errors = {};

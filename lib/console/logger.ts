@@ -1,6 +1,6 @@
-import pc from "picocolors";
-import Table from "cli-table3";
-import { Str } from "../utils/string";
+import Table from 'cli-table3';
+import pc from 'picocolors';
+import { Str } from '../utils/string';
 
 export class ConsoleLogger {
   /**
@@ -36,7 +36,7 @@ export class ConsoleLogger {
    * @returns void
    */
   static line(): void {
-    console.log(pc.gray("-".repeat(process.stdout.columns / 2)));
+    console.log(pc.gray('-'.repeat(process.stdout.columns / 2)));
   }
 
   /**

@@ -1,11 +1,11 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import { DatabaseOptions, DbConnectionOptions } from "./options";
-import Knex, { Knex as KnexType } from "knex";
-import { ConnectionNotFound } from "./exceptions";
-import { BaseModel } from "./baseModel";
-import { IntentConfig } from "../config/service";
-import { InternalLogger } from "../utils/logger";
-import { logTime } from "../utils/helpers";
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import Knex, { Knex as KnexType } from 'knex';
+import { IntentConfig } from '../config/service';
+import { logTime } from '../utils/helpers';
+import { InternalLogger } from '../utils/logger';
+import { BaseModel } from './baseModel';
+import { ConnectionNotFound } from './exceptions';
+import { DatabaseOptions, DbConnectionOptions } from './options';
 
 @Injectable()
 export class ObjectionService implements OnModuleInit {
@@ -13,7 +13,7 @@ export class ObjectionService implements OnModuleInit {
   static dbConnections: Record<string, KnexType>;
 
   constructor(config: IntentConfig) {
-    const dbConfig = config.get("db") as DatabaseOptions;
+    const dbConfig = config.get('db') as DatabaseOptions;
     if (!dbConfig) return;
     const defaultConnection = dbConfig.connections[dbConfig.default];
     ObjectionService.config = dbConfig;
@@ -32,20 +32,20 @@ export class ObjectionService implements OnModuleInit {
       const dbOptions = ObjectionService.getOptions(connName);
 
       try {
-        await connection.raw(dbOptions.validateQuery || "select 1+1 as result");
+        await connection.raw(dbOptions.validateQuery || 'select 1+1 as result');
         InternalLogger.success(
-          "DatabaseService",
+          'DatabaseService',
           `Was able to successfully validate [${connName}] connection ${logTime(
-            Date.now() - time
-          )}`
+            Date.now() - time,
+          )}`,
         );
       } catch (_e) {
         const e = _e as Error;
         InternalLogger.error(
-          "DatabaseService",
+          'DatabaseService',
           `Validation for connection [${connName}] failed with reason ${
             e.message
-          } ${logTime(Date.now() - time)}`
+          } ${logTime(Date.now() - time)}`,
         );
       }
     }
@@ -56,7 +56,7 @@ export class ObjectionService implements OnModuleInit {
     conName = conName || ObjectionService.config.default;
 
     const isConNameValid = Object.keys(
-      ObjectionService.config.connections
+      ObjectionService.config.connections,
     ).includes(conName);
 
     if (conName && !isConNameValid) {
@@ -71,7 +71,7 @@ export class ObjectionService implements OnModuleInit {
     conName = conName || ObjectionService.config.default;
 
     const isConNameValid = Object.keys(
-      ObjectionService.config.connections
+      ObjectionService.config.connections,
     ).includes(conName);
 
     if (conName && !isConNameValid) {

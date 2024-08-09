@@ -1,8 +1,8 @@
-import { ArgumentParserOutput } from "./interfaces";
-import { ArgumentParser } from "./argumentParser";
-import { Inquirer } from "./inquirer";
-import { ConsoleLogger } from "./logger";
-import { Obj } from "../utils";
+import { Obj } from '../utils';
+import { ArgumentParser } from './argumentParser';
+import { Inquirer } from './inquirer';
+import { ArgumentParserOutput } from './interfaces';
+import { ConsoleLogger } from './logger';
 
 export class ConsoleIO {
   schema: ArgumentParserOutput;
@@ -11,8 +11,11 @@ export class ConsoleIO {
   hasErrors: boolean;
   missingArguments: string[];
 
-  constructor(private schemaString: string, private argv: Record<string, any>) {
-    this.schema = { name: "", arguments: [], options: [], meta: { desc: "" } };
+  constructor(
+    private schemaString: string,
+    private argv: Record<string, any>,
+  ) {
+    this.schema = { name: '', arguments: [], options: [], meta: { desc: '' } };
     this.values = { arguments: {}, options: {} };
     this.rawValues = { ...this.argv };
     this.missingArguments = [];

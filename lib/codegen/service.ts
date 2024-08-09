@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
-import { existsSync } from "fs";
-import { join } from "path";
-import { Eta } from "eta";
-import { path } from "app-root-path";
-import { Node, Project, SyntaxKind } from "ts-morph";
+import { existsSync } from 'fs';
+import { join } from 'path';
+import { Injectable } from '@nestjs/common';
+import { path } from 'app-root-path';
+import { Eta } from 'eta';
+import { Node, Project, SyntaxKind } from 'ts-morph';
 
 @Injectable()
 export class CodegenService {
@@ -12,7 +12,7 @@ export class CodegenService {
   constructor() {
     this.templateEngine = new Eta({
       cache: true,
-      views: join(__dirname, "../../../resources/stubs"),
+      views: join(__dirname, '../../../resources/stubs'),
     });
   }
 
@@ -27,7 +27,7 @@ export class CodegenService {
     const { filePath, fileNameWithoutEx, input = {} } = options;
     await this.checkIfFileAlreadyExists(filePath);
 
-    const content = await this.templateEngine.renderAsync("config", input);
+    const content = await this.templateEngine.renderAsync('config', input);
     const project = new Project({});
     const newFile = project.createSourceFile(join(path, filePath), content, {
       overwrite: false,
@@ -36,7 +36,7 @@ export class CodegenService {
 
     // update the index.ts file
     const indexFile = project.addSourceFileAtPath(
-      join(path, "config/index.ts")
+      join(path, 'config/index.ts'),
     );
 
     indexFile.addImportDeclaration({
@@ -45,18 +45,18 @@ export class CodegenService {
     });
 
     const defaultExport = indexFile.getExportAssignment(
-      (assignment) => assignment.isExportEquals() === false
+      assignment => assignment.isExportEquals() === false,
     );
 
     if (!defaultExport) return;
     const exportExpression = defaultExport.getExpression();
     const arrayLiteral = exportExpression.asKindOrThrow(
-      SyntaxKind.ArrayLiteralExpression
+      SyntaxKind.ArrayLiteralExpression,
     );
     arrayLiteral.addElement(fileNameWithoutEx);
     await indexFile.save();
 
-    console.timeEnd("ttl");
+    console.timeEnd('ttl');
   }
 
   async createController(options: Record<string, any>): Promise<void> {
@@ -64,27 +64,27 @@ export class CodegenService {
     await this.checkIfFileAlreadyExists(filePath);
 
     const project = new Project();
-    const content = await this.templateEngine.renderAsync("controller", input);
+    const content = await this.templateEngine.renderAsync('controller', input);
     const newController = project.createSourceFile(
       join(path, filePath),
       content,
-      { overwrite: false }
+      { overwrite: false },
     );
     await newController.save();
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, "app", "module.ts")
+      join(path, 'app', 'module.ts'),
     );
-    const classDeclaration = moduleFile.getClassOrThrow("AppModule");
-    const moduleDecorator = classDeclaration.getDecoratorOrThrow("Module");
+    const classDeclaration = moduleFile.getClassOrThrow('AppModule');
+    const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
     const moduleDecoratorArg = moduleDecorator.getArguments()[0];
 
     const moduleObjectLiteral = moduleDecoratorArg.asKindOrThrow(
-      SyntaxKind.ObjectLiteralExpression
+      SyntaxKind.ObjectLiteralExpression,
     );
 
-    const controllersProperty = moduleObjectLiteral.getProperty("controllers");
+    const controllersProperty = moduleObjectLiteral.getProperty('controllers');
 
     if (Node.isPropertyAssignment(controllersProperty)) {
       const controllersArray = controllersProperty
@@ -106,27 +106,27 @@ export class CodegenService {
     await this.checkIfFileAlreadyExists(filePath);
 
     const project = new Project();
-    const content = await this.templateEngine.renderAsync("service", input);
+    const content = await this.templateEngine.renderAsync('service', input);
     const newController = project.createSourceFile(
       join(path, filePath),
       content,
-      { overwrite: false }
+      { overwrite: false },
     );
     await newController.save();
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, "app", "module.ts")
+      join(path, 'app', 'module.ts'),
     );
-    const classDeclaration = moduleFile.getClassOrThrow("AppModule");
-    const moduleDecorator = classDeclaration.getDecoratorOrThrow("Module");
+    const classDeclaration = moduleFile.getClassOrThrow('AppModule');
+    const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
     const moduleDecoratorArg = moduleDecorator.getArguments()[0];
 
     const moduleObjectLiteral = moduleDecoratorArg.asKindOrThrow(
-      SyntaxKind.ObjectLiteralExpression
+      SyntaxKind.ObjectLiteralExpression,
     );
 
-    const controllersProperty = moduleObjectLiteral.getProperty("providers");
+    const controllersProperty = moduleObjectLiteral.getProperty('providers');
 
     if (Node.isPropertyAssignment(controllersProperty)) {
       const controllersArray = controllersProperty
@@ -148,11 +148,11 @@ export class CodegenService {
     await this.checkIfFileAlreadyExists(filePath);
 
     const project = new Project();
-    const content = await this.templateEngine.renderAsync("exception", input);
+    const content = await this.templateEngine.renderAsync('exception', input);
     const newException = project.createSourceFile(
       join(path, filePath),
       content,
-      { overwrite: false }
+      { overwrite: false },
     );
     await newException.save();
   }
@@ -162,8 +162,8 @@ export class CodegenService {
     await this.checkIfFileAlreadyExists(filePath);
 
     const content = await this.templateEngine.renderAsync(
-      "repositoryDB",
-      input
+      'repositoryDB',
+      input,
     );
 
     const project = new Project();
@@ -171,31 +171,31 @@ export class CodegenService {
     const newSourceFile = project.createSourceFile(
       join(path, filePath),
       content,
-      { overwrite: false }
+      { overwrite: false },
     );
     await newSourceFile.save();
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, "app", "module.ts")
+      join(path, 'app', 'module.ts'),
     );
 
-    const classDeclaration = moduleFile.getClassOrThrow("AppModule");
-    const moduleDecorator = classDeclaration.getDecoratorOrThrow("Module");
+    const classDeclaration = moduleFile.getClassOrThrow('AppModule');
+    const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
     const moduleDecoratorArg = moduleDecorator.getArguments()[0];
 
     const moduleObjectLiteral = moduleDecoratorArg.asKindOrThrow(
-      SyntaxKind.ObjectLiteralExpression
+      SyntaxKind.ObjectLiteralExpression,
     );
 
-    const controllersProperty = moduleObjectLiteral.getProperty("providers");
+    const controllersProperty = moduleObjectLiteral.getProperty('providers');
 
     if (Node.isPropertyAssignment(controllersProperty)) {
       const controllersArray = controllersProperty
         .getInitializer()
         .asKindOrThrow(SyntaxKind.ArrayLiteralExpression);
       controllersArray.addElement(
-        `{ provide: '${repoToken}', useClass: ${input.className}, }`
+        `{ provide: '${repoToken}', useClass: ${input.className}, }`,
       );
     }
 
@@ -212,27 +212,27 @@ export class CodegenService {
     await this.checkIfFileAlreadyExists(filePath);
 
     const project = new Project();
-    const content = await this.templateEngine.renderAsync("job", input);
+    const content = await this.templateEngine.renderAsync('job', input);
     const newController = project.createSourceFile(
       join(path, filePath),
       content,
-      { overwrite: false }
+      { overwrite: false },
     );
     await newController.save();
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, "app", "module.ts")
+      join(path, 'app', 'module.ts'),
     );
-    const classDeclaration = moduleFile.getClassOrThrow("AppModule");
-    const moduleDecorator = classDeclaration.getDecoratorOrThrow("Module");
+    const classDeclaration = moduleFile.getClassOrThrow('AppModule');
+    const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
     const moduleDecoratorArg = moduleDecorator.getArguments()[0];
 
     const moduleObjectLiteral = moduleDecoratorArg.asKindOrThrow(
-      SyntaxKind.ObjectLiteralExpression
+      SyntaxKind.ObjectLiteralExpression,
     );
 
-    const controllersProperty = moduleObjectLiteral.getProperty("providers");
+    const controllersProperty = moduleObjectLiteral.getProperty('providers');
 
     if (Node.isPropertyAssignment(controllersProperty)) {
       const controllersArray = controllersProperty
@@ -254,11 +254,11 @@ export class CodegenService {
     await this.checkIfFileAlreadyExists(filePath);
 
     const project = new Project();
-    const content = await this.templateEngine.renderAsync("model", input);
+    const content = await this.templateEngine.renderAsync('model', input);
     const newController = project.createSourceFile(
       join(path, filePath),
       content,
-      { overwrite: false }
+      { overwrite: false },
     );
     await newController.save();
   }
@@ -268,11 +268,11 @@ export class CodegenService {
     await this.checkIfFileAlreadyExists(filePath);
 
     const project = new Project();
-    const content = await this.templateEngine.renderAsync("event", input);
+    const content = await this.templateEngine.renderAsync('event', input);
     const newException = project.createSourceFile(
       join(path, filePath),
       content,
-      { overwrite: false }
+      { overwrite: false },
     );
     await newException.save();
   }
@@ -282,27 +282,27 @@ export class CodegenService {
     await this.checkIfFileAlreadyExists(filePath);
 
     const project = new Project();
-    const content = await this.templateEngine.renderAsync("listener", input);
+    const content = await this.templateEngine.renderAsync('listener', input);
     const newController = project.createSourceFile(
       join(path, filePath),
       content,
-      { overwrite: false }
+      { overwrite: false },
     );
     await newController.save();
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, "app", "module.ts")
+      join(path, 'app', 'module.ts'),
     );
-    const classDeclaration = moduleFile.getClassOrThrow("AppModule");
-    const moduleDecorator = classDeclaration.getDecoratorOrThrow("Module");
+    const classDeclaration = moduleFile.getClassOrThrow('AppModule');
+    const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
     const moduleDecoratorArg = moduleDecorator.getArguments()[0];
 
     const moduleObjectLiteral = moduleDecoratorArg.asKindOrThrow(
-      SyntaxKind.ObjectLiteralExpression
+      SyntaxKind.ObjectLiteralExpression,
     );
 
-    const controllersProperty = moduleObjectLiteral.getProperty("providers");
+    const controllersProperty = moduleObjectLiteral.getProperty('providers');
 
     if (Node.isPropertyAssignment(controllersProperty)) {
       const controllersArray = controllersProperty
@@ -324,27 +324,27 @@ export class CodegenService {
     await this.checkIfFileAlreadyExists(filePath);
 
     const project = new Project();
-    const content = await this.templateEngine.renderAsync("command", input);
+    const content = await this.templateEngine.renderAsync('command', input);
     const newController = project.createSourceFile(
       join(path, filePath),
       content,
-      { overwrite: false }
+      { overwrite: false },
     );
     await newController.save();
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, "app", "module.ts")
+      join(path, 'app', 'module.ts'),
     );
-    const classDeclaration = moduleFile.getClassOrThrow("AppModule");
-    const moduleDecorator = classDeclaration.getDecoratorOrThrow("Module");
+    const classDeclaration = moduleFile.getClassOrThrow('AppModule');
+    const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
     const moduleDecoratorArg = moduleDecorator.getArguments()[0];
 
     const moduleObjectLiteral = moduleDecoratorArg.asKindOrThrow(
-      SyntaxKind.ObjectLiteralExpression
+      SyntaxKind.ObjectLiteralExpression,
     );
 
-    const controllersProperty = moduleObjectLiteral.getProperty("providers");
+    const controllersProperty = moduleObjectLiteral.getProperty('providers');
 
     if (Node.isPropertyAssignment(controllersProperty)) {
       const controllersArray = controllersProperty
@@ -366,11 +366,11 @@ export class CodegenService {
     await this.checkIfFileAlreadyExists(filePath);
 
     const project = new Project();
-    const content = await this.templateEngine.renderAsync("mail", input);
+    const content = await this.templateEngine.renderAsync('mail', input);
     const newException = project.createSourceFile(
       join(path, filePath),
       content,
-      { overwrite: false }
+      { overwrite: false },
     );
     await newException.save();
   }

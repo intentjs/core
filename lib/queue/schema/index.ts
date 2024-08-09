@@ -31,11 +31,11 @@ export class SqsQueueOptionsDto {
 }
 
 export class RedisQueueOptionsDto {
-  @ValidateIf((o) => !o.url)
+  @ValidateIf(o => !o.url)
   @IsString()
   host: string;
 
-  @ValidateIf((o) => !o.url)
+  @ValidateIf(o => !o.url)
   @IsNotEmpty()
   @IsInt()
   port: number;
@@ -47,7 +47,7 @@ export class RedisQueueOptionsDto {
   @IsNotEmpty()
   queue: string;
 
-  @ValidateIf((o) => !o.host)
+  @ValidateIf(o => !o.host)
   @IsUrl()
   url: string;
 

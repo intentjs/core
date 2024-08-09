@@ -1,4 +1,4 @@
-import { GenericFunction } from "../../interfaces";
+import { GenericFunction } from '../../interfaces';
 
 export interface CacheDriver {
   /**
@@ -16,7 +16,7 @@ export interface CacheDriver {
   set(
     key: string,
     value: Record<string, any> | string,
-    ttlInSec?: number
+    ttlInSec?: number,
   ): Promise<boolean>;
 
   /**
@@ -28,7 +28,7 @@ export interface CacheDriver {
   remember<T = any>(
     key: string,
     cb: GenericFunction,
-    ttlInSec: number
+    ttlInSec: number,
   ): Promise<T>;
 
   rememberForever<T = any>(key: string, cb: GenericFunction): Promise<T>;

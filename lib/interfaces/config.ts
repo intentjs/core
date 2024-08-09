@@ -1,8 +1,8 @@
 import {
   CorsOptions,
   CorsOptionsDelegate,
-} from "@nestjs/common/interfaces/external/cors-options.interface";
-import { GenericClass } from ".";
+} from '@nestjs/common/interfaces/external/cors-options.interface';
+import { GenericClass } from '.';
 
 export interface SentryConfig {
   dsn: string;

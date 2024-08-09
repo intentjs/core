@@ -1,7 +1,7 @@
-import axios from "axios";
-import { LocalDiskOptions, S3DiskOptions, StorageDriver } from "./interfaces";
-import { StorageService } from "./service";
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { LocalDiskOptions, S3DiskOptions, StorageDriver } from './interfaces';
+import { StorageService } from './service';
 
 @Injectable()
 export class Storage {
@@ -14,7 +14,7 @@ export class Storage {
   }
 
   static async download(url: string): Promise<Buffer> {
-    const res = await axios.get(url, { responseType: "arraybuffer" });
+    const res = await axios.get(url, { responseType: 'arraybuffer' });
     return Buffer.from(res.data);
   }
 }

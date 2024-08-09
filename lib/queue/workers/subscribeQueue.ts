@@ -1,8 +1,8 @@
-import { ListenerOptions } from "../interfaces";
-import { SubscribeQueueDriver } from "../strategy/subscribeQueueDriver";
-import { QueueMetadata } from "../metadata";
-import { QueueService } from "../service";
-import { Obj } from "../../utils";
+import { Obj } from '../../utils';
+import { ListenerOptions } from '../interfaces';
+import { QueueMetadata } from '../metadata';
+import { QueueService } from '../service';
+import { SubscribeQueueDriver } from '../strategy/subscribeQueueDriver';
 
 export interface PubSubWorkerOptions extends ListenerOptions {
   listenerId?: string;
@@ -25,7 +25,7 @@ export class SubscribeQueueWorker {
 
     if (!this.options.queue) {
       const data = QueueMetadata.getData();
-      this.options["queue"] = data.connections[
+      this.options['queue'] = data.connections[
         this.options.connection || defaultOptions.connection
       ].queue as string;
     }
@@ -40,7 +40,7 @@ export class SubscribeQueueWorker {
     const jobs = QueueMetadata.getAllJobs();
     await this.initBroker(this.options.connection, jobs);
     const connClient = QueueService.getConnectionClient<SubscribeQueueDriver>(
-      this.options.connection
+      this.options.connection,
     );
 
     await connClient.startListening(this.processIncomingMessage());
@@ -48,25 +48,25 @@ export class SubscribeQueueWorker {
     this.attachDeamonListeners();
 
     await new Promise(() =>
-      setInterval(async () => {}, 20 * 24 * 60 * 60 * 1000)
+      setInterval(async () => {}, 20 * 24 * 60 * 60 * 1000),
     );
   }
 
   attachDeamonListeners() {
-    process.on("SIGINT", async () => {
+    process.on('SIGINT', async () => {
       await this.closeConnections();
     });
 
-    process.on("SIGQUIT", async () => {
+    process.on('SIGQUIT', async () => {
       await this.closeConnections();
     });
 
-    process.on("SIGTERM", async () => {
+    process.on('SIGTERM', async () => {
       await this.closeConnections();
     });
 
-    process.on("message", async (msg: any) => {
-      if (msg === "shutdown" || msg.type === "shutdown") {
+    process.on('message', async (msg: any) => {
+      if (msg === 'shutdown' || msg.type === 'shutdown') {
         await this.closeConnections();
       }
     });
@@ -81,14 +81,14 @@ export class SubscribeQueueWorker {
 
   async initBroker(
     broker: string,
-    listeners: Record<string, any>
+    listeners: Record<string, any>,
   ): Promise<void> {
     const topicNames = Object.keys(listeners);
 
     const brokerClient =
       QueueService.getConnectionClient<SubscribeQueueDriver>(broker);
 
-    const workerOptions = Obj.pick(this.options, ["listenerId"]);
+    const workerOptions = Obj.pick(this.options, ['listenerId']);
     await brokerClient.initListeners({
       topics: topicNames,
       workerOptions: workerOptions,

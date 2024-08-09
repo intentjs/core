@@ -1,4 +1,4 @@
-import { IntentConfig } from "../config/service";
+import { IntentConfig } from '../config/service';
 
 interface NumOptions {
   precision?: number;
@@ -12,9 +12,9 @@ export class Num {
   }
 
   static abbreviate(num: number, options?: NumOptions): string {
-    const locale = options?.locale ?? IntentConfig.get("app.locale");
+    const locale = options?.locale ?? IntentConfig.get('app.locale');
     return Intl.NumberFormat(locale, {
-      notation: "compact",
+      notation: 'compact',
       maximumFractionDigits: options?.precision ?? 1,
     }).format(num);
   }
@@ -24,10 +24,10 @@ export class Num {
   }
 
   static currency(num: number, options?: NumOptions): string {
-    const locale = options?.locale ?? IntentConfig.get("app.locale");
-    const currency = options?.currency ?? IntentConfig.get("app.currency");
+    const locale = options?.locale ?? IntentConfig.get('app.locale');
+    const currency = options?.currency ?? IntentConfig.get('app.currency');
     return Intl.NumberFormat(locale, {
-      style: "currency",
+      style: 'currency',
       currency: currency,
     }).format(num);
   }
@@ -35,34 +35,34 @@ export class Num {
   // return type -
   static fileSize(num: number, options?: NumOptions): string {
     return new Intl.NumberFormat([], {
-      style: "unit",
-      unit: "byte",
-      notation: "compact",
-      unitDisplay: "narrow",
+      style: 'unit',
+      unit: 'byte',
+      notation: 'compact',
+      unitDisplay: 'narrow',
       maximumFractionDigits: options?.precision ?? 1,
     }).format(num);
   }
 
   static forHumans(num: number, options?: NumOptions): string {
-    const locale = options?.locale ?? IntentConfig.get("app.locale");
+    const locale = options?.locale ?? IntentConfig.get('app.locale');
     return Intl.NumberFormat(locale, {
-      notation: "compact",
-      compactDisplay: "long",
+      notation: 'compact',
+      compactDisplay: 'long',
       maximumFractionDigits: options?.precision ?? 1,
     }).format(num);
   }
 
   static format(num: number, options?: NumOptions): string {
-    const locale = options?.locale ?? IntentConfig.get("app.locale");
+    const locale = options?.locale ?? IntentConfig.get('app.locale');
     return Intl.NumberFormat(locale, {
       maximumFractionDigits: options?.precision ?? 1,
     }).format(num);
   }
 
   static percentage(num: number, options?: NumOptions): string {
-    const locale = options?.locale ?? IntentConfig.get("app.locale");
+    const locale = options?.locale ?? IntentConfig.get('app.locale');
     return Intl.NumberFormat(locale, {
-      style: "percent",
+      style: 'percent',
       minimumFractionDigits: options?.precision ?? 1,
       maximumFractionDigits: options?.precision ?? 1,
     }).format(num / 100);
@@ -84,72 +84,72 @@ export class Num {
 
   static spell(num: number | string): string {
     const numWords = [
-      "",
-      "one ",
-      "two ",
-      "three ",
-      "four ",
-      "five ",
-      "six ",
-      "seven ",
-      "eight ",
-      "nine ",
-      "ten ",
-      "eleven ",
-      "twelve ",
-      "thirteen ",
-      "fourteen ",
-      "fifteen ",
-      "sixteen ",
-      "seventeen ",
-      "eighteen ",
-      "nineteen ",
+      '',
+      'one ',
+      'two ',
+      'three ',
+      'four ',
+      'five ',
+      'six ',
+      'seven ',
+      'eight ',
+      'nine ',
+      'ten ',
+      'eleven ',
+      'twelve ',
+      'thirteen ',
+      'fourteen ',
+      'fifteen ',
+      'sixteen ',
+      'seventeen ',
+      'eighteen ',
+      'nineteen ',
     ];
     const tens = [
-      "",
-      "",
-      "twenty",
-      "thirty",
-      "forty",
-      "fifty",
-      "sixty",
-      "seventy",
-      "eighty",
-      "ninety",
+      '',
+      '',
+      'twenty',
+      'thirty',
+      'forty',
+      'fifty',
+      'sixty',
+      'seventy',
+      'eighty',
+      'ninety',
     ];
 
-    if ((num = num.toString()).length > 9) return "overflow";
-    const n = ("000000000" + num)
+    if ((num = num.toString()).length > 9) return 'overflow';
+    const n = ('000000000' + num)
       .slice(-9)
       .match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
     if (!n) return;
-    let str = "";
+    let str = '';
     str +=
       Number(n[1]) != 0
-        ? (numWords[Number(n[1])] || tens[n[1][0]] + " " + numWords[n[1][1]]) +
-          "crore "
-        : "";
+        ? (numWords[Number(n[1])] || tens[n[1][0]] + ' ' + numWords[n[1][1]]) +
+          'crore '
+        : '';
     str +=
       Number(n[2]) != 0
-        ? (numWords[Number(n[2])] || tens[n[2][0]] + " " + numWords[n[2][1]]) +
-          "lakh "
-        : "";
+        ? (numWords[Number(n[2])] || tens[n[2][0]] + ' ' + numWords[n[2][1]]) +
+          'lakh '
+        : '';
     str +=
       Number(n[3]) != 0
-        ? (numWords[Number(n[3])] || tens[n[3][0]] + " " + numWords[n[3][1]]) +
-          "thousand "
-        : "";
+        ? (numWords[Number(n[3])] || tens[n[3][0]] + ' ' + numWords[n[3][1]]) +
+          'thousand '
+        : '';
     str +=
       Number(n[4]) != 0
-        ? (numWords[Number(n[4])] || tens[n[4][0]] + " " + numWords[n[4][1]]) +
-          "hundred "
-        : "";
+        ? (numWords[Number(n[4])] || tens[n[4][0]] + ' ' + numWords[n[4][1]]) +
+          'hundred '
+        : '';
     str +=
       Number(n[5]) != 0
-        ? (str != "" ? "and " : "") +
-          (numWords[Number(n[5])] || tens[n[5][0]] + " " + numWords[n[5][1]]) +
-          "only"
-        : "";
+        ? (str != '' ? 'and ' : '') +
+          (numWords[Number(n[5])] || tens[n[5][0]] + ' ' + numWords[n[5][1]]) +
+          'only'
+        : '';
     return str;
   }
 

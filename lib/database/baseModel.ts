@@ -15,7 +15,7 @@ export class BaseModel extends Model {
   /**
    * Specifies if the model supports soft delete feature.
    */
-  static softDelete: boolean = false;
+  static softDelete = false;
 
   QueryBuilderType!: CustomQueryBuilder<this> | SoftDeleteQueryBuilder<this>;
 

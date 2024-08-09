@@ -1,9 +1,9 @@
-import { Type } from "@nestjs/common";
-import { plainToInstance } from "class-transformer";
-import { ValidationError, validate } from "class-validator";
-import { Obj } from "../utils";
-import { ValidationFailed } from "../exceptions/validationfailed";
-import { IntentConfig } from "../config/service";
+import { Type } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import { ValidationError, validate } from 'class-validator';
+import { IntentConfig } from '../config/service';
+import { ValidationFailed } from '../exceptions/validationfailed';
+import { Obj } from '../utils';
 
 export class Validator<T> {
   private meta: Record<string, any>;
@@ -32,7 +32,7 @@ export class Validator<T> {
       this.injectMeta(schema);
     }
 
-    schema["$"] = this.meta;
+    schema['$'] = this.meta;
 
     const errors = await validate(schema as Record<string, any>, {
       stopAtFirstError: true,
@@ -51,7 +51,7 @@ export class Validator<T> {
    */
   async processErrorsFromValidation(errors: ValidationError[]): Promise<void> {
     const serializerClass = IntentConfig.get(
-      "app.error.validationErrorSerializer"
+      'app.error.validationErrorSerializer',
     );
     if (!serializerClass) throw new ValidationFailed(errors);
     const serializer = new serializerClass();
@@ -60,17 +60,17 @@ export class Validator<T> {
   }
 
   injectMeta<T>(schema: T): T {
-    schema["$"] = this.meta || {};
+    schema['$'] = this.meta || {};
     const inject = (obj: any, injectionKey: string, injectionValue: any) => {
       for (const key in obj) {
         if (key === injectionKey) continue;
-        if (typeof obj[key] === "object")
+        if (typeof obj[key] === 'object')
           obj[key] = inject(obj[key], injectionKey, injectionValue);
       }
       obj[injectionKey] = injectionValue;
       return obj;
     };
 
-    return inject(schema, "$", this.meta);
+    return inject(schema, '$', this.meta);
   }
 }

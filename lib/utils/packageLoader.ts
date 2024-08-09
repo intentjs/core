@@ -1,5 +1,5 @@
-import { InternalLogger } from "./logger";
-import * as pc from "picocolors";
+import * as pc from 'picocolors';
+import { InternalLogger } from './logger';
 
 export class Package {
   static load(pkgName: string): any {
@@ -7,10 +7,10 @@ export class Package {
       return require(pkgName);
     } catch (e) {
       InternalLogger.error(
-        "PackageLoader",
+        'PackageLoader',
         `${pc.underline(
-          pkgName
-        )} is missing. Please make sure that you have installed the package first`
+          pkgName,
+        )} is missing. Please make sure that you have installed the package first`,
       );
       process.exit();
       // process.exitCode = 1;
