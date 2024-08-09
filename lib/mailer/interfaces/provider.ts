@@ -1,4 +1,4 @@
-import { MailMessage } from "../message";
+import { MailMessage } from '../message';
 
 export interface AttachmentOptions {
   filename: string;

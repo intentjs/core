@@ -4,7 +4,7 @@ import {
   StorageDriver$PutFileResponse,
   StorageDriver$RenameFileResponse,
   FileOptions,
-} from ".";
+} from '.';
 
 export interface StorageDriver {
   /**
@@ -16,7 +16,7 @@ export interface StorageDriver {
   put(
     path: string,
     fileContent: any,
-    options?: FileOptions
+    options?: FileOptions,
   ): Promise<StorageDriver$PutFileResponse>;
 
   /**
@@ -55,7 +55,7 @@ export interface StorageDriver {
   signedUrl(
     path: string,
     expireInMinutes: number,
-    command?: "get" | "put"
+    command?: 'get' | 'put',
   ): Promise<string>;
 
   /**
@@ -79,7 +79,7 @@ export interface StorageDriver {
    */
   copy(
     path: string,
-    newPath: string
+    newPath: string,
   ): Promise<StorageDriver$RenameFileResponse>;
 
   /**
@@ -90,7 +90,7 @@ export interface StorageDriver {
    */
   move(
     path: string,
-    newPath: string
+    newPath: string,
   ): Promise<StorageDriver$RenameFileResponse>;
 
   listDir(path: string): Promise<Record<string, any>>;
@@ -105,7 +105,7 @@ export interface StorageDriver {
   copyToDisk(
     sourcePath: string,
     destinationDisk: string,
-    destinationPath: string
+    destinationPath: string,
   ): Promise<boolean>;
 
   /**
@@ -118,7 +118,7 @@ export interface StorageDriver {
   moveToDisk(
     sourcePath: string,
     destinationDisk: string,
-    destinationPath: string
+    destinationPath: string,
   ): Promise<boolean>;
 
   /**
@@ -139,7 +139,7 @@ export interface StorageDriver {
   temporaryUrl(
     path: string,
     ttlInMins: number,
-    params?: Record<string, any>
+    params?: Record<string, any>,
   ): Promise<string>;
 
   size(path: string): Promise<number>;

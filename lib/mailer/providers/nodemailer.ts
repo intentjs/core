@@ -1,16 +1,16 @@
-import { Package } from "../../utils";
-import { NodemailerOptions } from "../interfaces";
-import { BaseProvider, BaseProviderSendOptions } from "../interfaces/provider";
+import { Package } from '../../utils';
+import { NodemailerOptions } from '../interfaces';
+import { BaseProvider, BaseProviderSendOptions } from '../interfaces/provider';
 
 export class NodemailerProvider implements BaseProvider {
   private client: any;
 
   constructor(private options: NodemailerOptions) {
-    const nodemailer = Package.load("nodemailer");
+    const nodemailer = Package.load('nodemailer');
     this.client = nodemailer.createTransport({
       host: options.host,
       port: options.port,
-      secure: options.port === "465",
+      secure: options.port === '465',
       ignoreTLS: options.ignoreTLS,
       requireTLS: options.requireTLS,
       auth: {
@@ -24,7 +24,7 @@ export class NodemailerProvider implements BaseProvider {
     return this.client.sendMail({
       from: payload.from,
       to: payload.to,
-      attachments: payload.attachments?.map((a) => ({
+      attachments: payload.attachments?.map(a => ({
         filename: a.filename,
         content: a.content,
         path: a.url,

@@ -5,9 +5,9 @@ import {
   OrderByDirection,
   PrimitiveValue,
   Expression,
-} from "objection";
-import { Pagination } from "../interfaces";
-import { GenericFunction } from "../../interfaces";
+} from 'objection';
+import { GenericFunction } from '../../interfaces';
+import { Pagination } from '../interfaces';
 
 export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   M,
@@ -39,7 +39,7 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   }
 
   async onlyCount() {
-    const result = (await this.count({ c: "*" })) as unknown as { c: number }[];
+    const result = (await this.count({ c: '*' })) as unknown as { c: number }[];
     return +result[0].c;
   }
 
@@ -51,7 +51,7 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   async chunk(cb: GenericFunction, size: number): Promise<void> {
     let offset = 0;
     let hasMore = true;
-    while (!!!offset || hasMore) {
+    while (!offset || hasMore) {
       const query = structuredClone(this);
       const records = (await query
         .offset(offset)
@@ -64,11 +64,11 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   }
 
   cOrderBy(expressions: string): this {
-    const orders = (expressions || "").split("|");
+    const orders = (expressions || '').split('|');
     for (const order of orders) {
-      const [column, direction] = order.split(":");
+      const [column, direction] = order.split(':');
       if (!column) continue;
-      this.orderBy(column, (direction || "ASC") as OrderByDirection);
+      this.orderBy(column, (direction || 'ASC') as OrderByDirection);
     }
 
     return this;
@@ -77,7 +77,7 @@ export class CustomQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
   when(
     condition: any,
     truthyCb: (query: CustomQueryBuilder<M, R>, condition: any) => this,
-    falsyCb?: (query: CustomQueryBuilder<M, R>, condition: any) => this
+    falsyCb?: (query: CustomQueryBuilder<M, R>, condition: any) => this,
   ): this {
     if (condition) {
       return truthyCb(this, condition);

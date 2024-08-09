@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import { QueueWorker } from "../worker";
-import { Command, ConsoleIO } from "../../console";
+import { Injectable } from '@nestjs/common';
+import { Command, ConsoleIO } from '../../console';
+import { QueueWorker } from '../worker';
 
 @Injectable()
 export class QueueConsoleCommands {
@@ -14,17 +14,17 @@ export class QueueConsoleCommands {
       {--C|connection= : Connection which should be used for consumption} 
       {--Q|queue= : Name of the queue from which the messages should be pulled}
     `,
-    { desc: "Command to run the intent queue worker." }
+    { desc: 'Command to run the intent queue worker.' },
   )
   public async startQueueWork(_cli: ConsoleIO): Promise<void> {
-    const sleep = _cli.option<number>("sleep");
-    const connection = _cli.option<number>("connection");
-    const queue = _cli.option<number>("queue");
+    const sleep = _cli.option<number>('sleep');
+    const connection = _cli.option<number>('connection');
+    const queue = _cli.option<number>('queue');
 
     const options: { [key: string]: string | number } = {};
-    if (sleep) options["sleep"] = sleep;
-    if (connection) options["connection"] = connection;
-    if (queue) options["queue"] = queue;
+    if (sleep) options['sleep'] = sleep;
+    if (connection) options['connection'] = connection;
+    if (queue) options['queue'] = queue;
 
     await QueueWorker.init(options).listen();
     return;

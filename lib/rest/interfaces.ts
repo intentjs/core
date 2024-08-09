@@ -1,6 +1,6 @@
-import { CorsOptions } from "@nestjs/common/interfaces/external/cors-options.interface";
-import { AbstractHttpAdapter, BaseExceptionFilter } from "@nestjs/core";
-import { Request as BaseRequest } from "express";
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+import { AbstractHttpAdapter, BaseExceptionFilter } from '@nestjs/core';
+import { Request as BaseRequest } from 'express';
 
 export interface IRequest extends BaseRequest {
   /**

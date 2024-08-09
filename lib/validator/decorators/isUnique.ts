@@ -1,13 +1,13 @@
+import { Injectable } from '@nestjs/common';
 import {
   registerDecorator,
   ValidationOptions,
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-} from "class-validator";
-import { Injectable } from "@nestjs/common";
-import { ObjectionService } from "../../database";
-import { isEmpty } from "../../utils/helpers";
+} from 'class-validator';
+import { ObjectionService } from '../../database';
+import { isEmpty } from '../../utils/helpers';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
@@ -16,7 +16,7 @@ export class IsUniqueConstraint implements ValidatorConstraintInterface {
 
   public async validate(
     value: string | string[],
-    args: ValidationArguments
+    args: ValidationArguments,
   ): Promise<boolean> {
     if (isEmpty(value)) return false;
     const [{ table, column, dbCon }] = args.constraints;
@@ -31,15 +31,15 @@ export class IsUniqueConstraint implements ValidatorConstraintInterface {
      * Apply self unique check, useful in case of update queries
      */
     const { object } = args;
-    const id = object["id"];
+    const id = object['id'];
 
-    if (id) query.whereNot("id", id);
+    if (id) query.whereNot('id', id);
 
-    const result = await query.count({ count: "*" });
+    const result = await query.count({ count: '*' });
     const record = result[0] || {};
-    const count = +record["count"];
+    const count = +record['count'];
 
-    return Array.isArray(value) ? !!!(value.length === count) : !!!count;
+    return Array.isArray(value) ? !(value.length === count) : !count;
   }
 
   defaultMessage(args: ValidationArguments) {
@@ -54,7 +54,7 @@ export function IsUnique(
     column: string;
     dbCon?: string;
   },
-  validationOptions?: ValidationOptions
+  validationOptions?: ValidationOptions,
 ) {
   return function (object: Record<string, any>, propertyName: string): void {
     registerDecorator({

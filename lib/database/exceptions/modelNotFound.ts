@@ -1,4 +1,4 @@
-import { HttpException } from "@nestjs/common";
+import { HttpException } from '@nestjs/common';
 
 export class ModelNotFound extends HttpException {
   constructor(modelName: string) {

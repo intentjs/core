@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { MailData, MailerOptions } from "./interfaces";
-import { IntentConfig } from "../config/service";
-import { BaseProvider, BaseProviderSendOptions } from "./interfaces/provider";
-import { MAIL_PROVIDER_MAP } from "./providers";
-import { InternalLogger } from "../utils/logger";
-import { logTime } from "../utils";
+import { Injectable } from '@nestjs/common';
+import { IntentConfig } from '../config/service';
+import { logTime } from '../utils';
+import { InternalLogger } from '../utils/logger';
+import { MailData, MailerOptions } from './interfaces';
+import { BaseProvider, BaseProviderSendOptions } from './interfaces/provider';
+import { MAIL_PROVIDER_MAP } from './providers';
 
 @Injectable()
 export class MailerService {
@@ -12,7 +12,7 @@ export class MailerService {
   private static channels: Record<string, BaseProvider>;
 
   constructor(private config: IntentConfig) {
-    const options = this.config.get("mailers") as MailerOptions;
+    const options = this.config.get('mailers') as MailerOptions;
 
     MailerService.options = options;
     MailerService.channels = {};
@@ -22,20 +22,20 @@ export class MailerService {
       const driver = MAIL_PROVIDER_MAP[cOptions.provider];
       if (!driver) {
         InternalLogger.error(
-          "MailerService",
-          `We couldn't find any channel driver associated with the [${channel}].`
+          'MailerService',
+          `We couldn't find any channel driver associated with the [${channel}].`,
         );
         continue;
       }
 
       MailerService.channels[channel] = new driver(
-        cOptions as unknown as never
+        cOptions as unknown as never,
       );
       InternalLogger.success(
-        "MailerService",
+        'MailerService',
         `Channel [${channel}] successfully initiailized ${logTime(
-          Date.now() - time
-        )}`
+          Date.now() - time,
+        )}`,
       );
     }
   }
@@ -53,14 +53,14 @@ export class MailerService {
       to: options.to,
       cc: options.cc,
       bcc: options.bcc,
-      from: options.sender || providerConfig["from"],
+      from: options.sender || providerConfig['from'],
       html: mailData.html,
       subject: mailData.subject,
       attachments: mailData.attachments,
     } as BaseProviderSendOptions;
 
-    if (options.replyTo || providerConfig["replyTo"]) {
-      mail.replyTo = options.replyTo || providerConfig["replyTo"];
+    if (options.replyTo || providerConfig['replyTo']) {
+      mail.replyTo = options.replyTo || providerConfig['replyTo'];
     }
 
     if (options.inReplyTo) {

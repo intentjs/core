@@ -2,16 +2,16 @@ import {
   NextFunction,
   Request as ERequest,
   Response as EResponse,
-} from "express";
-import { Request } from "../request";
+} from 'express';
+import { Request } from '../request';
 
 export const requestMiddleware = (
   req: ERequest,
   res: EResponse,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const intentRequestObj = new Request(req);
-  req["intent"] = {
+  req['intent'] = {
     req: () => intentRequestObj,
   };
   next();

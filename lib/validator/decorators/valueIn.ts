@@ -15,7 +15,7 @@ class ValueInConstraint implements ValidatorConstraintInterface {
     }
 
     if (value instanceof Array) {
-      const difference = value.filter((x) => validValues.indexOf(x) === -1);
+      const difference = value.filter(x => validValues.indexOf(x) === -1);
       return !difference.length;
     }
 

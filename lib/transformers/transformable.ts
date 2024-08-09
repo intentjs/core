@@ -1,6 +1,6 @@
-import { Obj } from "../utils";
-import { TransformableContextOptions, TransformerContext } from "./interfaces";
-import { Transformer } from "./transformer";
+import { Obj } from '../utils';
+import { TransformableContextOptions, TransformerContext } from './interfaces';
+import { Transformer } from './transformer';
 
 export class Transformable {
   /**
@@ -13,7 +13,7 @@ export class Transformable {
   async item(
     obj: Record<string, any>,
     transformer: Transformer,
-    options?: TransformableContextOptions
+    options?: TransformableContextOptions,
   ): Promise<Record<string, any>> {
     transformer = this.setTransformerContext(transformer, options);
 
@@ -30,7 +30,7 @@ export class Transformable {
   async collection(
     collect: Array<Record<string, any>>,
     transformer: Transformer,
-    options?: TransformableContextOptions
+    options?: TransformableContextOptions,
   ): Promise<Array<Record<string, any>>> {
     transformer = this.setTransformerContext(transformer, options);
 
@@ -50,7 +50,7 @@ export class Transformable {
   async paginate(
     obj: Record<string, any>,
     transformer: Transformer,
-    options?: TransformableContextOptions
+    options?: TransformableContextOptions,
   ): Promise<Record<string, any>> {
     const collection = this.collection(obj.data, transformer, options);
     return { data: await collection, pagination: obj.pagination };
@@ -58,7 +58,7 @@ export class Transformable {
 
   private setTransformerContext(
     transformer: Transformer,
-    options: TransformableContextOptions
+    options: TransformableContextOptions,
   ): Transformer {
     // add request object to the transformer's context
     const ctx = new TransformerContext(options);
@@ -67,7 +67,7 @@ export class Transformable {
   }
 
   getIncludes(req: any) {
-    if (!req) return "";
-    return Obj.get(req.all(), "include", "");
+    if (!req) return '';
+    return Obj.get(req.all(), 'include', '');
   }
 }

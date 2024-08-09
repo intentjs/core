@@ -1,18 +1,18 @@
-import { Str } from "./string";
+import { Str } from './string';
 
 export const columnify = (
   rows: Record<string, any>[],
-  options?: Record<string, any>
+  options?: Record<string, any>,
 ) => {
-  const formattedRows: string[][] = rows.map((row) => Object.values(row));
+  const formattedRows: string[][] = rows.map(row => Object.values(row));
   const maxColumns = findMaxColumns(formattedRows);
   for (let i = 0; i < maxColumns; i++) {
     const colValues = findAllColumnsAtIndex(formattedRows, i);
     const maxLength = findMaxLength(colValues);
     for (const row of formattedRows) {
-      row[i] = Str.padRight(row[i], maxLength, " ");
+      row[i] = Str.padRight(row[i], maxLength, ' ');
       if (options?.padStart) {
-        row[i] = Str.padLeft("", options.padStart, " ").concat(row[i]);
+        row[i] = Str.padLeft('', options.padStart, ' ').concat(row[i]);
       }
     }
   }

@@ -1,6 +1,6 @@
-import { GenericFunction } from "../interfaces";
-import { ArgumentParser } from "./argumentParser";
-import { CommandObject, CommandMetaOptions } from "./interfaces";
+import { GenericFunction } from '../interfaces';
+import { ArgumentParser } from './argumentParser';
+import { CommandObject, CommandMetaOptions } from './interfaces';
 
 export class CommandMeta {
   private static commands: Record<string, CommandObject> = {};
@@ -16,7 +16,7 @@ export class CommandMeta {
   static setCommand(
     command: string,
     options: CommandMetaOptions,
-    target: GenericFunction
+    target: GenericFunction,
   ): void {
     const parsedArgument = ArgumentParser.from(command);
     const { name } = parsedArgument;

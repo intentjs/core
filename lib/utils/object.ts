@@ -1,5 +1,5 @@
-import { InvalidValue } from "../exceptions";
-import { Arr } from "./array";
+import { InvalidValue } from '../exceptions';
+import { Arr } from './array';
 
 export class Obj {
   static dot(obj: Record<string, any>): Record<string, any> {
@@ -37,7 +37,7 @@ export class Obj {
     for (const key in obj) {
       if (Obj.isObj(obj[key])) {
         trimmedObj[key] = Obj.trim(obj[key]);
-      } else if (typeof obj[key] === "string") {
+      } else if (typeof obj[key] === 'string') {
         trimmedObj[key] = obj[key].trim();
       } else {
         trimmedObj[key] = obj[key];
@@ -55,14 +55,14 @@ export class Obj {
         continue;
       }
 
-      const propArr = prop.split(".");
+      const propArr = prop.split('.');
       if (Array.isArray(obj[propArr[0]])) {
         newObj[propArr[0]] = Arr.pick(obj[propArr[0]], [
-          propArr.slice(1).join("."),
+          propArr.slice(1).join('.'),
         ]);
       } else if (Obj.isObj(obj[propArr[0]])) {
         newObj[propArr[0]] = Obj.pick(obj[propArr[0]], [
-          propArr.slice(1).join("."),
+          propArr.slice(1).join('.'),
         ]);
       }
     }
@@ -78,14 +78,14 @@ export class Obj {
         continue;
       }
 
-      const propArr = prop.split(".");
+      const propArr = prop.split('.');
       if (Array.isArray(cloneObj[propArr[0]])) {
         cloneObj[propArr[0]] = Arr.except(cloneObj[propArr[0]], [
-          propArr.slice(1).join("."),
+          propArr.slice(1).join('.'),
         ]);
       } else if (Obj.isObj(cloneObj[propArr[0]])) {
         cloneObj[propArr[0]] = Obj.except(cloneObj[propArr[0]], [
-          propArr.slice(1).join("."),
+          propArr.slice(1).join('.'),
         ]);
       }
     }
@@ -95,7 +95,7 @@ export class Obj {
 
   static isEmpty(obj: Record<string, any>): boolean {
     Obj.isObj(obj);
-    return !!!Object.keys(obj).length;
+    return !Object.keys(obj).length;
   }
 
   static isNotEmpty(obj: Record<string, any>): boolean {
@@ -110,15 +110,15 @@ export class Obj {
     const keys = [key, ...aliasKeys];
     for (const key of keys) {
       if (key in obj) return obj[key];
-      const splitKeys = key.split(".");
+      const splitKeys = key.split('.');
       if (!splitKeys.length) return;
 
       if (Arr.isArray(obj[splitKeys[0]])) {
-        return Arr.get(obj[splitKeys[0]], splitKeys.slice(1).join("."));
+        return Arr.get(obj[splitKeys[0]], splitKeys.slice(1).join('.'));
       }
 
       if (Obj.isObj(obj[splitKeys[0]])) {
-        return Obj.get(obj[splitKeys[0]], splitKeys.slice(1).join("."));
+        return Obj.get(obj[splitKeys[0]], splitKeys.slice(1).join('.'));
       }
     }
     return undefined;
@@ -152,7 +152,7 @@ export class Obj {
     console.log(sortedObj);
     const jsonString = JSON.stringify(sortedObj);
     console.log(jsonString);
-    return "";
+    return '';
   }
 
   static asMap<T = Record<string, any>>(obj: T): Map<keyof T, any> {
@@ -164,12 +164,12 @@ export class Obj {
   }
 
   static isObj(obj: any, throwError = false): boolean {
-    if (typeof obj === "object" && !Array.isArray(obj) && obj !== null) {
+    if (typeof obj === 'object' && !Array.isArray(obj) && obj !== null) {
       return true;
     }
 
     if (throwError) {
-      throw new InvalidValue("Passed value is not an object");
+      throw new InvalidValue('Passed value is not an object');
     }
 
     return false;

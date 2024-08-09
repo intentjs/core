@@ -1,12 +1,12 @@
-import { GenericFunction } from "../../interfaces";
-import { Package } from "../../utils";
-import { CacheDriver, RedisDriverOption } from "../interfaces";
+import { GenericFunction } from '../../interfaces';
+import { Package } from '../../utils';
+import { CacheDriver, RedisDriverOption } from '../interfaces';
 
 export class RedisDriver implements CacheDriver {
   private client: any;
 
   constructor(private options: RedisDriverOption) {
-    const IORedis = Package.load("ioredis");
+    const IORedis = Package.load('ioredis');
     if (options.url) {
       this.client = new IORedis(options.url, { db: options.database || 0 });
     } else {
@@ -33,12 +33,12 @@ export class RedisDriver implements CacheDriver {
   async set(
     key: string,
     value: string | number | Record<string, any>,
-    ttlInSec?: number
+    ttlInSec?: number,
   ): Promise<boolean> {
     try {
       const redisKey = `${this.options.prefix}:::${key}`;
       ttlInSec
-        ? await this.client.set(redisKey, JSON.stringify(value), "EX", ttlInSec)
+        ? await this.client.set(redisKey, JSON.stringify(value), 'EX', ttlInSec)
         : await this.client.set(redisKey, JSON.stringify(value));
       return true;
     } catch {
@@ -54,7 +54,7 @@ export class RedisDriver implements CacheDriver {
   async remember<T = any>(
     key: string,
     cb: GenericFunction,
-    ttlInSec: number
+    ttlInSec: number,
   ): Promise<T> {
     const value = await this.get(key);
     if (value) return value;

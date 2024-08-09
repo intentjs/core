@@ -1,16 +1,16 @@
-import { Storage } from "../../storage";
-import { Package } from "../../utils";
-import { isEmpty } from "../../utils/helpers";
-import { Str } from "../../utils/string";
-import { MailgunOptions } from "../interfaces";
-import { BaseProvider, BaseProviderSendOptions } from "../interfaces/provider";
+import { Storage } from '../../storage';
+import { Package } from '../../utils';
+import { isEmpty } from '../../utils/helpers';
+import { Str } from '../../utils/string';
+import { MailgunOptions } from '../interfaces';
+import { BaseProvider, BaseProviderSendOptions } from '../interfaces/provider';
 
 export class MailgunProvider implements BaseProvider {
   protected client: any;
 
   constructor(private options: MailgunOptions) {
-    const formData = Package.load("form-data");
-    const Mailgun = Package.load("mailgun.js");
+    const formData = Package.load('form-data');
+    const Mailgun = Package.load('mailgun.js');
     const mailgun = new Mailgun(formData);
     this.client = mailgun.client({
       username: this.options.username,
@@ -23,7 +23,7 @@ export class MailgunProvider implements BaseProvider {
     if (!isEmpty(attachments)) {
       for (const attachment of attachments) {
         if (Str.isUrl(attachment.url)) {
-          attachment["content"] = await Storage.download(attachment.url);
+          attachment['content'] = await Storage.download(attachment.url);
           delete attachment.url;
         }
       }
@@ -36,7 +36,7 @@ export class MailgunProvider implements BaseProvider {
       bcc: payload.bcc,
       subject: payload.subject,
       html: payload.html,
-      attachment: attachments.map((a) => ({
+      attachment: attachments.map(a => ({
         filename: a.filename,
         data: a.content,
       })),
