@@ -30,6 +30,7 @@ module.exports = {
   ],
   rules: {
     'no-console': 'error',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-inferrable-types': 'error',
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
