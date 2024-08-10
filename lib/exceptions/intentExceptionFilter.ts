@@ -30,7 +30,6 @@ export abstract class IntentExceptionFilter extends BaseExceptionFilter {
 
   reportToSentry(exception: any): void {
     const sentryConfig = IntentConfig.get('app.sentry');
-    console.log(sentryConfig);
     if (!sentryConfig?.dsn) return;
 
     const exceptionConstructor = exception?.constructor;
@@ -39,7 +38,6 @@ export abstract class IntentExceptionFilter extends BaseExceptionFilter {
       exceptionConstructor &&
       !this.doNotReport().includes(exceptionConstructor)
     ) {
-      console.log(exceptionConstructor);
       sentry.captureException(exception);
     }
   }
