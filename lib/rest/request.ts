@@ -88,7 +88,7 @@ export class Request {
   bearerToken(): string {
     const authHeader = this.$headers['authorization'];
     const asArray = authHeader?.split(' ');
-    return !isEmpty(asArray) && asArray(' ')[1];
+    return !isEmpty(asArray) && asArray[1];
   }
 
   host(): string {
