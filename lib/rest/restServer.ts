@@ -13,7 +13,9 @@ export class RestServer {
    */
 
   static async make(module: any, options?: ServerOptions): Promise<void> {
-    const app = await NestFactory.create<NestExpressApplication>(module);
+    const app = await NestFactory.create<NestExpressApplication>(module, {
+      bodyParser: true,
+    });
 
     if (options?.addValidationContainer) {
       useContainer(app.select(module), { fallbackOnErrors: true });
@@ -25,6 +27,13 @@ export class RestServer {
       app.enable(corsRule);
     }
 
+    /**
+     * Explicitly enable body parsers, so that they are available in all of the middlewares.
+     */
+    app.useBodyParser('json');
+    app.useBodyParser('raw');
+    app.useBodyParser('urlencoded');
+
     app.use(requestMiddleware);
 
     this.configureErrorReporter(config.get('app.sentry'));
@@ -34,7 +43,9 @@ export class RestServer {
       app.useGlobalFilters(options.exceptionFilter(httpAdapter));
     }
 
-    options?.globalPrefix && app.setGlobalPrefix(options.globalPrefix);
+    if (options?.globalPrefix) {
+      app.setGlobalPrefix(options.globalPrefix);
+    }
 
     await app.listen(options?.port || config.get<number>('app.port'));
   }

@@ -15,3 +15,5 @@ export * from './database';
 export * from './serializers/validationErrorSerializer';
 export * from './mailer';
 export * from './events';
+export * from './validator';
+export * from './config/service';
