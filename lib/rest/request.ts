@@ -12,12 +12,14 @@ export class Request {
   private $body: Record<string, any>;
   private $dto: any;
   private id: string;
+  private $user: Record<string, any>;
 
   constructor(private request: ERequest) {
     this.$payload = {};
     this.$headers = {};
     this.initiate(request);
     this.id = ulid();
+    this.$user = null;
     this.$query = request.query;
     this.$body = request.body;
     this.$pathParams = request.params;
@@ -88,7 +90,7 @@ export class Request {
   bearerToken(): string {
     const authHeader = this.$headers['authorization'];
     const asArray = authHeader?.split(' ');
-    return !isEmpty(asArray) && asArray(' ')[1];
+    return !isEmpty(asArray) && asArray[1];
   }
 
   host(): string {
@@ -152,6 +154,14 @@ export class Request {
     return validator
       .addMeta({ ...payload, _headers: { ...this.$headers } })
       .validate({ ...this.all() });
+  }
+
+  setUser(user: any): void {
+    this.$user = user;
+  }
+
+  user<T = any>(): T {
+    return this.$user as T;
   }
 
   only(...keys: string[]): Record<string, any> {
