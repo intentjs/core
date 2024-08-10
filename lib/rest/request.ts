@@ -16,15 +16,19 @@ export class Request {
   constructor(private request: ERequest) {
     this.$payload = {};
     this.$headers = {};
-    this.initiate();
+    this.initiate(request);
     this.id = ulid();
+    this.$query = request.query;
+    this.$body = request.body;
+    this.$pathParams = request.params;
+    this.$headers = request.headers;
   }
 
-  private initiate() {
-    this.$query = this.request.query;
-    this.$body = this.request.body;
-    this.$pathParams = this.request.params;
-    this.$headers = this.request.headers;
+  private initiate(request: ERequest) {
+    this.$query = request.query;
+    this.$body = request.body;
+    this.$pathParams = request.params;
+    this.$headers = request.headers;
     this.$payload = { ...this.$query, ...this.$pathParams, ...this.$body };
   }
 
@@ -151,22 +155,18 @@ export class Request {
   }
 
   only(...keys: string[]): Record<string, any> {
-    console.log(keys);
     return {};
   }
 
   except(...keys: string[]): Record<string, any> {
-    console.log(keys);
     return {};
   }
 
   is(pathPattern: string): boolean {
-    console.log(pathPattern);
     return false;
   }
 
   has(...keys: string[]): boolean {
-    console.log('kjeys ===> ', keys);
     for (const key of keys) {
       if (!(key in this.$payload)) return false;
     }
