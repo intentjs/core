@@ -18,6 +18,7 @@ import { MailerService } from './mailer';
 import { QueueService } from './queue';
 import { QueueConsoleCommands } from './queue/console';
 import { QueueExplorer } from './queue/explorer';
+import { QueueMetadata } from './queue/metadata';
 import { StorageService } from './storage/service';
 import { ExistsConstraint } from './validator/decorators/exists';
 import { IsUniqueConstraint } from './validator/decorators/isUnique';
@@ -43,6 +44,7 @@ const providers = [
   EventQueueWorker,
   MailerService,
   LocalizationService,
+  QueueMetadata,
 ];
 const imports = [DiscoveryModule];
 const exportsArr = [IntentConfig];
