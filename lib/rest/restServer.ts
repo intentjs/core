@@ -24,7 +24,7 @@ export class RestServer {
 
     if (config.get('app.cors') || options?.cors) {
       const corsRule = options?.cors ?? config.get('app.cors');
-      app.enable(corsRule);
+      app.enableCors(corsRule);
     }
 
     /**
