@@ -5,33 +5,21 @@ import { ulid } from 'ulid';
 import { Validator } from '../validator';
 
 export class Request {
-  private $payload: Record<string, any>;
   private $headers: Record<string, any>;
-  private $query: Record<string, any>;
-  private $pathParams: Record<string, any>;
-  private $body: Record<string, any>;
   private $dto: any;
   private id: string;
   private $user: Record<string, any>;
 
   constructor(private request: ERequest) {
-    this.$payload = {};
     this.$headers = {};
     this.initiate(request);
     this.id = ulid();
     this.$user = null;
-    this.$query = request.query;
-    this.$body = request.body;
-    this.$pathParams = request.params;
     this.$headers = request.headers;
   }
 
   private initiate(request: ERequest) {
-    this.$query = request.query;
-    this.$body = request.body;
-    this.$pathParams = request.params;
     this.$headers = request.headers;
-    this.$payload = { ...this.$query, ...this.$pathParams, ...this.$body };
   }
 
   logger() {}
@@ -45,11 +33,16 @@ export class Request {
   }
 
   all(): Record<string, any> {
-    return this.$payload;
+    return {
+      ...(this.request.query || {}),
+      ...(this.request.params || {}),
+      ...(this.request.body || {}),
+    };
   }
 
   input<T = string>(name: string, defaultValue?: T): T {
-    return name in this.$payload ? this.$payload[name] : defaultValue;
+    const payload = this.all();
+    return name in payload ? payload[name] : defaultValue;
   }
 
   string(name: string): string {
@@ -63,12 +56,14 @@ export class Request {
   }
 
   boolean(name: string): boolean {
-    const val = this.$payload[name] as string;
+    const payload = this.all();
+    const val = payload[name] as string;
     return [true, 'yes', 'on', '1', 1, 'true'].includes(val.toLowerCase());
   }
 
   query<T = Record<string, any>>(name?: string): T {
-    return name ? this.$query[name] : this.$query;
+    const query: Record<string, any> = this.request.query || {};
+    return name ? query[name] : query;
   }
 
   path<T = Record<string, any>>(): T {
@@ -177,24 +172,27 @@ export class Request {
   }
 
   has(...keys: string[]): boolean {
+    const payload = this.all();
     for (const key of keys) {
-      if (!(key in this.$payload)) return false;
+      if (!(key in payload)) return false;
     }
 
     return true;
   }
 
   hasAny(...keys: string[]): boolean {
+    const payload = this.all();
     for (const key of keys) {
-      if (key in this.$payload) return true;
+      if (key in payload) return true;
     }
 
     return false;
   }
 
   missing(...keys: string[]): boolean {
+    const payload = this.all();
     for (const key of keys) {
-      if (key in this.$payload) return false;
+      if (key in payload) return false;
     }
 
     return true;
