@@ -1,8 +1,8 @@
-import { DriverJob } from "../strategy";
+import { DriverJob } from '../strategy';
 
 export class RedisJob extends DriverJob {
   public getId(): string {
-    return "";
+    return '';
   }
 
   public getMessage(): string {
@@ -12,7 +12,7 @@ export class RedisJob extends DriverJob {
 
 export class SqsJob extends DriverJob {
   public getId(): string {
-    return "";
+    return '';
   }
 
   public getMessage(): string {

@@ -41,8 +41,8 @@ export interface RedisQueueDriverOptions {
 }
 
 export interface DbQueueDriverOptions {
-  listenerType: "poll";
-  driver: "db";
+  listenerType: 'poll';
+  driver: 'db';
   connection?: string;
   table: string;
   queue: string;
