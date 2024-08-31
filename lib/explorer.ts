@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
-import { GenericFunction } from '../interfaces';
-import { ConsoleConstants } from './constants';
-import { CommandMetaOptions } from './interfaces';
-import { CommandMeta } from './metadata';
+import { CommandMeta, CommandMetaOptions } from './console';
+import { ConsoleConstants } from './console/constants';
+import { EventMetadata } from './events';
+import { IntentEventConstants } from './events/constants';
+import { GenericFunction } from './interfaces';
+import { JOB_NAME, JOB_OPTIONS } from './queue/constants';
+import { QueueMetadata } from './queue/metadata';
 
 @Injectable()
-export class ConsoleExplorer {
+export class IntentExplorer {
   constructor(
     private readonly discovery: DiscoveryService,
     private readonly metadataScanner: MetadataScanner,
@@ -27,9 +30,40 @@ export class ConsoleExplorer {
       this.metadataScanner.scanFromPrototype(
         instance,
         Object.getPrototypeOf(instance),
-        (key: string) => this.lookupConsoleCommands(instance, key),
+        (key: string) => {
+          this.lookupJobs(instance, key);
+          this.lookupListeners(instance, key);
+          this.lookupConsoleCommands(instance, key);
+        },
       );
     });
+  }
+
+  lookupJobs(instance: Record<string, GenericFunction>, key: string) {
+    const methodRef = instance[key];
+    const hasJobMeta = Reflect.hasMetadata(JOB_NAME, instance, key);
+    if (!hasJobMeta) return;
+    const jobName = Reflect.getMetadata(JOB_NAME, instance, key);
+    QueueMetadata.addJob(jobName, {
+      options: Reflect.getMetadata(JOB_OPTIONS, instance, key),
+      target: methodRef.bind(instance),
+    });
+  }
+
+  lookupListeners(instance: Record<string, any>, key: string) {
+    const methodRef = instance[key];
+    const hasEventMeta = Reflect.hasMetadata(
+      IntentEventConstants.eventName,
+      instance,
+      key,
+    );
+    if (!hasEventMeta) return;
+    const eventName = Reflect.getMetadata(
+      IntentEventConstants.eventName,
+      instance,
+      key,
+    );
+    EventMetadata.addListener(eventName, methodRef.bind(instance));
   }
 
   lookupConsoleCommands(

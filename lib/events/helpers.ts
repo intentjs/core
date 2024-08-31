@@ -6,7 +6,6 @@ export async function Emit(...events: EmitsEvent[]): Promise<void> {
     promises.push(event.emit());
   }
   await Promise.allSettled(promises);
-  return;
 }
 
 export async function EmitIf(
@@ -18,7 +17,6 @@ export async function EmitIf(
     promises.push(event.emitIf(condition));
   }
   await Promise.allSettled(promises);
-  return;
 }
 
 export async function emitUnless(
@@ -30,7 +28,6 @@ export async function emitUnless(
     promises.push(event.emitUnless(condition));
   }
   await Promise.allSettled(promises);
-  return;
 }
 
 export function difference<T>(arr1: T[], arr2: T[]): T[] {
