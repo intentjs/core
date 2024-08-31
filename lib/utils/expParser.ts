@@ -22,27 +22,27 @@ export class ExpParser {
       const lastChar = this.exp.charCodeAt(i - 1);
       const ch = this.exp.charCodeAt(i);
       if (ch === 91) {
-        o["name"] = p.join("");
-        o["args"] = [];
+        o['name'] = p.join('');
+        o['args'] = [];
         p = [];
         inArray = true;
       } else if (inArray && ch === 44) {
-        o["args"].push(p.join(""));
+        o['args'].push(p.join(''));
         p = [];
       } else if (ch === 93) {
-        o["args"].push(p.join(""));
+        o['args'].push(p.join(''));
         presenter.push(o);
         o = {};
         p = [];
         inArray = false;
       } else if (lastChar !== 93 && ch === 44) {
-        o["name"] = p.join("");
+        o['name'] = p.join('');
         presenter.push(o);
         o = {};
         p = [];
       } else if (ch !== 93 && length - i == 1) {
         p.push(String.fromCharCode(ch));
-        o["name"] = p.join("");
+        o['name'] = p.join('');
         presenter.push(o);
       } else if (ch !== 44) {
         p.push(String.fromCharCode(ch));
@@ -59,18 +59,18 @@ export class ExpParser {
   static buildFromObj(inputs: Record<string, any>): string {
     for (const key in inputs) {
       const type = typeof inputs[key];
-      if (type === "string" || type === "number") {
+      if (type === 'string' || type === 'number') {
         inputs[key] = [inputs[key]];
       }
     }
 
     const keys = Object.keys(inputs).sort();
-    let str = "";
+    let str = '';
     for (const key of keys) {
       str += `,${key}`;
       if (Array.isArray(inputs[key]) && inputs[key].length > 0) {
         const values = inputs[key].sort();
-        str += `[${values.join(",")}]`;
+        str += `[${values.join(',')}]`;
       }
     }
 

@@ -1,4 +1,4 @@
-import { transports, format, transport } from "winston";
+import { transports, format, transport } from 'winston';
 
 export enum Transports {
   Default,
@@ -48,7 +48,7 @@ export const defaultLoggerOptions = (): {
   level: LogLevel;
   [key: string]: any;
 } => ({
-  level: "debug",
+  level: 'debug',
   transports: [{ transport: Transports.Default, format: Formats.Default }],
 });
 
@@ -70,7 +70,7 @@ export const TransportsMap = {
 
 const defaultFormat = () => {
   const date = new Date().toISOString();
-  const logFormat = format.printf((info) => {
+  const logFormat = format.printf(info => {
     return `[${info.level}] ${date} : ${JSON.stringify(info.message)}`;
   });
   return format.combine(format.colorize(), logFormat);
@@ -97,4 +97,4 @@ export const FormatsMap = {
   [Formats.Uncolorize]: format.uncolorize,
 };
 
-export type LogLevel = "error" | "warn" | "info" | "http" | "verbose" | "debug";
+export type LogLevel = 'error' | 'warn' | 'info' | 'http' | 'verbose' | 'debug';

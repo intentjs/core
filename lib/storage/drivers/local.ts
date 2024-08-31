@@ -1,20 +1,23 @@
-import { extname, join } from "path";
-import * as fs from "fs-extra";
+import { ReadStream, createReadStream } from 'fs';
+import { extname, join } from 'path';
+import * as fs from 'fs-extra';
+import { CannotParseAsJsonException } from '../exceptions/cannotParseAsJson';
+import { CannotPerformFileOpException } from '../exceptions/cannotPerformFileOp';
+import { getMimeTypeFromExtention } from '../helpers';
 import {
   LocalDiskOptions,
   StorageDriver,
   StorageDriver$FileMetadataResponse,
   StorageDriver$PutFileResponse,
   StorageDriver$RenameFileResponse,
-} from "../interfaces";
-import { ReadStream, createReadStream } from "fs";
-import { getMimeTypeFromExtention } from "../helpers";
-import { CannotParseAsJsonException } from "../exceptions/cannotParseAsJson";
-import { StorageService } from "../service";
-import { CannotPerformFileOpException } from "../exceptions/cannotPerformFileOp";
+} from '../interfaces';
+import { StorageService } from '../service';
 
 export class Local implements StorageDriver {
-  constructor(private disk: string, private config: LocalDiskOptions) {}
+  constructor(
+    private disk: string,
+    private config: LocalDiskOptions,
+  ) {}
 
   /**
    * Put file content to the path specified.
@@ -24,13 +27,13 @@ export class Local implements StorageDriver {
    */
   async put(
     filePath: string,
-    fileContent: any
+    fileContent: any,
   ): Promise<StorageDriver$PutFileResponse> {
     await fs.outputFile(
-      join(this.config.basePath || "", filePath),
-      fileContent
+      join(this.config.basePath || '', filePath),
+      fileContent,
     );
-    return { path: join(this.config.basePath || "", filePath), url: "" };
+    return { path: join(this.config.basePath || '', filePath), url: '' };
   }
 
   /**
@@ -39,7 +42,7 @@ export class Local implements StorageDriver {
    * @param path
    */
   async get(filePath: string): Promise<Buffer> {
-    return await fs.readFile(join(this.config.basePath || "", filePath));
+    return await fs.readFile(join(this.config.basePath || '', filePath));
   }
 
   /**
@@ -47,7 +50,7 @@ export class Local implements StorageDriver {
    * @param path
    */
   async meta(filePath: string): Promise<StorageDriver$FileMetadataResponse> {
-    const path = join(this.config.basePath || "", filePath);
+    const path = join(this.config.basePath || '', filePath);
     const res = await fs.stat(path);
     return {
       path,
@@ -63,10 +66,10 @@ export class Local implements StorageDriver {
   async signedUrl(
     filePath: string,
     expire = 10,
-    command: "get" | "put"
+    command: 'get' | 'put',
   ): Promise<string> {
     console.log(expire, filePath, command);
-    return "";
+    return '';
   }
 
   /**
@@ -75,7 +78,7 @@ export class Local implements StorageDriver {
    * @param path
    */
   async exists(filePath: string): Promise<boolean> {
-    return fs.pathExists(join(this.config.basePath || "", filePath));
+    return fs.pathExists(join(this.config.basePath || '', filePath));
   }
 
   /**
@@ -93,11 +96,11 @@ export class Local implements StorageDriver {
    * @param path
    */
   async url(fileName: string): Promise<string> {
-    if (this.config.hasOwnProperty("baseUrl")) {
-      const filePath = join("public", fileName);
+    if (this.config.hasOwnProperty('baseUrl')) {
+      const filePath = join('public', fileName);
       return `${this.config.basePath}/${filePath}`;
     } else {
-      return "";
+      return '';
     }
   }
 
@@ -108,20 +111,19 @@ export class Local implements StorageDriver {
    */
   async delete(filePath: string): Promise<boolean> {
     try {
-      await fs.remove(join(this.config.basePath || "", filePath));
+      await fs.remove(join(this.config.basePath || '', filePath));
       return true;
     } catch (e) {
       if (this.shouldThrowError())
         throw new CannotPerformFileOpException(
-          `File ${filePath} cannot be deleted due to the reason: ${e["message"]}`
+          `File ${filePath} cannot be deleted due to the reason: ${e['message']}`,
         );
     }
     return false;
   }
 
   getStream(filePath: string): ReadStream {
-    const file = createReadStream(join(this.config.basePath || "", filePath));
-    return file;
+    return createReadStream(join(this.config.basePath || '', filePath));
   }
 
   /**
@@ -132,15 +134,15 @@ export class Local implements StorageDriver {
    */
   async copy(
     sourcePath: string,
-    destinationPath: string
+    destinationPath: string,
   ): Promise<StorageDriver$RenameFileResponse> {
     await fs.copy(
-      join(this.config.basePath || "", sourcePath),
-      join(this.config.basePath || "", destinationPath),
-      { overwrite: true }
+      join(this.config.basePath || '', sourcePath),
+      join(this.config.basePath || '', destinationPath),
+      { overwrite: true },
     );
     return {
-      path: join(this.config.basePath || "", destinationPath),
+      path: join(this.config.basePath || '', destinationPath),
       url: await this.url(destinationPath),
     };
   }
@@ -153,12 +155,12 @@ export class Local implements StorageDriver {
    */
   async move(
     sourcePath: string,
-    destinationPath: string
+    destinationPath: string,
   ): Promise<StorageDriver$RenameFileResponse> {
     await this.copy(sourcePath, destinationPath);
     await this.delete(sourcePath);
     return {
-      path: join(this.config.basePath || "", destinationPath),
+      path: join(this.config.basePath || '', destinationPath),
       url: await this.url(destinationPath),
     };
   }
@@ -180,7 +182,7 @@ export class Local implements StorageDriver {
   async copyToDisk(
     sourcePath: string,
     destinationDisk: string,
-    destinationPath: string
+    destinationPath: string,
   ): Promise<boolean> {
     try {
       const buffer = await this.get(sourcePath);
@@ -190,7 +192,7 @@ export class Local implements StorageDriver {
     } catch (e) {
       if (this.shouldThrowError()) {
         throw new CannotPerformFileOpException(
-          `File cannot be copied from ${sourcePath} to ${destinationDisk} in ${destinationDisk} disk for the reason: ${e["message"]}`
+          `File cannot be copied from ${sourcePath} to ${destinationDisk} in ${destinationDisk} disk for the reason: ${e['message']}`,
         );
       }
     }
@@ -201,7 +203,7 @@ export class Local implements StorageDriver {
   async moveToDisk(
     sourcePath: string,
     destinationDisk: string,
-    destinationPath: string
+    destinationPath: string,
   ): Promise<boolean> {
     try {
       const buffer = await this.get(sourcePath);
@@ -212,10 +214,10 @@ export class Local implements StorageDriver {
     } catch (e) {
       if (this.shouldThrowError()) {
         throw new CannotPerformFileOpException(
-          `File cannot be moved from ${sourcePath} to ${destinationDisk} in ${destinationDisk} disk for the reason: ${e["message"]}`
+          `File cannot be moved from ${sourcePath} to ${destinationDisk} in ${destinationDisk} disk for the reason: ${e['message']}`,
         );
       }
-      console.log("error while copying ===> ", e);
+      console.log('error while copying ===> ', e);
     }
     return false;
   }
@@ -235,20 +237,20 @@ export class Local implements StorageDriver {
   temporaryUrl(
     path: string,
     ttlInMins: number,
-    params?: Record<string, any>
+    params?: Record<string, any>,
   ): Promise<string> {
     console.log(path, ttlInMins, params);
     return null;
   }
 
   async size(filePath: string): Promise<number> {
-    const path = join(this.config.basePath || "", filePath);
+    const path = join(this.config.basePath || '', filePath);
     const res = await fs.stat(path);
     return res.size;
   }
 
   async lastModifiedAt(filePath: string): Promise<Date> {
-    const path = join(this.config.basePath || "", filePath);
+    const path = join(this.config.basePath || '', filePath);
     const res = await fs.stat(path);
     return res.mtime;
   }
@@ -258,11 +260,11 @@ export class Local implements StorageDriver {
   }
 
   async path(filePath: string): Promise<string> {
-    return join(this.config.basePath || "", filePath);
+    return join(this.config.basePath || '', filePath);
   }
 
   async listDir(path: string): Promise<Record<string, any>> {
-    const directory = join(this.config.basePath || "", path);
+    const directory = join(this.config.basePath || '', path);
     const fileNames = await fs.readdir(directory);
 
     const listOfFiles = [];

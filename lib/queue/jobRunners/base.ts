@@ -1,13 +1,13 @@
-import { ListenerOptions } from "../interfaces";
-import { QueueMetadata } from "../metadata";
-import { InternalMessage } from "../strategy";
-import { PollQueueDriver } from "../strategy/pollQueueDriver";
-import { JobStatusEnum } from "../constants";
+import { JobStatusEnum } from '../constants';
+import { ListenerOptions } from '../interfaces';
+import { QueueMetadata } from '../metadata';
+import { InternalMessage } from '../strategy';
+import { PollQueueDriver } from '../strategy/pollQueueDriver';
 
 export class JobRunner {
   constructor(
     private options: ListenerOptions,
-    private connection: PollQueueDriver
+    private connection: PollQueueDriver,
   ) {}
 
   async run(message: InternalMessage): Promise<Record<string, any>> {

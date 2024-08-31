@@ -1,31 +1,25 @@
-import { Type } from "@nestjs/common";
-import { Request as ERequest } from "express";
-import { Validator } from "../validator";
-import { ulid } from "ulid";
-import { isEmpty } from "lodash";
+import { Type } from '@nestjs/common';
+import { Request as ERequest } from 'express';
+import { isEmpty } from 'lodash';
+import { ulid } from 'ulid';
+import { Validator } from '../validator';
 
 export class Request {
-  private $payload: Record<string, any>;
   private $headers: Record<string, any>;
-  private $query: Record<string, any>;
-  private $pathParams: Record<string, any>;
-  private $body: Record<string, any>;
   private $dto: any;
   private id: string;
+  private $user: Record<string, any>;
 
   constructor(private request: ERequest) {
-    this.$payload = {};
     this.$headers = {};
-    this.initiate();
+    this.initiate(request);
     this.id = ulid();
+    this.$user = null;
+    this.$headers = request.headers;
   }
 
-  private initiate() {
-    this.$query = this.request.query;
-    this.$body = this.request.body;
-    this.$pathParams = this.request.params;
-    this.$headers = this.request.headers;
-    this.$payload = { ...this.$query, ...this.$pathParams, ...this.$body };
+  private initiate(request: ERequest) {
+    this.$headers = request.headers;
   }
 
   logger() {}
@@ -39,11 +33,16 @@ export class Request {
   }
 
   all(): Record<string, any> {
-    return this.$payload;
+    return {
+      ...(this.request.query || {}),
+      ...(this.request.params || {}),
+      ...(this.request.body || {}),
+    };
   }
 
   input<T = string>(name: string, defaultValue?: T): T {
-    return name in this.$payload ? this.$payload[name] : defaultValue;
+    const payload = this.all();
+    return name in payload ? payload[name] : defaultValue;
   }
 
   string(name: string): string {
@@ -57,12 +56,14 @@ export class Request {
   }
 
   boolean(name: string): boolean {
-    const val = this.$payload[name] as string;
-    return [true, "yes", "on", "1", 1, "true"].includes(val.toLowerCase());
+    const payload = this.all();
+    const val = payload[name] as string;
+    return [true, 'yes', 'on', '1', 1, 'true'].includes(val.toLowerCase());
   }
 
   query<T = Record<string, any>>(name?: string): T {
-    return name ? this.$query[name] : this.$query;
+    const query: Record<string, any> = this.request.query || {};
+    return name ? query[name] : query;
   }
 
   path<T = Record<string, any>>(): T {
@@ -82,13 +83,13 @@ export class Request {
   }
 
   bearerToken(): string {
-    const authHeader = this.$headers["authorization"];
-    const asArray = authHeader?.split(" ");
-    return !isEmpty(asArray) && asArray(" ")[1];
+    const authHeader = this.$headers['authorization'];
+    const asArray = authHeader?.split(' ');
+    return !isEmpty(asArray) && asArray[1];
   }
 
   host(): string {
-    return this.request.get("host");
+    return this.request.get('host');
   }
 
   httpHost(): string {
@@ -96,11 +97,11 @@ export class Request {
   }
 
   isHttp(): boolean {
-    return this.httpHost() === "http";
+    return this.httpHost() === 'http';
   }
 
   isHttps(): boolean {
-    return this.httpHost() === "https";
+    return this.httpHost() === 'https';
   }
 
   url(): string {
@@ -128,18 +129,18 @@ export class Request {
   }
 
   getAcceptableContentTypes(): string[] {
-    const accept = this.$headers["accept"];
-    return accept.split(",");
+    const accept = this.$headers['accept'];
+    return accept.split(',');
   }
 
   accepts(contentTypes: string[]): boolean {
-    const accept = this.$headers["accept"];
-    if (accept == "*/*") return true;
+    const accept = this.$headers['accept'];
+    if (accept == '*/*') return true;
     return contentTypes.includes(accept);
   }
 
   expectsJson(): boolean {
-    return this.$headers["accept"];
+    return this.$headers['accept'];
   }
 
   async validate<T>(dto: Type<T>): Promise<T> {
@@ -150,41 +151,48 @@ export class Request {
       .validate({ ...this.all() });
   }
 
+  setUser(user: any): void {
+    this.$user = user;
+  }
+
+  user<T = any>(): T {
+    return this.$user as T;
+  }
+
   only(...keys: string[]): Record<string, any> {
-    console.log(keys);
     return {};
   }
 
   except(...keys: string[]): Record<string, any> {
-    console.log(keys);
     return {};
   }
 
   is(pathPattern: string): boolean {
-    console.log(pathPattern);
     return false;
   }
 
   has(...keys: string[]): boolean {
-    console.log("kjeys ===> ", keys);
+    const payload = this.all();
     for (const key of keys) {
-      if (!(key in this.$payload)) return false;
+      if (!(key in payload)) return false;
     }
 
     return true;
   }
 
   hasAny(...keys: string[]): boolean {
+    const payload = this.all();
     for (const key of keys) {
-      if (key in this.$payload) return true;
+      if (key in payload) return true;
     }
 
     return false;
   }
 
   missing(...keys: string[]): boolean {
+    const payload = this.all();
     for (const key of keys) {
-      if (key in this.$payload) return false;
+      if (key in payload) return false;
     }
 
     return true;

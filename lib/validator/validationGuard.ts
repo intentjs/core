@@ -1,16 +1,17 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { Request } from "../rest";
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { Request as ERequest } from 'express';
+import { Request } from '../rest';
 
 @Injectable()
 export class IntentValidationGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest() as Request;
-    const iRequest = request["intent"].req();
-    const schema = this.reflector.get("dtoSchema", context.getHandler());
-    iRequest.addDto(await iRequest.validate(schema));
+    const expressRequest = context.switchToHttp().getRequest() as ERequest;
+    const request = expressRequest['intent'].req() as Request;
+    const schema = this.reflector.get('dtoSchema', context.getHandler());
+    request.addDto(await request.validate(schema));
     return true;
   }
 }

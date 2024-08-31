@@ -1,9 +1,10 @@
-import { InternalMessage } from "../strategy";
-import { RedisQueueOptionsDto } from "../schema";
-import { PollQueueDriver } from "../strategy/pollQueueDriver";
-import { ulid } from "ulid";
-import { Package, validateOptions } from "../../utils";
-import { RedisJob } from "../interfaces/job";
+import { ulid } from 'ulid';
+import { Package } from '../../utils';
+import { validateOptions } from '../../utils/helpers';
+import { RedisJob } from '../interfaces/job';
+import { RedisQueueOptionsDto } from '../schema';
+import { InternalMessage } from '../strategy';
+import { PollQueueDriver } from '../strategy/pollQueueDriver';
 
 const FIND_DELAYED_JOB = `
 local source_key = KEYS[1]
@@ -37,12 +38,12 @@ export class RedisQueueDriver implements PollQueueDriver {
 
   constructor(private options: Record<string, any>) {
     validateOptions(this.options, RedisQueueOptionsDto, {
-      cls: "RedisQueueDriver",
+      cls: 'RedisQueueDriver',
     });
-    this.queuePrefix = this.options.prefix || "intent_queue";
-    const Redis = Package.load("ioredis");
+    this.queuePrefix = this.options.prefix || 'intent_queue';
+    const Redis = Package.load('ioredis');
     this.client = new Redis(options);
-    this.client.defineCommand("findDelayedJob", {
+    this.client.defineCommand('findDelayedJob', {
       numberOfKeys: 2,
       lua: FIND_DELAYED_JOB,
     });
@@ -58,7 +59,7 @@ export class RedisQueueDriver implements PollQueueDriver {
 
     await this.client.rpush(
       this.getQueue(`${rawPayload.queue}`),
-      this.getProcessedMessage(message)
+      this.getProcessedMessage(message),
     );
   }
 
@@ -74,24 +75,21 @@ export class RedisQueueDriver implements PollQueueDriver {
   async purge(options: Record<string, any>): Promise<void> {
     await this.client.del(this.getQueue(options.queue));
     await this.client.del(this.getDelayedQueue(options.queue));
-    return;
   }
 
   async count(options: Record<string, any>): Promise<number> {
-    const data = await this.client.llen(this.getQueue(options.queue));
-    return data;
+    return await this.client.llen(this.getQueue(options.queue));
   }
 
   async pushToDelayedQueue(
     message: string,
-    rawPayload: InternalMessage
+    rawPayload: InternalMessage,
   ): Promise<void> {
     await this.client.zadd(
       this.getDelayedQueue(`${rawPayload.queue}`),
-      rawPayload.delay,
-      this.getProcessedMessage(message)
+      Date.now() + rawPayload.delay * 1000,
+      this.getProcessedMessage(message),
     );
-    return;
   }
 
   getProcessedMessage(message: string): string {
@@ -104,7 +102,7 @@ export class RedisQueueDriver implements PollQueueDriver {
     await (this.client as any).findDelayedJob(
       this.getDelayedQueue(options.queue),
       this.getQueue(options.queue),
-      Date.now()
+      Date.now(),
     );
   }
 

@@ -1,4 +1,4 @@
-import { Request } from "../rest";
+import { Request } from '../rest';
 
 export class Context {
   req: Request;

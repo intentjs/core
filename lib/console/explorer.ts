@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
-import { ConsoleConstants } from './constants';
-import { CommandMeta } from './metadata';
 import { GenericFunction } from '../interfaces';
+import { ConsoleConstants } from './constants';
 import { CommandMetaOptions } from './interfaces';
+import { CommandMeta } from './metadata';
 
 @Injectable()
 export class ConsoleExplorer {
@@ -14,7 +14,7 @@ export class ConsoleExplorer {
 
   onModuleInit() {
     const wrappers = this.discovery.getProviders();
-    wrappers.forEach((w) => {
+    wrappers.forEach(w => {
       const { instance } = w;
       if (
         !instance ||

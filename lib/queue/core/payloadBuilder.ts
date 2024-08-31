@@ -1,7 +1,7 @@
-import { ulid } from "ulid";
-import { QueueMetadata } from "../metadata";
-import { Message, JobOptions, InternalMessage } from "../strategy";
-import ms from "ms";
+import ms from 'ms';
+import { ulid } from 'ulid';
+import { QueueMetadata } from '../metadata';
+import { Message, JobOptions, InternalMessage } from '../strategy';
 
 type Complete<T> = {
   [P in keyof Required<T>]: Pick<T, P> extends Required<Pick<T, P>>
@@ -16,7 +16,7 @@ const calculateDelay = (delay: number | string | Date): number => {
     return now > time ? now : time;
   }
 
-  const delayInMs = typeof delay === "string" ? ms(delay) : delay * 1000;
+  const delayInMs = typeof delay === 'string' ? ms(delay) : delay * 1000;
   const calculatedDelay = now + delayInMs;
   if (calculatedDelay < now) return now;
   return calculatedDelay;
@@ -25,7 +25,7 @@ const calculateDelay = (delay: number | string | Date): number => {
 export class PayloadBuilder {
   static build(
     message: Message,
-    jobOptions: JobOptions
+    jobOptions: JobOptions,
   ): Complete<InternalMessage> {
     const defaultOptions = QueueMetadata.getDefaultOptions();
     const payload = {

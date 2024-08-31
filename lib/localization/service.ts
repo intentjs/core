@@ -1,12 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import { readdirSync, readFileSync } from "fs-extra";
-import { Obj } from "../utils";
-import { Str } from "../utils/string";
-import { Num } from "../utils/number";
-import { IntentConfig } from "../config/service";
-import { LocalizationOptions } from "./interfaces";
-import { join } from "path";
-import { path } from "app-root-path";
+import { join } from 'path';
+import { Injectable } from '@nestjs/common';
+import { path } from 'app-root-path';
+import { readdirSync, readFileSync } from 'fs-extra';
+import { IntentConfig } from '../config/service';
+import { Obj } from '../utils';
+import { Num } from '../utils/number';
+import { Str } from '../utils/string';
+import { LocalizationOptions } from './interfaces';
 
 @Injectable()
 export class LocalizationService {
@@ -20,7 +20,7 @@ export class LocalizationService {
   };
 
   constructor(private config: IntentConfig) {
-    const options = config.get<LocalizationOptions>("localization");
+    const options = config.get<LocalizationOptions>('localization');
 
     const { path: dir, fallbackLang } = options;
     const data: Record<string, any> = {};
@@ -28,8 +28,8 @@ export class LocalizationService {
     LocalizationService.readFiles(
       join(path, dir),
       function (filename: string, content: any) {
-        data[filename.split(".")[0]] = JSON.parse(content);
-      }
+        data[filename.split('.')[0]] = JSON.parse(content);
+      },
     );
 
     LocalizationService.data = data;
@@ -39,17 +39,17 @@ export class LocalizationService {
   static trans(
     key: string,
     language?: string | Record<string, any>,
-    options?: Record<string, any>
+    options?: Record<string, any>,
   ): string {
     let langData = LocalizationService.data[this.fallbackLang];
-    if (typeof language === "string" && language != "") {
+    if (typeof language === 'string' && language != '') {
       langData = LocalizationService.data[language];
     } else {
       options = language as Record<string, any>;
     }
 
-    let text = Obj.get(langData, key, "") as string;
-    if (!text || typeof text !== "string") return `${key}`;
+    let text = Obj.get(langData, key, '') as string;
+    if (!text || typeof text !== 'string') return `${key}`;
 
     if (options) {
       for (const k in options) {
@@ -64,32 +64,32 @@ export class LocalizationService {
     key: string,
     language?: string | number,
     count?: number | Record<string, any>,
-    options?: Record<string, any>
+    options?: Record<string, any>,
   ): string {
     let langData = LocalizationService.data[this.fallbackLang];
-    if (typeof language === "string" && language != "") {
+    if (typeof language === 'string' && language != '') {
       langData = LocalizationService.data[language];
     }
 
-    if (typeof count === "object") {
+    if (typeof count === 'object') {
       options = count as Record<string, any>;
     }
 
-    if (typeof language === "number") {
+    if (typeof language === 'number') {
       count = language as number;
     }
 
-    if (!count && count != 0) throw new Error("Count value not found");
+    if (!count && count != 0) throw new Error('Count value not found');
 
     const text = Obj.get(langData, key, null);
-    if (!text || typeof text !== "string") return key;
+    if (!text || typeof text !== 'string') return key;
 
     const textObjArr: Record<string, any>[] = [];
-    text.split("|").forEach((t, index) => {
+    text.split('|').forEach((t, index) => {
       textObjArr.push(this.choiceStringParser(t, index));
     });
 
-    let finalText = "";
+    let finalText = '';
     for (const t of textObjArr) {
       if (Num.inRange(count as number, [t.limit.lower, t.limit.upper])) {
         finalText = t.text;
@@ -111,20 +111,20 @@ export class LocalizationService {
 
   private static choiceStringParser(
     t: string,
-    index: number
+    index: number,
   ): Record<string, any> {
-    const text: string = Str.after(t, "]").trim();
-    const range = Str.between(t, "[", "]");
+    const text: string = Str.after(t, ']').trim();
+    const range = Str.between(t, '[', ']');
     const limits = Str.is(range, text)
-      ? [index == 0 ? index : index + 1, index == 0 ? index + 1 : "*"]
-      : range.split(",");
+      ? [index == 0 ? index : index + 1, index == 0 ? index + 1 : '*']
+      : range.split(',');
 
     return {
       text,
       limit: {
-        lower: limits[0] == "*" ? Number.NEGATIVE_INFINITY : +limits[0],
+        lower: limits[0] == '*' ? Number.NEGATIVE_INFINITY : +limits[0],
         upper: limits[1]
-          ? limits[1] == "*"
+          ? limits[1] == '*'
             ? Number.POSITIVE_INFINITY
             : +limits[1]
           : +limits[0],
@@ -141,25 +141,25 @@ export class LocalizationService {
     const keyStartIdx = lowerCaseText.indexOf(key);
     const identifier: string = text.substr(
       keyStartIdx,
-      keyStartIdx + key.length
+      keyStartIdx + key.length,
     );
 
     const caseType = Str.isUpperCase(identifier)
       ? this.caseTypes.UPPER_CASE
       : Str.isLowerCase(identifier)
-      ? this.caseTypes.LOWER_CASE
-      : Str.isSentenceCase(identifier)
-      ? this.caseTypes.SENTENCE_CASE
-      : this.caseTypes.UNKNOWN;
+        ? this.caseTypes.LOWER_CASE
+        : Str.isSentenceCase(identifier)
+          ? this.caseTypes.SENTENCE_CASE
+          : this.caseTypes.UNKNOWN;
 
     const matchStr =
       caseType === this.caseTypes.UPPER_CASE
         ? key.toUpperCase()
         : caseType === this.caseTypes.LOWER_CASE
-        ? key.toLowerCase()
-        : caseType === this.caseTypes.SENTENCE_CASE
-        ? key[0].toUpperCase() + key.slice(1)
-        : key;
+          ? key.toLowerCase()
+          : caseType === this.caseTypes.SENTENCE_CASE
+            ? key[0].toUpperCase() + key.slice(1)
+            : key;
 
     const replaceStr = () => {
       switch (caseType) {
@@ -181,8 +181,8 @@ export class LocalizationService {
   private static readFiles(dirname: string, onFileContent: any) {
     const fss = readdirSync(dirname);
     fss.forEach((filename: string) => {
-      const fileData = readFileSync(dirname + "/" + filename, {
-        encoding: "utf-8",
+      const fileData = readFileSync(dirname + '/' + filename, {
+        encoding: 'utf-8',
       });
 
       onFileContent(filename, fileData);

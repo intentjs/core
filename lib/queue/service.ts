@@ -1,17 +1,17 @@
-import { Injectable, Type } from "@nestjs/common";
-import { QueueDriverOptions, QueueOptions } from "./interfaces";
-import { QueueMetadata } from "./metadata";
-import { IntentConfig } from "../config/service";
+import { Injectable, Type } from '@nestjs/common';
+import { IntentConfig } from '../config/service';
+import { logTime } from '../utils/helpers';
+import { InternalLogger } from '../utils/logger';
+import { Str } from '../utils/string';
 import {
   DatabaseQueueDriver,
   SqsQueueDriver,
   SyncQueueDriver,
-} from "./drivers";
-import { Str } from "../utils/string";
-import { InternalLogger } from "../utils/logger";
-import { QueueDrivers } from "./strategy";
-import { RedisQueueDriver } from "./drivers/redis";
-import { logTime } from "../utils/helpers";
+} from './drivers';
+import { RedisQueueDriver } from './drivers/redis';
+import { QueueDriverOptions, QueueOptions } from './interfaces';
+import { QueueMetadata } from './metadata';
+import { QueueDrivers } from './strategy';
 
 @Injectable()
 export class QueueService {
@@ -25,7 +25,7 @@ export class QueueService {
   private static connections: Record<string, any> = {};
 
   constructor(private config: IntentConfig) {
-    const options = this.config.get<QueueOptions>("queue");
+    const options = this.config.get<QueueOptions>('queue');
     if (!options) return;
     for (const connName in options.connections) {
       const time = Date.now();
@@ -37,8 +37,8 @@ export class QueueService {
 
       if (!driver) {
         InternalLogger.error(
-          "QueueService",
-          `We couldn't find any driver associated with the "${driverName}".`
+          'QueueService',
+          `We couldn't find any driver associated with the "${driverName}".`,
         );
         continue;
       }
@@ -48,16 +48,16 @@ export class QueueService {
         client: new driver(connection),
       };
       InternalLogger.success(
-        "QueueService",
+        'QueueService',
         `Queue connection [${connName}] successfully initiailized ${logTime(
-          Date.now() - time
-        )}`
+          Date.now() - time,
+        )}`,
       );
     }
   }
 
   static getConnection<T = QueueDrivers>(
-    connection: string | undefined
+    connection: string | undefined,
   ): { config: QueueDriverOptions; client: T } {
     const options = QueueMetadata.getData();
     if (!connection) connection = options.default;
@@ -65,7 +65,7 @@ export class QueueService {
   }
 
   static getConnectionClient<T = QueueDrivers>(
-    connection: string | undefined
+    connection: string | undefined,
   ): T {
     const options = QueueMetadata.getData();
     if (!connection) connection = options.default;

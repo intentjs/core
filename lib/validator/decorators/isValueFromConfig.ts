@@ -1,15 +1,15 @@
+import { Injectable } from '@nestjs/common';
 import {
   registerDecorator,
   ValidationOptions,
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-} from "class-validator";
-import { Injectable } from "@nestjs/common";
-import { IntentConfig } from "../../config/service";
-import { isEmpty } from "../../utils/helpers";
-import { Arr } from "../../utils/array";
-import { Obj } from "../../utils";
+} from 'class-validator';
+import { IntentConfig } from '../../config/service';
+import { Obj } from '../../utils';
+import { Arr } from '../../utils/array';
+import { isEmpty } from '../../utils/helpers';
 
 @Injectable()
 @ValidatorConstraint({ async: false })
@@ -37,7 +37,7 @@ export class IsValueFromConfigConstraint
     const [options] = args.constraints;
     const validValues = this.getValues(options.key);
     return `${args.property} should have either of ${validValues.join(
-      ", "
+      ', ',
     )} as value`;
   }
 
@@ -53,7 +53,7 @@ export class IsValueFromConfigConstraint
 
 export function IsValueFromConfig(
   options: Record<string, any>,
-  validationOptions?: ValidationOptions
+  validationOptions?: ValidationOptions,
 ) {
   return function (object: Record<string, any>, propertyName: string): void {
     registerDecorator({
