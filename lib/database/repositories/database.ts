@@ -1,5 +1,5 @@
 import { Knex, Knex as KnexType } from 'knex';
-import { PrimitiveValue , Expression } from 'objection';
+import { PrimitiveValue, Expression } from 'objection';
 import { BaseModel } from '../baseModel';
 import { ModelNotFound } from '../exceptions';
 import { RepositoryError } from '../exceptions/repoError';
@@ -82,6 +82,7 @@ export class DatabaseRepository<T extends BaseModel>
     }
 
     for (const key in inputs) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       Array.isArray(inputs[key] as unknown as any)
         ? query.whereIn(
             key,
@@ -201,6 +202,7 @@ export class DatabaseRepository<T extends BaseModel>
     const query = this.query();
 
     for (const key in inputs) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       Array.isArray(inputs[key])
         ? query.whereIn(key, inputs[key] as unknown as any[])
         : query.where(key, inputs[key] as unknown as any);
@@ -229,7 +231,6 @@ export class DatabaseRepository<T extends BaseModel>
     payload: number | string | Array<number | string> | Record<string, any>,
   ): Promise<void> {
     await model.$relatedQuery(relation).relate(payload);
-    return;
   }
 
   /**
@@ -247,7 +248,6 @@ export class DatabaseRepository<T extends BaseModel>
     if (Array.isArray(payload) && payload.length > 0) {
       await model.$relatedQuery(relation).relate(payload);
     }
-    return;
   }
 
   /**
@@ -261,7 +261,6 @@ export class DatabaseRepository<T extends BaseModel>
     const query = this.query();
     query.where(where);
     await query.chunk(cb, size);
-    return;
   }
 
   /**
