@@ -6,34 +6,31 @@ import { CodegenCommand } from './codegen/command';
 import { CodegenService } from './codegen/service';
 import { ViewConfigCommand } from './config/command';
 import { IntentConfig } from './config/service';
-import { ConsoleExplorer, ListCommands } from './console';
+import { ListCommands } from './console';
 import { ObjectionService } from './database';
 import { DbOperationsCommand } from './database/commands/migrations';
-import { EventExplorer } from './events';
 import { EventQueueWorker } from './events/jobListener';
+import { IntentExplorer } from './explorer';
 import { GenericFunction } from './interfaces';
 import { LocalizationService } from './localization';
 import { LoggerService } from './logger/service';
 import { MailerService } from './mailer';
 import { QueueService } from './queue';
 import { QueueConsoleCommands } from './queue/console';
-import { QueueExplorer } from './queue/explorer';
 import { QueueMetadata } from './queue/metadata';
 import { StorageService } from './storage/service';
 import { ExistsConstraint } from './validator/decorators/exists';
 import { IsUniqueConstraint } from './validator/decorators/isUnique';
 
 const providers = [
-  ConsoleExplorer,
+  IntentExplorer,
   ListCommands,
   DbOperationsCommand,
   ObjectionService,
-  EventExplorer,
   StorageService,
   CacheService,
   QueueService,
   QueueConsoleCommands,
-  QueueExplorer,
   CodegenCommand,
   CodegenService,
   ViewConfigCommand,
