@@ -1,5 +1,5 @@
 import { Knex, Knex as KnexType } from 'knex';
-import { PrimitiveValue , Expression } from 'objection';
+import { PrimitiveValue, Expression } from 'objection';
 import { BaseModel } from '../baseModel';
 import { ModelNotFound } from '../exceptions';
 import { RepositoryError } from '../exceptions/repoError';

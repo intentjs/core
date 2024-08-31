@@ -4,7 +4,12 @@ import { logTime } from '../utils/helpers';
 import { InternalLogger } from '../utils/logger';
 import { Local, S3Storage } from './drivers';
 import { DiskNotFoundException } from './exceptions/diskNotFound';
-import { LocalDiskOptions, S3DiskOptions, StorageOptions , StorageDriver } from './interfaces';
+import {
+  LocalDiskOptions,
+  S3DiskOptions,
+  StorageOptions,
+  StorageDriver,
+} from './interfaces';
 
 @Injectable()
 export class StorageService {
