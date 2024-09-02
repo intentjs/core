@@ -2,7 +2,7 @@ import { MemoryDriver, RedisDriver } from "../drivers";
 
 export interface LimiterOptions {
   isGlobal?: boolean;
-  driver: LimiterDriver;
+  driver: LimiterDriverType;
   defaultTokensCount?: number;
   defaultRefillIntervalInSeconds?: number;
   connection?: RedisConnection;
