@@ -3,6 +3,7 @@ import { DiscoveryService, MetadataScanner } from "@nestjs/core";
 import { ulid } from "ulid";
 import { Limiter } from "./rateLimiter";
 import { GenericFunction } from "../interfaces";
+import { REFILL_INTERVAL, TOKEN_COUNT } from "./constants";
 
 @Injectable()
 export class LimiterExplorer {
@@ -36,40 +37,17 @@ export class LimiterExplorer {
     key: string
   ) {
     let methodRef = instance[key];
-    const hasCommandMeta = Reflect.hasMetadata(
-      "rate-limiter-tokens",
-      instance,
-      key
-    );
+    const hasCommandMeta = Reflect.hasMetadata(TOKEN_COUNT, instance, key);
 
     if (!hasCommandMeta) return;
 
-    const tokensCount = Reflect.getMetadata(
-      "rate-limiter-tokens",
-      instance,
-      key
-    );
-    const frequency = Reflect.getMetadata(
-      "rate-limiter-interval",
-      instance,
-      key
-    );
-    console.log("limiter found", methodRef, key, tokensCount, frequency);
+    const tokensCount = Reflect.getMetadata(TOKEN_COUNT, instance, key);
+    const frequency = Reflect.getMetadata(REFILL_INTERVAL, instance, key);
     const funcKey = ulid();
     Limiter.initializeToken(key + funcKey, tokensCount, frequency);
     instance[key] = function (...args) {
       Limiter.useToken(key + funcKey);
-      console.log("Rate Limited");
       return methodRef.apply(instance, args);
     };
-
-    // const options: CommandMetaOptions =
-    //   Reflect.getMetadata(ConsoleConstants.commandOptions, instance, key) ||
-    //   Reflect.getMetadata(
-    //     ConsoleConstants.commandOptions,
-    //     instance.constructor,
-    //   );
-
-    // CommandMeta.setCommand(command, options, methodRef.bind(instance));
   }
 }
