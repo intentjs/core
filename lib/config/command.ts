@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as pc from 'picocolors';
+import pc from 'picocolors';
 import { Command, ConsoleIO } from '../console';
 import { Obj } from '../utils';
 import { Arr } from '../utils/array';
@@ -28,6 +28,7 @@ export class ViewConfigCommand {
       printRows.push([pc.green(row[0]), pc.yellow(row[1])].join(' '));
     }
 
+    // eslint-disable-next-line no-console
     console.log(printRows.join('\n'));
   }
 }

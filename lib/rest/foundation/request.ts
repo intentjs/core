@@ -1,8 +1,7 @@
 import { Type } from '@nestjs/common';
 import { Request as ERequest } from 'express';
 import { isEmpty } from 'lodash';
-import { ulid } from 'ulid';
-import { Validator } from '../validator';
+import { Validator } from '../../validator';
 
 export class Request {
   private $headers: Record<string, any>;
@@ -10,12 +9,11 @@ export class Request {
   private id: string;
   private $user: Record<string, any>;
 
-  constructor(private request: ERequest) {
+  constructor(private readonly raw: ERequest) {
     this.$headers = {};
-    this.initiate(request);
-    this.id = ulid();
+    this.initiate(raw);
     this.$user = null;
-    this.$headers = request.headers;
+    this.$headers = raw.headers;
   }
 
   private initiate(request: ERequest) {
@@ -24,19 +22,19 @@ export class Request {
 
   logger() {}
 
-  addDto(dto: any): void {
+  setBody(dto: any): void {
     this.$dto = dto;
   }
 
-  dto(): any {
+  body(): any {
     return this.$dto;
   }
 
   all(): Record<string, any> {
     return {
-      ...(this.request.query || {}),
-      ...(this.request.params || {}),
-      ...(this.request.body || {}),
+      ...(this.raw.query || {}),
+      ...(this.raw.params || {}),
+      ...(this.raw.body || {}),
     };
   }
 
@@ -61,13 +59,13 @@ export class Request {
     return [true, 'yes', 'on', '1', 1, 'true'].includes(val.toLowerCase());
   }
 
-  query<T = Record<string, any>>(name?: string): T {
-    const query: Record<string, any> = this.request.query || {};
+  query<T = unknown>(name?: string): T {
+    const query: Record<string, any> = this.raw.query || {};
     return name ? query[name] : query;
   }
 
-  path<T = Record<string, any>>(): T {
-    return this.request.params as T;
+  pathParams<T = Record<string, any>>(): T {
+    return this.raw.params as T;
   }
 
   header(name: string): string {
@@ -89,11 +87,11 @@ export class Request {
   }
 
   host(): string {
-    return this.request.get('host');
+    return this.raw.get('host');
   }
 
   httpHost(): string {
-    return this.request.protocol;
+    return this.raw.protocol;
   }
 
   isHttp(): boolean {
@@ -105,27 +103,27 @@ export class Request {
   }
 
   url(): string {
-    return this.request.url;
+    return this.raw.url;
   }
 
   fullUrl(): string {
-    return this.request.url;
+    return this.raw.url;
   }
 
   ip(): string {
-    return this.request.ip;
+    return this.raw.ip;
   }
 
   ips(): string[] {
-    return this.request.ips;
+    return this.raw.ips;
   }
 
   method(): string {
-    return this.request.method;
+    return this.raw.method;
   }
 
   isMethod(method: string): boolean {
-    return this.request.method === method;
+    return this.raw.method === method;
   }
 
   getAcceptableContentTypes(): string[] {
@@ -143,12 +141,13 @@ export class Request {
     return this.$headers['accept'];
   }
 
-  async validate<T>(dto: Type<T>): Promise<T> {
+  async validate<T>(schema: Type<T>): Promise<void> {
     const payload = this.all();
-    const validator = Validator.compareWith(dto);
-    return validator
+    const validator = Validator.compareWith(schema);
+    const dto = await validator
       .addMeta({ ...payload, _headers: { ...this.$headers } })
-      .validate({ ...this.all() });
+      .validate({ ...payload });
+    this.setBody(dto);
   }
 
   setUser(user: any): void {
@@ -159,15 +158,18 @@ export class Request {
     return this.$user as T;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   only(...keys: string[]): Record<string, any> {
     return {};
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   except(...keys: string[]): Record<string, any> {
     return {};
   }
 
-  is(pathPattern: string): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isPath(pathPattern: string): boolean {
     return false;
   }
 
@@ -204,5 +206,9 @@ export class Request {
     }
 
     return true;
+  }
+
+  toJSON() {
+    return { msg: 'custom request payload' };
   }
 }

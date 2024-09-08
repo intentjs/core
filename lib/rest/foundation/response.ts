@@ -2,20 +2,21 @@ import { ReadStream } from 'fs';
 import { ClassSerializerContextOptions, StreamableFile } from '@nestjs/common';
 import { StreamableFileOptions } from '@nestjs/common/file-stream/interfaces';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { Response } from 'express';
+import { Response as EResponse } from 'express';
+import { HttpStatus } from './statusCodes';
 
-export class IntentResponse {
+export class Response {
   private $headers: Record<string, any>;
   private $data: Record<string, any>;
   private $statusCode: number;
 
-  constructor(private response: Response) {
+  constructor(private response: EResponse) {
     this.$data = undefined;
     this.$headers = {};
-    this.$statusCode = 200;
+    this.$statusCode = HttpStatus.OK;
   }
 
-  send(data: any, statusCode = 200): this {
+  send(data: any, statusCode = HttpStatus.OK): this {
     this.$data = data;
     this.response.status(statusCode);
     return this;
@@ -27,14 +28,14 @@ export class IntentResponse {
     return this;
   }
 
-  status(status = 200): this {
+  status(status = HttpStatus.OK): this {
     this.response.status(status);
     return this;
   }
 
   stream(stream: ReadStream, options: StreamableFileOptions = {}): this {
     this.$data = new StreamableFile(stream, options);
-    this.status(200);
+    this.status(HttpStatus.OK);
     return this;
   }
 

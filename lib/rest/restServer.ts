@@ -4,7 +4,7 @@ import { useContainer } from 'class-validator';
 import { IntentConfig } from '../config/service';
 import { Obj, Package } from '../utils';
 import { ServerOptions } from './interfaces';
-import { requestMiddleware } from './middlewares/requestSerializer';
+import { requestMiddleware } from './middlewares/functional/requestSerializer';
 
 export class RestServer {
   /**

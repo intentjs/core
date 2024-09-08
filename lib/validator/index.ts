@@ -5,7 +5,7 @@ import {
   applyDecorators,
   createParamDecorator,
 } from '@nestjs/common';
-import { Request } from '../rest/request';
+import { Request } from '../rest/foundation';
 import { IntentValidationGuard } from './validationGuard';
 
 export * from './validator';
@@ -26,6 +26,6 @@ export const Dto = createParamDecorator(
     }
     const request = ctx.switchToHttp().getRequest();
     const intentRequest = request.intent.req() as Request;
-    return intentRequest.dto();
+    return intentRequest.body();
   },
 );

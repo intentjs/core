@@ -32,7 +32,7 @@ export class IntentExplorer {
         Object.getPrototypeOf(instance),
         (key: string) => {
           this.lookupJobs(instance, key);
-          this.lookupListeners(instance, key);
+          this.lookupEventListeners(instance, key);
           this.lookupConsoleCommands(instance, key);
         },
       );
@@ -50,7 +50,7 @@ export class IntentExplorer {
     });
   }
 
-  lookupListeners(instance: Record<string, any>, key: string) {
+  lookupEventListeners(instance: Record<string, any>, key: string) {
     const methodRef = instance[key];
     const hasEventMeta = Reflect.hasMetadata(
       IntentEventConstants.eventName,
