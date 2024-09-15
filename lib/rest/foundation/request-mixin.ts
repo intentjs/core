@@ -1,15 +1,14 @@
-import { IncomingHttpHeaders } from 'http';
-import { Request } from 'express';
-import { Type } from '../../interfaces';
-import { isEmpty, Obj, Str } from '../../utils';
+import { Request as ERequest } from 'express';
 import { Validator } from '../../validator';
+import { Type } from '../../interfaces';
+import { isEmpty } from '../../utils';
 
-export const RequestMixin = (request: Request) => ({
+export const RequestMixin = (request: ERequest) => ({
   $dto: null,
   $user: null,
   logger() {},
 
-  setBody(dto: any): void {
+  setDto(dto: any): void {
     this.$dto = dto;
   },
 
@@ -46,15 +45,6 @@ export const RequestMixin = (request: Request) => ({
     return [true, 'yes', 'on', '1', 1, 'true'].includes(val.toLowerCase());
   },
 
-  query<T = unknown>(name?: string): T {
-    const query: Record<string, any> = request.query || {};
-    return name ? query[name] : query;
-  },
-
-  pathParams<T = Record<string, any>>(): T {
-    return request.params as T;
-  },
-
   hasHeader(name: string): boolean {
     return name in request.headers;
   },
@@ -62,11 +52,8 @@ export const RequestMixin = (request: Request) => ({
   bearerToken(): string {
     const authHeader = request.headers['authorization'];
     const asArray = authHeader?.split(' ');
-    return !isEmpty(asArray) && asArray[1];
-  },
-
-  host(): string {
-    return request.get('host');
+    if (!isEmpty(asArray)) return asArray[1];
+    return undefined;
   },
 
   httpHost(): string {
@@ -86,30 +73,25 @@ export const RequestMixin = (request: Request) => ({
   },
 
   isMethod(method: string): boolean {
-    return request.method === method;
+    return request.method.toLowerCase() === method.toLowerCase();
   },
 
-  getAcceptableContentTypes(): IncomingHttpHeaders {
-    return request.headers;
-  },
-
-  accepts(contentTypes: string[]): boolean {
-    const accept = request.headers['accept'];
-    if (accept == '*/*') return true;
-    return contentTypes.includes(accept);
+  getAcceptableContentTypes(): string {
+    return request.headers['accept'];
   },
 
   expectsJson(): boolean {
-    return true;
+    return request.accepts('json') === 'json';
   },
 
-  async validate<T>(schema: Type<T>): Promise<void> {
+  async validate<T>(schema: Type<T>): Promise<boolean> {
     const payload = this.all();
     const validator = Validator.compareWith(schema);
     const dto = await validator
       .addMeta({ ...payload, _headers: { ...request.headers } })
       .validate({ ...payload });
-    this.setBody(dto);
+    this.setDto(dto);
+    return true;
   },
 
   setUser(user: any): void {
@@ -121,15 +103,18 @@ export const RequestMixin = (request: Request) => ({
   },
 
   only(...keys: string[]): Record<string, any> {
-    return Obj.pick(this.all(), keys);
+    console.log(keys);
+    return {};
   },
 
   except(...keys: string[]): Record<string, any> {
-    return Obj.except(this.all(), keys);
+    console.log(keys);
+    return {};
   },
 
   isPath(pathPattern: string): boolean {
-    return Str.is(request.path, pathPattern);
+    console.log(request, pathPattern);
+    return false;
   },
 
   has(...keys: string[]): boolean {
@@ -168,10 +153,11 @@ export const RequestMixin = (request: Request) => ({
   },
 
   hasIncludes(): boolean {
-    return true;
+    const includes = this.includes();
+    return includes === '';
   },
 
-  includes(): string[] {
-    return [];
+  includes(): string {
+    return this.string('include');
   },
 });

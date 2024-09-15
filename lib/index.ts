@@ -18,3 +18,4 @@ export * from './events';
 export * from './validator';
 export * from './config/service';
 export * from './foundation';
+export { registerAs } from '@nestjs/config';
