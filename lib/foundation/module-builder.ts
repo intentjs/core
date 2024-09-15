@@ -3,7 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { Type } from '../interfaces';
 import { IntentGuard, Kernel } from '../rest';
 import { MiddlewareConfigurator } from '../rest/foundation/middlewares/configurator';
-import { IntentAppContainer } from './appContainer';
+import { IntentAppContainer } from './app-container';
 
 export class ModuleBuilder {
   static build(container: IntentAppContainer, kernel?: Kernel) {

@@ -1,4 +1,5 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { INestApplicationContext } from '@nestjs/common';
 
 export type GenericFunction = (...args: any[]) => any;
 export type GenericClass = Record<string, any>;
@@ -12,3 +13,4 @@ export interface Type<T = any> extends Function {
 }
 
 export type IntentApplication = NestExpressApplication;
+export type IntentApplicationContext = INestApplicationContext;

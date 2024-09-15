@@ -1,7 +1,7 @@
 import { Provider } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Type } from '../interfaces';
-import { ImportType, ServiceProvider } from './serviceProvider';
+import { ImportType, ServiceProvider } from './service-provider';
 
 export abstract class IntentAppContainer {
   static serviceProviders: ServiceProvider[] = [];
