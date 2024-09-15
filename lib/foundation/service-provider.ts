@@ -5,7 +5,11 @@ import {
   OptionalFactoryDependency,
   Provider,
 } from '@nestjs/common';
-import { IntentApplication, Type } from '../interfaces';
+import {
+  IntentApplication,
+  IntentApplicationContext,
+  Type,
+} from '../interfaces';
 
 export type ImportType =
   | Type<any>
@@ -69,5 +73,5 @@ export abstract class ServiceProvider {
   /**
    * Use this method to run
    */
-  abstract boot(app: IntentApplication);
+  abstract boot(app: IntentApplication | IntentApplicationContext);
 }
