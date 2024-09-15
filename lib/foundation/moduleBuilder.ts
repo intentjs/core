@@ -1,25 +1,21 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ServiceProviderContainer } from './serviceProviderContainer';
-import { Kernel } from '../rest/foundation/kernel';
-import { Type } from '../interfaces';
-import { IntentGuard } from '../rest/foundation/guards/baseGuard';
 import { APP_GUARD } from '@nestjs/core';
+import { Type } from '../interfaces';
+import { IntentGuard, Kernel } from '../rest';
 import { MiddlewareConfigurator } from '../rest/foundation/middlewares/configurator';
+import { IntentAppContainer } from './appContainer';
 
 export class ModuleBuilder {
-  static build(container: ServiceProviderContainer, kernel: Kernel) {
+  static build(container: IntentAppContainer, kernel?: Kernel) {
     const providers = container.scanProviders();
-    const controllers = container.scanControllers();
+    const controllers = kernel?.controllers() || [];
     /**
      * Scan for global middlewares
      */
-    const globalMiddlewares = kernel.middlewares();
+    const globalMiddlewares = kernel?.middlewares() || [];
     const globalGuards = ModuleBuilder.buildGlobalGuardProviders(
-      kernel.guards(),
+      kernel?.guards() || [],
     );
-
-    const middlewareConfigurator = new MiddlewareConfigurator();
-    kernel.middlewareGroups(middlewareConfigurator);
 
     @Module({
       imports: container.scanImports(),
@@ -28,6 +24,7 @@ export class ModuleBuilder {
     })
     class AppModule implements NestModule {
       configure(consumer: MiddlewareConsumer) {
+        if (!kernel) return;
         /**
          * Apply global middleware for all routes if any found.
          */
@@ -35,12 +32,13 @@ export class ModuleBuilder {
           consumer.apply(...globalMiddlewares).forRoutes('');
         }
 
+        const middlewareConfigurator = new MiddlewareConfigurator();
+        kernel.routeMiddlewares(middlewareConfigurator);
         /**
          * Apply route specific middlewares
          */
         if (middlewareConfigurator.hasAnyRule()) {
           for (const rule of middlewareConfigurator.getAllRules()) {
-            console.log(rule);
             consumer
               .apply(rule.middleware)
               .exclude(...rule.excludedFor)

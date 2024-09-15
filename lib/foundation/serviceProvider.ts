@@ -15,15 +15,10 @@ export type ImportType =
 
 export abstract class ServiceProvider {
   private providers: Provider[] = [];
-  private controllers: Type<any>[] = [];
   private imports: ImportType[] = [];
 
   getAllImports(): ImportType[] {
     return this.imports;
-  }
-
-  getAllControllers(): Type<any>[] {
-    return this.controllers;
   }
 
   getAllProviders(): Provider[] {
@@ -35,22 +30,17 @@ export abstract class ServiceProvider {
     return this;
   }
 
-  registerController(...controllers: Type<any>[]): this {
-    this.controllers.push(...controllers);
-    return this;
-  }
-
-  provide(...cls: Provider[]): this {
+  bind(...cls: Provider[]): this {
     this.providers.push(...cls);
     return this;
   }
 
-  provideWithValue(token: string | symbol | Type<any>, valueFn: any): this {
+  bindWithValue(token: string | symbol | Type<any>, valueFn: any): this {
     this.providers.push({ provide: token, useValue: valueFn });
     return this;
   }
 
-  provideWithClass(token: string | symbol | Type<any>, cls: Type<any>): this {
+  bindWithClass(token: string | symbol | Type<any>, cls: Type<any>): this {
     this.providers.push({
       provide: token,
       useClass: cls,
@@ -58,12 +48,12 @@ export abstract class ServiceProvider {
     return this;
   }
 
-  provideExisting(token: string, cls: Type<any>): this {
+  bindWithExisting(token: string, cls: Type<any>): this {
     this.providers.push({ provide: token, useExisting: cls });
     return this;
   }
 
-  provideWithFactory<T>(
+  bindWithFactory<T>(
     token: string | symbol | Type<any>,
     factory: (...args: any[]) => T | Promise<T>,
     inject?: Array<InjectionToken | OptionalFactoryDependency>,

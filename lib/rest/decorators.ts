@@ -2,18 +2,12 @@ import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { Request } from './foundation';
 
-export const Req = createParamDecorator(
-  (data: string, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
-    return request.intent.req();
-  },
-);
+export { Req, Res } from '@nestjs/common';
 
 export const Body = createParamDecorator(
   (data: any, ctx: ExecutionContext) => {
-    const expressReq = ctx.switchToHttp().getRequest();
-    const request = expressReq.intent.req() as Request;
-    if (request.body()) return request.body();
+    const request = ctx.switchToHttp().getRequest<Request>();
+    if (request.dto()) return request.dto();
 
     const types = Reflect.getMetadata(
       'design:paramtypes',
@@ -37,7 +31,7 @@ export const Body = createParamDecorator(
 
     if (typeParamType === 'function') {
       const dto = plainToInstance(paramType, request.all());
-      request.setBody(dto);
+      request.setDto(dto);
       request.body();
     }
 

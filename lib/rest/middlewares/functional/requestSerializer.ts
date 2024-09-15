@@ -1,19 +1,11 @@
-import {
-  NextFunction,
-  Request as HRequest,
-  Response as HResponse,
-} from 'express';
-import { Request } from '../../foundation';
+import { NextFunction, Request, Response } from 'express';
+import { RequestMixin } from '../../foundation/request-mixin';
 
 export const requestMiddleware = (
-  req: HRequest,
-  res: HResponse,
+  req: Request,
+  res: Response,
   next: NextFunction,
 ) => {
-  const intentRequestObj = new Request(req);
-  req['intent'] = {
-    req: () => intentRequestObj,
-    res: () => () => {},
-  };
+  Object.assign(req, RequestMixin(req));
   next();
 };

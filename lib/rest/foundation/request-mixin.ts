@@ -1,177 +1,136 @@
-import { Type } from '@nestjs/common';
-import { Request as ERequest } from 'express';
-import { isEmpty } from 'lodash';
+import { IncomingHttpHeaders } from 'http';
+import { Request } from 'express';
+import { Type } from '../../interfaces';
+import { isEmpty, Obj, Str } from '../../utils';
 import { Validator } from '../../validator';
 
-export class Request {
-  private $headers: Record<string, any>;
-  private $dto: any;
-  private id: string;
-  private $user: Record<string, any>;
-
-  constructor(private readonly raw: ERequest) {
-    this.$headers = {};
-    this.initiate(raw);
-    this.$user = null;
-    this.$headers = raw.headers;
-  }
-
-  private initiate(request: ERequest) {
-    this.$headers = request.headers;
-  }
-
-  logger() {}
+export const RequestMixin = (request: Request) => ({
+  $dto: null,
+  $user: null,
+  logger() {},
 
   setBody(dto: any): void {
     this.$dto = dto;
-  }
+  },
 
-  body(): any {
+  dto(): any {
     return this.$dto;
-  }
+  },
 
   all(): Record<string, any> {
     return {
-      ...(this.raw.query || {}),
-      ...(this.raw.params || {}),
-      ...(this.raw.body || {}),
+      ...(request.query || {}),
+      ...(request.params || {}),
+      ...(request.body || {}),
     };
-  }
+  },
 
   input<T = string>(name: string, defaultValue?: T): T {
     const payload = this.all();
     return name in payload ? payload[name] : defaultValue;
-  }
+  },
 
   string(name: string): string {
     const value = this.input(name);
     return value && value.toString();
-  }
+  },
 
   number(name: string): number {
     const value = this.input(name);
     return +value;
-  }
+  },
 
   boolean(name: string): boolean {
     const payload = this.all();
     const val = payload[name] as string;
     return [true, 'yes', 'on', '1', 1, 'true'].includes(val.toLowerCase());
-  }
+  },
 
   query<T = unknown>(name?: string): T {
-    const query: Record<string, any> = this.raw.query || {};
+    const query: Record<string, any> = request.query || {};
     return name ? query[name] : query;
-  }
+  },
 
   pathParams<T = Record<string, any>>(): T {
-    return this.raw.params as T;
-  }
-
-  header(name: string): string {
-    return this.$headers[name];
-  }
-
-  headers(): Record<string, any> {
-    return this.$headers;
-  }
+    return request.params as T;
+  },
 
   hasHeader(name: string): boolean {
-    return name in this.$headers;
-  }
+    return name in request.headers;
+  },
 
   bearerToken(): string {
-    const authHeader = this.$headers['authorization'];
+    const authHeader = request.headers['authorization'];
     const asArray = authHeader?.split(' ');
     return !isEmpty(asArray) && asArray[1];
-  }
+  },
 
   host(): string {
-    return this.raw.get('host');
-  }
+    return request.get('host');
+  },
 
   httpHost(): string {
-    return this.raw.protocol;
-  }
+    return request.protocol;
+  },
 
   isHttp(): boolean {
     return this.httpHost() === 'http';
-  }
+  },
 
   isHttps(): boolean {
     return this.httpHost() === 'https';
-  }
-
-  url(): string {
-    return this.raw.url;
-  }
+  },
 
   fullUrl(): string {
-    return this.raw.url;
-  }
-
-  ip(): string {
-    return this.raw.ip;
-  }
-
-  ips(): string[] {
-    return this.raw.ips;
-  }
-
-  method(): string {
-    return this.raw.method;
-  }
+    return request.url;
+  },
 
   isMethod(method: string): boolean {
-    return this.raw.method === method;
-  }
+    return request.method === method;
+  },
 
-  getAcceptableContentTypes(): string[] {
-    const accept = this.$headers['accept'];
-    return accept.split(',');
-  }
+  getAcceptableContentTypes(): IncomingHttpHeaders {
+    return request.headers;
+  },
 
   accepts(contentTypes: string[]): boolean {
-    const accept = this.$headers['accept'];
+    const accept = request.headers['accept'];
     if (accept == '*/*') return true;
     return contentTypes.includes(accept);
-  }
+  },
 
   expectsJson(): boolean {
-    return this.$headers['accept'];
-  }
+    return true;
+  },
 
   async validate<T>(schema: Type<T>): Promise<void> {
     const payload = this.all();
     const validator = Validator.compareWith(schema);
     const dto = await validator
-      .addMeta({ ...payload, _headers: { ...this.$headers } })
+      .addMeta({ ...payload, _headers: { ...request.headers } })
       .validate({ ...payload });
     this.setBody(dto);
-  }
+  },
 
   setUser(user: any): void {
     this.$user = user;
-  }
+  },
 
   user<T = any>(): T {
     return this.$user as T;
-  }
+  },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   only(...keys: string[]): Record<string, any> {
-    return {};
-  }
+    return Obj.pick(this.all(), keys);
+  },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   except(...keys: string[]): Record<string, any> {
-    return {};
-  }
+    return Obj.except(this.all(), keys);
+  },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isPath(pathPattern: string): boolean {
-    return false;
-  }
+    return Str.is(request.path, pathPattern);
+  },
 
   has(...keys: string[]): boolean {
     const payload = this.all();
@@ -180,7 +139,7 @@ export class Request {
     }
 
     return true;
-  }
+  },
 
   hasAny(...keys: string[]): boolean {
     const payload = this.all();
@@ -189,7 +148,7 @@ export class Request {
     }
 
     return false;
-  }
+  },
 
   missing(...keys: string[]): boolean {
     const payload = this.all();
@@ -198,17 +157,21 @@ export class Request {
     }
 
     return true;
-  }
+  },
 
   hasHeaders(...keys: string[]): boolean {
     for (const key of keys) {
-      if (!(key in this.$headers)) return false;
+      if (!(key in request.headers)) return false;
     }
 
     return true;
-  }
+  },
 
-  toJSON() {
-    return { msg: 'custom request payload' };
-  }
-}
+  hasIncludes(): boolean {
+    return true;
+  },
+
+  includes(): string[] {
+    return [];
+  },
+});

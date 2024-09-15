@@ -1,4 +1,4 @@
-export * from './module';
+export * from './serviceProvider';
 export * from './utils';
 export * from './constants';
 export * from './interfaces';
@@ -17,3 +17,4 @@ export * from './mailer';
 export * from './events';
 export * from './validator';
 export * from './config/service';
+export * from './foundation';

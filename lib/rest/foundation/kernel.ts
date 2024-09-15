@@ -1,15 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { IntentApplication, Type } from '../../interfaces';
 import { IntentGuard } from './guards/baseGuard';
 import { MiddlewareConfigurator } from './middlewares/configurator';
 import { IntentMiddleware } from './middlewares/middleware';
 
 export abstract class Kernel {
+  public controllers(): Type<any>[] {
+    return [];
+  }
+
   public middlewares(): Type<IntentMiddleware>[] {
     return [];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public middlewareGroups(configurator: MiddlewareConfigurator) {}
+  public routeMiddlewares(configurator: MiddlewareConfigurator) {}
 
   public guards(): Type<IntentGuard>[] {
     return [];

@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { CommandMeta, CommandMetaOptions } from './console';
 import { ConsoleConstants } from './console/constants';
 import { EventMetadata } from './events';
 import { IntentEventConstants } from './events/constants';
+import { Injectable } from './foundation';
 import { GenericFunction } from './interfaces';
 import { JOB_NAME, JOB_OPTIONS } from './queue/constants';
 import { QueueMetadata } from './queue/metadata';

@@ -1,7 +1,7 @@
 import cors from 'cors';
 import { NextFunction } from 'express';
 import { IntentConfig } from '../../config/service';
-import { Injectable } from '../../providers';
+import { Injectable } from '../../foundation';
 import { IntentMiddleware, Request, Response } from '../foundation';
 
 @Injectable()

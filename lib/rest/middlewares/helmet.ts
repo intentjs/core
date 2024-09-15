@@ -1,7 +1,7 @@
 import { NextFunction } from 'express';
+import helmet from 'helmet';
 import { IntentConfig } from '../../config/service';
-import { Injectable } from '../../providers';
-import { Package } from '../../utils';
+import { Injectable } from '../../foundation';
 import { IntentMiddleware, Request, Response } from '../foundation';
 
 @Injectable()
@@ -11,7 +11,6 @@ export class HelmetMiddleware extends IntentMiddleware {
   }
 
   boot(req: Request, res: Response, next: NextFunction): void | Promise<void> {
-    const helmet = Package.load('helmet');
     helmet(this.config.get('app.cors'));
     next();
   }

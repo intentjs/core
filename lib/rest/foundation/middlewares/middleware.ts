@@ -1,19 +1,10 @@
 import { NestMiddleware } from '@nestjs/common';
-import {
-  Request as HRequest,
-  Response as HResponse,
-  NextFunction,
-} from 'express';
-import { Request } from '../request';
-import { Response } from '../response';
+import { NextFunction } from 'express';
+import { Request, Response } from '../interface';
 
 export abstract class IntentMiddleware implements NestMiddleware {
-  async use(
-    eReq: HRequest,
-    eRes: HResponse,
-    eNext: NextFunction,
-  ): Promise<void> {
-    await this.boot(eReq['intent'].req(), eReq['intent'].res(), eNext);
+  async use(req: Request, res: Response, next: NextFunction): Promise<void> {
+    await this.boot(req, res, next);
   }
 
   abstract boot(

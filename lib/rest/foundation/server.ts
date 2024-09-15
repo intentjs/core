@@ -1,28 +1,27 @@
-/* eslint-disable no-console */
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { useContainer } from 'class-validator';
 import 'console.mute';
 import { IntentConfig } from '../../config/service';
 import { IntentExceptionFilter } from '../../exceptions';
+import { IntentAppContainer, ModuleBuilder } from '../../foundation';
 import { Type } from '../../interfaces';
-import { ModuleBuilder, ServiceProviderContainer } from '../../providers';
 import { Obj, Package } from '../../utils';
+import { Kernel } from '../foundation/kernel';
 import { requestMiddleware } from '../middlewares/functional/requestSerializer';
-import { Kernel } from './kernel';
 
 export class IntentHttpServer {
   private kernel: Kernel;
   private errorHandler: Type<IntentExceptionFilter>;
-  private container: ServiceProviderContainer;
+  private container: IntentAppContainer;
 
   static init() {
     return new IntentHttpServer();
   }
 
-  useContainer(containerCls: Type<ServiceProviderContainer>): this {
+  useContainer(containerCls: Type<IntentAppContainer>): this {
     this.container = new containerCls();
-    this.container.handle();
+    this.container.build();
     return this;
   }
 
@@ -39,7 +38,7 @@ export class IntentHttpServer {
   async start() {
     const module = ModuleBuilder.build(this.container, this.kernel);
 
-    console['mute']();
+    // console['mute']();
     const app = await NestFactory.create<NestExpressApplication>(module, {
       bodyParser: true,
     });
@@ -53,7 +52,7 @@ export class IntentHttpServer {
     app.useBodyParser('raw');
     app.useBodyParser('urlencoded');
 
-    console['resume']();
+    // console['resume']();
 
     app.use(requestMiddleware);
 
@@ -67,7 +66,6 @@ export class IntentHttpServer {
 
     // options?.globalPrefix && app.setGlobalPrefix(options.globalPrefix);
 
-    console.timeEnd('total_time_to_start_server');
     await app.listen(5006 || config.get<number>('app.port'));
   }
 
