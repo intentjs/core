@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { CommandMeta, CommandMetaOptions } from './console';
 import { ConsoleConstants } from './console/constants';
 import { EventMetadata } from './events';
 import { IntentEventConstants } from './events/constants';
+import { Injectable } from './foundation';
 import { GenericFunction } from './interfaces';
 import { JOB_NAME, JOB_OPTIONS } from './queue/constants';
 import { QueueMetadata } from './queue/metadata';
@@ -32,7 +32,7 @@ export class IntentExplorer {
         Object.getPrototypeOf(instance),
         (key: string) => {
           this.lookupJobs(instance, key);
-          this.lookupListeners(instance, key);
+          this.lookupEventListeners(instance, key);
           this.lookupConsoleCommands(instance, key);
         },
       );
@@ -50,7 +50,7 @@ export class IntentExplorer {
     });
   }
 
-  lookupListeners(instance: Record<string, any>, key: string) {
+  lookupEventListeners(instance: Record<string, any>, key: string) {
     const methodRef = instance[key];
     const hasEventMeta = Reflect.hasMetadata(
       IntentEventConstants.eventName,
