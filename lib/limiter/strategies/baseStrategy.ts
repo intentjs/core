@@ -1,5 +1,5 @@
-import { GenericException } from "../../exceptions";
-import { LimiterDriver } from "../interfaces/LimiterDriver";
+import { GenericException } from '../../exceptions';
+import { LimiterDriver } from '../interfaces/limiterDriver';
 
 export class BaseStrategy {
   protected static tokensQuota = {};
@@ -12,7 +12,7 @@ export class BaseStrategy {
   initializeToken = async (
     key: string,
     tokensCount: number,
-    intervalInSeconds: number
+    intervalInSeconds: number,
   ) => {
     BaseStrategy.tokensQuota[key] = tokensCount;
     BaseStrategy.tokensIntervals[key] = intervalInSeconds;
@@ -24,14 +24,14 @@ export class BaseStrategy {
       await this.initializeToken(
         key,
         BaseStrategy.tokensQuota[key] - 1,
-        BaseStrategy.tokensIntervals[key]
+        BaseStrategy.tokensIntervals[key],
       );
       return;
     }
     const cut = await this.driver.decrementCounter(key);
-    console.log("current Count", await this.driver.getCount(key), cut);
+    console.log('current Count', await this.driver.getCount(key), cut);
     if (!cut) {
-      throw new GenericException("Cannot be called.");
+      throw new GenericException('Cannot be called.');
     }
   };
 }

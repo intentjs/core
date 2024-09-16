@@ -1,12 +1,12 @@
-import { RedisDriverOption } from "../../cache";
-import { Package } from "../../utils";
-import { LimiterDriver } from "../interfaces/LimiterDriver";
+import { RedisDriverOption } from '../../cache';
+import { Package } from '../../utils';
+import { LimiterDriver } from '../interfaces/limiterDriver';
 
 export class RedisDriver implements LimiterDriver {
   private client: any;
 
   constructor(private options: RedisDriverOption) {
-    const IORedis = Package.load("ioredis");
+    const IORedis = Package.load('ioredis');
     if (options.url) {
       this.client = new IORedis(options.url, { db: options.database || 0 });
     } else {
@@ -23,7 +23,7 @@ export class RedisDriver implements LimiterDriver {
   async setCounter(
     key: string,
     value: number,
-    ttlInSec?: number
+    ttlInSec?: number,
   ): Promise<void> {
     await this.set(key, value, ttlInSec);
   }
@@ -74,12 +74,12 @@ export class RedisDriver implements LimiterDriver {
   private async set(
     key: string,
     value: string | number | Record<string, any>,
-    ttlInSec?: number
+    ttlInSec?: number,
   ): Promise<boolean> {
     try {
       const redisKey = this.storeKey(key);
       ttlInSec
-        ? await this.client.set(redisKey, JSON.stringify(value), "EX", ttlInSec)
+        ? await this.client.set(redisKey, JSON.stringify(value), 'EX', ttlInSec)
         : await this.client.set(redisKey, JSON.stringify(value));
       return true;
     } catch {

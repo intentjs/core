@@ -1,24 +1,24 @@
-import { LimiterDriver } from "./interfaces/LimiterDriver";
-import { BaseStrategy } from "./strategies/BaseStrategy";
-import { Injectable } from "@nestjs/common";
-import { RedisDriver } from "./drivers/redis";
-import { IntentConfig } from "../config/service";
+import { LimiterDriver } from './interfaces/limiterDriver';
+import { BaseStrategy } from './strategies/baseStrategy';
+import { Injectable } from '@nestjs/common';
+import { RedisDriver } from './drivers/redis';
+import { IntentConfig } from '../config/service';
 import {
   DriversMap,
   LimiterDriverType,
   LimiterOptions,
-} from "./interfaces/options";
+} from './interfaces/options';
 
 @Injectable()
 export class Limiter {
   private static driver: LimiterDriver;
   private static strategy: BaseStrategy;
   constructor(private config: IntentConfig) {
-    const options = this.config.get<LimiterOptions>("queue");
+    const options = this.config.get<LimiterOptions>('queue');
     switch (options.driver) {
       case LimiterDriverType.REDIS: {
         Limiter.driver = new DriversMap[LimiterDriverType.REDIS](
-          options.connection
+          options.connection,
         );
       }
       default: {
@@ -31,7 +31,7 @@ export class Limiter {
   static initializeToken = (
     key: string,
     tokensCount: number,
-    intervalInSeconds: number
+    intervalInSeconds: number,
   ) => {
     Limiter.strategy.initializeToken(key, tokensCount, intervalInSeconds);
   };

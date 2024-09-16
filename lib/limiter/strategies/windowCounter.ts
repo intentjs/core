@@ -1,6 +1,6 @@
-import { BaseStrategy } from "./BaseStrategy";
-import { LimiterDriver } from "../interfaces/LimiterDriver";
-import { GenericException } from "../../exceptions";
+import { BaseStrategy } from './baseStrategy';
+import { LimiterDriver } from '../interfaces/limiterDriver';
+import { GenericException } from '../../exceptions';
 
 export class WindowCounterStrategy extends BaseStrategy {
   constructor(driver: LimiterDriver) {
@@ -10,7 +10,7 @@ export class WindowCounterStrategy extends BaseStrategy {
   initializeToken = async (
     key: string,
     tokensCount: number,
-    intervalInSeconds: number
+    intervalInSeconds: number,
   ) => {
     WindowCounterStrategy.tokensQuota[key] = tokensCount;
     WindowCounterStrategy.tokensIntervals[key] = intervalInSeconds;
@@ -19,7 +19,7 @@ export class WindowCounterStrategy extends BaseStrategy {
 
   useToken = async (key: string) => {
     if (!(await this.driver.decrementCounter(key))) {
-      throw new GenericException("Cannot be called.");
+      throw new GenericException('Cannot be called.');
     }
   };
 
@@ -31,7 +31,7 @@ export class WindowCounterStrategy extends BaseStrategy {
       setInterval(async () => {
         await this.driver.setCounter(
           key,
-          WindowCounterStrategy.tokensQuota[key]
+          WindowCounterStrategy.tokensQuota[key],
         );
       }, BaseStrategy.tokensIntervals[key] * 1000);
     }

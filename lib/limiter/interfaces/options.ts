@@ -1,4 +1,4 @@
-import { MemoryDriver, RedisDriver } from "../drivers";
+import { MemoryDriver, RedisDriver } from '../drivers';
 
 export interface LimiterOptions {
   isGlobal?: boolean;
@@ -16,8 +16,8 @@ export interface RedisConnection {
 }
 
 export enum LimiterDriverType {
-  REDIS = "redis",
-  IN_MEMORY = "in-memory",
+  REDIS = 'redis',
+  IN_MEMORY = 'in-memory',
 }
 
 export const defaultOptions = {

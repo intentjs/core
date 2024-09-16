@@ -98,4 +98,23 @@ export class IntentExplorer {
 
     CommandMeta.setCommand(command, options, methodRef.bind(instance));
   }
+
+  lookupLimittedMethods(
+    instance: Record<string, GenericFunction>,
+    key: string,
+  ) {
+    let methodRef = instance[key];
+    const hasCommandMeta = Reflect.hasMetadata(TOKEN_COUNT, instance, key);
+
+    if (!hasCommandMeta) return;
+
+    const tokensCount = Reflect.getMetadata(TOKEN_COUNT, instance, key);
+    const frequency = Reflect.getMetadata(REFILL_INTERVAL, instance, key);
+    const funcKey = ulid();
+    Limiter.initializeToken(key + funcKey, tokensCount, frequency);
+    instance[key] = function (...args) {
+      Limiter.useToken(key + funcKey);
+      return methodRef.apply(instance, args);
+    };
+  }
 }

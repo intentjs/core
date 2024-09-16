@@ -1,6 +1,6 @@
-import { GenericException } from "../../exceptions";
-import { LimiterDriver } from "../interfaces/LimiterDriver";
-import { BaseStrategy } from "./BaseStrategy";
+import { GenericException } from '../../exceptions';
+import { LimiterDriver } from '../interfaces/limiterDriver';
+import { BaseStrategy } from './baseStrategy';
 
 export class SlidingWindowCounter extends BaseStrategy {
   constructor(driver: LimiterDriver) {
@@ -10,7 +10,7 @@ export class SlidingWindowCounter extends BaseStrategy {
   initializeToken = async (
     key: string,
     tokensCount: number,
-    intervalInSeconds: number
+    intervalInSeconds: number,
   ) => {
     SlidingWindowCounter.tokensQuota[key] = tokensCount;
     SlidingWindowCounter.tokensIntervals[key] = intervalInSeconds;
@@ -24,7 +24,7 @@ export class SlidingWindowCounter extends BaseStrategy {
     if (
       (await this.driver.getScoresCount(key)) >= BaseStrategy.tokensQuota[key]
     ) {
-      throw new GenericException("Cannot be called.");
+      throw new GenericException('Cannot be called.');
     }
     await this.driver.addNewScore(key, current);
   };

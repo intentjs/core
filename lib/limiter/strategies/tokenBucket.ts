@@ -1,6 +1,6 @@
-import { BaseStrategy } from "./BaseStrategy";
-import { LimiterDriver } from "../interfaces/LimiterDriver";
-import { GenericException } from "../../exceptions";
+import { BaseStrategy } from './baseStrategy';
+import { LimiterDriver } from '../interfaces/limiterDriver';
+import { GenericException } from '../../exceptions';
 
 export class TokenBucketStrategy extends BaseStrategy {
   constructor(driver: LimiterDriver) {
@@ -10,7 +10,7 @@ export class TokenBucketStrategy extends BaseStrategy {
   initializeToken = async (
     key: string,
     tokensCount: number,
-    intervalInSeconds: number
+    intervalInSeconds: number,
   ) => {
     TokenBucketStrategy.tokensQuota[key] = tokensCount;
     TokenBucketStrategy.tokensIntervals[key] = intervalInSeconds;
@@ -19,7 +19,7 @@ export class TokenBucketStrategy extends BaseStrategy {
 
   useToken = async (key: string) => {
     if (!(await this.driver.decrementCounter(key))) {
-      throw new GenericException("Cannot be called.");
+      throw new GenericException('Cannot be called.');
     }
   };
 
