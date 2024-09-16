@@ -1,7 +1,7 @@
 import { ulid } from 'ulid';
 import { Package } from '../../utils';
 import { validateOptions } from '../../utils/helpers';
-import { RedisJob } from '../interfaces/redisJob';
+import { RedisJob } from '../interfaces/job';
 import { RedisQueueOptionsDto } from '../schema';
 import { InternalMessage } from '../strategy';
 import { PollQueueDriver } from '../strategy/pollQueueDriver';
@@ -52,7 +52,7 @@ export class RedisQueueDriver implements PollQueueDriver {
   async init(): Promise<void> {}
 
   async push(message: string, rawPayload: InternalMessage): Promise<void> {
-    if ((rawPayload.delay || 0) > 0) {
+    if (rawPayload.delay > Date.now()) {
       await this.pushToDelayedQueue(message, rawPayload);
       return;
     }
@@ -75,7 +75,6 @@ export class RedisQueueDriver implements PollQueueDriver {
   async purge(options: Record<string, any>): Promise<void> {
     await this.client.del(this.getQueue(options.queue));
     await this.client.del(this.getDelayedQueue(options.queue));
-    return;
   }
 
   async count(options: Record<string, any>): Promise<number> {
@@ -91,7 +90,6 @@ export class RedisQueueDriver implements PollQueueDriver {
       Date.now() + rawPayload.delay * 1000,
       this.getProcessedMessage(message),
     );
-    return;
   }
 
   getProcessedMessage(message: string): string {

@@ -3,7 +3,11 @@ import { IntentConfig } from '../config/service';
 import { logTime } from '../utils/helpers';
 import { InternalLogger } from '../utils/logger';
 import { Str } from '../utils/string';
-import { SqsQueueDriver, SyncQueueDriver } from './drivers';
+import {
+  DatabaseQueueDriver,
+  SqsQueueDriver,
+  SyncQueueDriver,
+} from './drivers';
 import { RedisQueueDriver } from './drivers/redis';
 import { QueueDriverOptions, QueueOptions } from './interfaces';
 import { QueueMetadata } from './metadata';
@@ -15,6 +19,7 @@ export class QueueService {
     sync: SyncQueueDriver,
     sqs: SqsQueueDriver,
     redis: RedisQueueDriver,
+    db: DatabaseQueueDriver,
   };
 
   private static connections: Record<string, any> = {};

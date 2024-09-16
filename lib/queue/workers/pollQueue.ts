@@ -1,4 +1,5 @@
 import { EmitsEvent } from '../../events';
+import { Obj } from '../../utils';
 import { logTime } from '../../utils/helpers';
 import { JobStatusEnum } from '../constants';
 import { JobFailed, JobProcessed, JobProcessing } from '../events';
@@ -58,6 +59,7 @@ export class PollQueueWorker extends BaseQueueWorker {
     if (connection.scheduledTask) this.performScheduledTask(connection);
 
     const runner = new JobRunner(this.options, connection);
+    // eslint-disable-next-line no-constant-condition
     while (1) {
       const jobs = await this.poll(connection);
       if (!jobs.length) {
@@ -114,7 +116,6 @@ export class PollQueueWorker extends BaseQueueWorker {
         `[${message.job}] Job Failed... | ${error['message']}`,
         true,
       );
-      return;
     }
   }
 
@@ -186,6 +187,7 @@ export class PollQueueWorker extends BaseQueueWorker {
    * @param job
    */
   fetchMessage(job: DriverJob): InternalMessage {
-    return JSON.parse(job.getMessage());
+    const message = job.getMessage();
+    return Obj.isObj(message) ? message : JSON.parse(job.getMessage());
   }
 }

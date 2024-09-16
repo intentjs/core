@@ -1,6 +1,6 @@
 import { Package } from '../../utils';
 import { joinUrl, validateOptions } from '../../utils/helpers';
-import { SqsJob } from '../interfaces/sqsJob';
+import { SqsJob } from '../interfaces/job';
 import { SqsQueueOptionsDto } from '../schema';
 import { InternalMessage } from '../strategy';
 import { PollQueueDriver } from '../strategy/pollQueueDriver';

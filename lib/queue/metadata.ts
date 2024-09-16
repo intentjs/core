@@ -27,7 +27,7 @@ export class QueueMetadata {
       delay: 10,
       tries: 5,
       timeout: 30,
-      sleep: 5000,
+      sleep: 10000,
     };
   }
 
