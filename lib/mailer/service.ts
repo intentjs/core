@@ -48,7 +48,7 @@ export class MailerService {
     const config = MailerService.options;
     providerName = providerName ?? config.default;
     const providerConfig = config.channels[providerName];
-    const mailData = options.mail.getMailData() as MailData;
+    const mailData = (await options.mail.getMailData()) as MailData;
     const mail = {
       to: options.to,
       cc: options.cc,

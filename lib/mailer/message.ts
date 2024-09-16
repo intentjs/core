@@ -1,4 +1,5 @@
 import { render } from '@react-email/render';
+// eslint-disable-next-line import/no-named-as-default
 import IntentMailComponent from '../../resources/mail/emails';
 import { IntentConfig } from '../config/service';
 import { GENERIC_MAIL, RAW_MAIL, VIEW_BASED_MAIL } from './constants';
@@ -9,11 +10,10 @@ import {
   MailMessagePayload,
 } from './interfaces';
 import { AttachmentOptions } from './interfaces/provider';
-import { MailerService } from './service';
 
 export class MailMessage {
   private mailSubject?: string;
-  private viewFile?: (payload: Record<string, any>) => JSX.Element;
+  private viewFile?: (payload: Record<string, any>) => Element;
   private templateString?: string;
   private payload: MailMessagePayload = {};
   private mailType: MailType;
@@ -61,7 +61,7 @@ export class MailMessage {
    * @param payload
    */
   view(
-    component: (payload: Record<string, any>) => JSX.Element,
+    component: (payload: Record<string, any>) => Element,
     payload?: Record<string, any>,
   ): this {
     this.mailType = VIEW_BASED_MAIL;
@@ -196,20 +196,15 @@ export class MailMessage {
     return this;
   }
 
-  toHtml(): string {
-    return this.getMailData().html;
-  }
-
   /**
    * Method to compile templates
    */
-  private _compileTemplate(): string {
+  private async _compileTemplate(): Promise<string> {
     if (this.compiledHtml) return this.compiledHtml;
-    const config = MailerService.getConfig();
 
     if (this.mailType === GENERIC_MAIL) {
       const templateConfig = IntentConfig.get('mailers.template');
-      const html = render(
+      const html = await render(
         IntentMailComponent({
           header: { value: { title: templateConfig.appName } },
           footer: {
@@ -229,7 +224,7 @@ export class MailMessage {
 
     if (this.mailType === VIEW_BASED_MAIL && this.viewFile) {
       const component = this.viewFile;
-      const html = render(component(this.payload));
+      const html = await render(component(this.payload));
 
       this.compiledHtml = html;
       return this.compiledHtml;
@@ -245,14 +240,14 @@ export class MailMessage {
   /**
    * Returns the maildata payload
    */
-  getMailData(): MailData {
+  async getMailData(): Promise<MailData> {
     if (typeof (this as any).handle === 'function') {
       (this as any)['handle']();
     }
 
     return {
       subject: this.mailSubject,
-      html: this._compileTemplate(),
+      html: await this._compileTemplate(),
       attachments: this.attachments,
     };
   }
@@ -261,7 +256,7 @@ export class MailMessage {
    * Render the email template.
    * Returns the complete html of the mail.
    */
-  render(): string {
-    return this._compileTemplate();
+  async render(): Promise<string> {
+    return await this._compileTemplate();
   }
 }
