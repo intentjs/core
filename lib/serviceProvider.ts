@@ -19,6 +19,7 @@ import { QueueService } from './queue';
 import { QueueConsoleCommands } from './queue/console';
 import { QueueMetadata } from './queue/metadata';
 import { StorageService } from './storage/service';
+import { Limiter } from './limiter';
 
 export const IntentProvidersFactory = (
   config: any[],
@@ -51,6 +52,7 @@ export const IntentProvidersFactory = (
         LocalizationService,
         EventQueueWorker,
         LoggerService,
+        Limiter,
       );
     }
 
