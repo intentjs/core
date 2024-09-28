@@ -1,15 +1,30 @@
-import { CanActivate, ExecutionContext, Inject } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Request, Response } from '../interface';
+import { Reflector } from '../../../reflections';
 
 export abstract class IntentGuard implements CanActivate {
-  @Inject()
-  private reflector: Reflector;
-
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    /**
+     * Get Express Request Object
+     */
     const expressRequest = context.switchToHttp().getRequest();
-    return this.boot(expressRequest, expressRequest);
+
+    /**
+     * Get Express Response Object
+     */
+    const expressResponse = context.switchToHttp().getResponse();
+
+    /**
+     * Initialise a new Reflector class.
+     */
+    const reflector = new Reflector(context.getClass(), context.getHandler());
+
+    return this.guard(expressRequest, expressResponse, reflector);
   }
 
-  abstract boot(req: Request, res: Response): boolean | Promise<boolean>;
+  abstract guard(
+    req: Request,
+    res: Response,
+    reflector: Reflector,
+  ): boolean | Promise<boolean>;
 }
