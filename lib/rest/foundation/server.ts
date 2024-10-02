@@ -66,7 +66,7 @@ export class IntentHttpServer {
 
     // options?.globalPrefix && app.setGlobalPrefix(options.globalPrefix);
 
-    await app.listen(5006 || config.get<number>('app.port'));
+    await app.listen(config.get<number>('app.port') || 5001);
   }
 
   configureErrorReporter(config: Record<string, any>) {
