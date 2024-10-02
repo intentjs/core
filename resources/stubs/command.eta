@@ -10,5 +10,8 @@ export class <%= it.className %> {
 
   async handle(_cli: ConsoleIO): Promise<void> {
     _cli.error('Command not implemented');
+
+    // you can remove the process.exit() if you would like your command to keep running.
+    process.exit();
   }
 }

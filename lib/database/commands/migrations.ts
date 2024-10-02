@@ -31,6 +31,7 @@ export class DbOperationsCommand {
     }
 
     _cli.table(['Migration', 'Status'], statusList);
+    process.exit();
   }
 
   @Command('migrate {--connection==}', {
@@ -48,13 +49,15 @@ export class DbOperationsCommand {
 
     if (migrations.length === 0) {
       _cli.info('No migrations to run');
-      return;
+      process.exit();
     }
 
     _cli.info(`Batch Number: ${batch}`);
     for (const migration of migrations) {
       _cli.success(migration);
     }
+
+    process.exit();
   }
 
   @Command('migrate:rollback {--connection==}', {
@@ -72,13 +75,15 @@ export class DbOperationsCommand {
 
     if (migrations.length === 0) {
       _cli.info('No migrations to rollback. Already at the base migration');
-      return;
+      process.exit();
     }
 
     _cli.info(`Reverted Batch: ${batch}`);
     for (const migration of migrations) {
       _cli.success(migration);
     }
+
+    process.exit();
   }
 
   @Command('migrate:reset {--connection==}', {
@@ -96,7 +101,7 @@ export class DbOperationsCommand {
 
     if (!confirm) {
       _cli.info('Thank you! Exiting...');
-      return;
+      process.exit();
     }
 
     const password = await _cli.password(
@@ -107,7 +112,7 @@ export class DbOperationsCommand {
       const conPassword = connConfig.connection?.['password'];
       if (conPassword && password !== conPassword) {
         _cli.error(' Wrong Password. Exiting... ');
-        return;
+        process.exit();
       }
     }
 
@@ -117,13 +122,15 @@ export class DbOperationsCommand {
 
     if (migrations.length === 0) {
       _cli.info('No migrations to rollback. Already at the base migration');
-      return;
+      process.exit();
     }
 
     _cli.info('Rollback of following migrations are done:');
     for (const migration of migrations) {
       _cli.success(migration);
     }
+
+    process.exit();
   }
 
   @Command('make:migration {name} {--connection=}', {
@@ -143,5 +150,6 @@ export class DbOperationsCommand {
 
     const paths = res.split('/');
     _cli.success(paths[paths.length - 1]);
+    process.exit();
   }
 }

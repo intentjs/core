@@ -19,6 +19,8 @@ import { QueueService } from './queue';
 import { QueueConsoleCommands } from './queue/console';
 import { QueueMetadata } from './queue/metadata';
 import { StorageService } from './storage/service';
+import { BuildProjectCommand } from './dev-server/build';
+import { DevServerCommand } from './dev-server/serve';
 
 export const IntentProvidersFactory = (
   config: any[],
@@ -51,6 +53,8 @@ export const IntentProvidersFactory = (
         LocalizationService,
         EventQueueWorker,
         LoggerService,
+        BuildProjectCommand,
+        DevServerCommand,
       );
     }
 

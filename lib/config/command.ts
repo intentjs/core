@@ -30,5 +30,7 @@ export class ViewConfigCommand {
 
     // eslint-disable-next-line no-console
     console.log(printRows.join('\n'));
+
+    process.exit();
   }
 }

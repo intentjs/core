@@ -28,8 +28,9 @@ export class CodegenCommand {
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+
+    process.exit();
   }
 
   @Command('make:controller {name}', { desc: 'Command to create a controller' })
@@ -50,8 +51,9 @@ export class CodegenCommand {
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+
+    process.exit();
   }
 
   @Command('make:service {name}', { desc: 'Command to create a service' })
@@ -67,8 +69,9 @@ export class CodegenCommand {
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+
+    process.exit();
   }
 
   @Command('make:job {name}', { desc: 'Command to create a job' })
@@ -90,8 +93,8 @@ export class CodegenCommand {
     } catch (e) {
       console.log(e);
       _cli.error(e['message']);
-      return;
     }
+    process.exit();
   }
 
   @Command('make:model {name}', { desc: 'Command to create a model' })
@@ -111,8 +114,8 @@ export class CodegenCommand {
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+    process.exit();
   }
 
   @Command('make:repo {repoName} {modelFileName} {--without-interface}', {
@@ -147,8 +150,9 @@ export class CodegenCommand {
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+
+    process.exit();
   }
 
   @Command('make:exception {name}', {
@@ -166,8 +170,9 @@ export class CodegenCommand {
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+
+    process.exit();
   }
 
   @Command('make:resource {name}', { desc: 'Command to create a service' })
@@ -183,8 +188,9 @@ export class CodegenCommand {
       await CommandRunner.run(`make:service ${name}`, { silent: true });
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+
+    process.exit();
   }
 
   @Command('make:event {name}', {
@@ -206,8 +212,9 @@ export class CodegenCommand {
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+
+    process.exit();
   }
 
   @Command(
@@ -232,8 +239,9 @@ export class CodegenCommand {
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+
+    process.exit();
   }
 
   @Command(
@@ -256,8 +264,9 @@ export class CodegenCommand {
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+
+    process.exit();
   }
 
   @Command('make:mail {name}', {
@@ -278,7 +287,8 @@ export class CodegenCommand {
       _cli.success(`Successfully created ${filePath}`);
     } catch (e) {
       _cli.error(e['message']);
-      return;
     }
+
+    process.exit();
   }
 }
