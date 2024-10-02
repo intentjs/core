@@ -8,10 +8,24 @@ export class ContainerFactory {
     containerCls: Type<IntentAppContainer>,
   ): Promise<IntentApplicationContext> {
     const container = new containerCls();
+
     container.build();
+
+    /**
+     * Build a module for NestJS DI Container
+     */
     const module = ModuleBuilder.build(container);
+
+    /**
+     * Build NestJS DI Container
+     */
     const app = await NestFactory.createApplicationContext(module);
+
+    /**
+     * Run the `boot` method of the main application container
+     */
     container.boot(app);
+
     return app;
   }
 }

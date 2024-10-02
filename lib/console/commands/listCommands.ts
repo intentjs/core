@@ -61,6 +61,7 @@ export class ListCommands {
     console.log();
     console.log(printRows.join('\n'));
     console.log();
-    return;
+
+    process.exit();
   }
 }
