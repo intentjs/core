@@ -1,9 +1,13 @@
 import { Command, ConsoleIO } from '../console';
 import { Package } from '../utils';
 
-@Command(`dev
+@Command(
+  `server:dev
   {--config : Path to intent.config.json file}
-  {--debug : Start debug mode in the server}`)
+  {--debug : Start debug mode in the server}
+`,
+  { desc: 'Command to start a server in watch (live-reload) mode.' },
+)
 export class DevServerCommand {
   async handle(_cli: ConsoleIO): Promise<void> {
     const debug = _cli.option('debug');

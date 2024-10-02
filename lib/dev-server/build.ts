@@ -3,12 +3,12 @@ import { getTime, Package } from '../utils';
 import pc from 'picocolors';
 
 @Command(
-  `build
+  `server:build
   {--c|config : Path to the .intentrc file.}
   {--t|tsconfig : Path to tsconfig file.}
   {--d|debug : Run in debug mode (with --inspect flag).}
   {--dtc|disable-type-check : Disable type checking. Enabled by default.}`,
-  { desc: 'Command to start the dev server' },
+  { desc: 'Command to build the application' },
 )
 export class BuildProjectCommand {
   async handle(_cli: ConsoleIO): Promise<void> {
