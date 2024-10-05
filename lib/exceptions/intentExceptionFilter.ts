@@ -18,14 +18,14 @@ export abstract class IntentExceptionFilter extends BaseExceptionFilter {
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const request = ctx.getRequest<any>();
+    const request = ctx.getRequest<any>() as Request;
     const response = ctx.getResponse<any>();
 
     this.reportToSentry(exception);
 
     Log().error('', exception);
 
-    return this.handleHttp(exception, request.intent.req(), response);
+    return this.handleHttp(exception, request, response);
   }
 
   reportToSentry(exception: any): void {
