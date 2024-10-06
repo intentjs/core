@@ -39,10 +39,10 @@
     "@types/jest": "^29.5.13",
     "@types/lodash": "^4.14.202",
     "@types/ms": "^0.7.34",
-    "eslint": "^8.57.0",
     "@types/node": "^22.5.5",
     "@typescript-eslint/eslint-plugin": "^8.5.0",
     "@typescript-eslint/parser": "^8.5.0",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
@@ -56,7 +56,6 @@
     "typescript": "^5.5.2"
   },
   "dependencies": {
-    "@nestjs/config": "^3.2.0",
     "@nestjs/platform-express": "^10.4.1",
     "@react-email/components": "^0.0.25",
     "app-root-path": "^3.1.0",

@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import pc from 'picocolors';
+import { Inject, Injectable } from '@nestjs/common';
 import { Command, ConsoleIO } from '../console';
 import { Obj } from '../utils';
 import { Arr } from '../utils/array';
 import { columnify } from '../utils/columnify';
-import { IntentConfig } from './service';
+import * as pc from 'picocolors';
+import { ConfigMap } from './options';
+import { CONFIG_FACTORY } from './constant';
 
 @Injectable()
 export class ViewConfigCommand {
-  constructor(private config: IntentConfig) {}
+  constructor(@Inject(CONFIG_FACTORY) private config: ConfigMap) {}
 
   @Command('config:view {namespace}', {
     desc: 'Command to view config for a given namespace',
@@ -28,9 +29,6 @@ export class ViewConfigCommand {
       printRows.push([pc.green(row[0]), pc.yellow(row[1])].join(' '));
     }
 
-    // eslint-disable-next-line no-console
     console.log(printRows.join('\n'));
-
-    process.exit();
   }
 }

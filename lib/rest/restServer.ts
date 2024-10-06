@@ -1,10 +1,11 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { useContainer } from 'class-validator';
-import { IntentConfig } from '../config/service';
+import { ConfigService } from '../config/service';
 import { Obj, Package } from '../utils';
 import { ServerOptions } from './interfaces';
 import { requestMiddleware } from './middlewares/functional/requestSerializer';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 export class RestServer {
   /**
@@ -20,10 +21,10 @@ export class RestServer {
     if (options?.addValidationContainer) {
       useContainer(app.select(module), { fallbackOnErrors: true });
     }
-    const config = app.get(IntentConfig, { strict: false });
+    const config = app.get(ConfigService, { strict: false });
 
     if (config.get('app.cors') || options?.cors) {
-      const corsRule = options?.cors ?? config.get('app.cors');
+      const corsRule = options?.cors ?? (config.get('app.cors') as CorsOptions);
       app.enableCors(corsRule);
     }
 
@@ -47,7 +48,7 @@ export class RestServer {
       app.setGlobalPrefix(options.globalPrefix);
     }
 
-    await app.listen(options?.port || config.get<number>('app.port'));
+    await app.listen(options?.port || (config.get('app.port') as number));
   }
 
   static configureErrorReporter(config: Record<string, any>) {

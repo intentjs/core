@@ -2,7 +2,7 @@ import { join } from 'path';
 import { Injectable } from '@nestjs/common';
 import { path } from 'app-root-path';
 import { readdirSync, readFileSync } from 'fs-extra';
-import { IntentConfig } from '../config/service';
+import { ConfigService } from '../config/service';
 import { Obj } from '../utils';
 import { Num } from '../utils/number';
 import { Str } from '../utils/string';
@@ -19,8 +19,8 @@ export class LocalizationService {
     UNKNOWN: 0,
   };
 
-  constructor(private config: IntentConfig) {
-    const options = config.get<LocalizationOptions>('localization');
+  constructor(private config: ConfigService) {
+    const options = config.get('localization') as LocalizationOptions;
 
     const { path: dir, fallbackLang } = options;
     const data: Record<string, any> = {};
