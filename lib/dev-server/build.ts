@@ -3,7 +3,7 @@ import { getTime, Package } from '../utils';
 import pc from 'picocolors';
 
 @Command(
-  `server:build
+  `build
   {--c|config : Path to the .intentrc file.}
   {--t|tsconfig : Path to tsconfig file.}
   {--d|debug : Run in debug mode (with --inspect flag).}

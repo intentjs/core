@@ -2,7 +2,7 @@ import { Command, ConsoleIO } from '../console';
 import { Package } from '../utils';
 
 @Command(
-  `server:dev
+  `dev
   {--config : Path to intent.config.json file}
   {--debug : Start debug mode in the server}
 `,
