@@ -1,4 +1,4 @@
-import { IntentConfig } from '../config/service';
+import { ConfigService } from '../config/service';
 
 interface NumOptions {
   precision?: number;
@@ -12,7 +12,8 @@ export class Num {
   }
 
   static abbreviate(num: number, options?: NumOptions): string {
-    const locale = options?.locale ?? IntentConfig.get('app.locale');
+    const locale =
+      options?.locale ?? (ConfigService.get('app.locale') as string);
     return Intl.NumberFormat(locale, {
       notation: 'compact',
       maximumFractionDigits: options?.precision ?? 1,
@@ -24,8 +25,10 @@ export class Num {
   }
 
   static currency(num: number, options?: NumOptions): string {
-    const locale = options?.locale ?? IntentConfig.get('app.locale');
-    const currency = options?.currency ?? IntentConfig.get('app.currency');
+    const locale =
+      options?.locale ?? (ConfigService.get('app.locale') as string);
+    const currency =
+      options?.currency ?? (ConfigService.get('app.currency') as string);
     return Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currency,
@@ -44,7 +47,8 @@ export class Num {
   }
 
   static forHumans(num: number, options?: NumOptions): string {
-    const locale = options?.locale ?? IntentConfig.get('app.locale');
+    const locale =
+      options?.locale ?? (ConfigService.get('app.locale') as string);
     return Intl.NumberFormat(locale, {
       notation: 'compact',
       compactDisplay: 'long',
@@ -53,14 +57,16 @@ export class Num {
   }
 
   static format(num: number, options?: NumOptions): string {
-    const locale = options?.locale ?? IntentConfig.get('app.locale');
+    const locale =
+      options?.locale ?? (ConfigService.get('app.locale') as string);
     return Intl.NumberFormat(locale, {
       maximumFractionDigits: options?.precision ?? 1,
     }).format(num);
   }
 
   static percentage(num: number, options?: NumOptions): string {
-    const locale = options?.locale ?? IntentConfig.get('app.locale');
+    const locale =
+      options?.locale ?? (ConfigService.get('app.locale') as string);
     return Intl.NumberFormat(locale, {
       style: 'percent',
       minimumFractionDigits: options?.precision ?? 1,

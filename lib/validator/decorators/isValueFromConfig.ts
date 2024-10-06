@@ -6,7 +6,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { IntentConfig } from '../../config/service';
+import { ConfigService } from '../../config/service';
 import { Obj } from '../../utils';
 import { Arr } from '../../utils/array';
 import { isEmpty } from '../../utils/helpers';
@@ -16,7 +16,7 @@ import { isEmpty } from '../../utils/helpers';
 export class IsValueFromConfigConstraint
   implements ValidatorConstraintInterface
 {
-  constructor(private config: IntentConfig) {}
+  constructor(private config: ConfigService) {}
 
   validate(value: string, args: ValidationArguments): boolean {
     const [options] = args.constraints;
@@ -42,7 +42,7 @@ export class IsValueFromConfigConstraint
   }
 
   private getValues(key: string): any {
-    let validValues: Array<string> = this.config.get(key);
+    let validValues: Array<string> = this.config.get(key) as string[];
     if (Obj.isObj(validValues)) {
       validValues = Object.values(validValues);
     }

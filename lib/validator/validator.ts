@@ -1,7 +1,7 @@
 import { Type } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { ValidationError, validate } from 'class-validator';
-import { IntentConfig } from '../config/service';
+import { ConfigService } from '../config/service';
 import { ValidationFailed } from '../exceptions/validationfailed';
 import { Obj } from '../utils';
 
@@ -50,7 +50,7 @@ export class Validator<T> {
    * Throws new ValidationFailed Exception with validation errors
    */
   async processErrorsFromValidation(errors: ValidationError[]): Promise<void> {
-    const serializerClass = IntentConfig.get(
+    const serializerClass = ConfigService.get(
       'app.error.validationErrorSerializer',
     );
     if (!serializerClass) throw new ValidationFailed(errors);

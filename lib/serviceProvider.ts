@@ -1,10 +1,8 @@
-import { ConfigModule } from '@nestjs/config';
 import { DiscoveryModule } from '@nestjs/core';
 import { CacheService } from './cache';
 import { CodegenCommand } from './codegen/command';
 import { CodegenService } from './codegen/service';
 import { ViewConfigCommand } from './config/command';
-import { IntentConfig } from './config/service';
 import { ListCommands } from './console';
 import { ObjectionService } from './database';
 import { DbOperationsCommand } from './database/commands/migrations';
@@ -21,20 +19,14 @@ import { QueueMetadata } from './queue/metadata';
 import { StorageService } from './storage/service';
 import { BuildProjectCommand } from './dev-server/build';
 import { DevServerCommand } from './dev-server/serve';
+import { CONFIG_FACTORY, ConfigBuilder, ConfigService } from './config';
 
 export const IntentProvidersFactory = (
   config: any[],
 ): Type<ServiceProvider> => {
   return class extends ServiceProvider {
     register() {
-      this.import(
-        DiscoveryModule,
-        ConfigModule.forRoot({
-          isGlobal: true,
-          expandVariables: true,
-          load: config,
-        }),
-      );
+      this.import(DiscoveryModule);
       this.bind(
         IntentExplorer,
         ListCommands,
@@ -48,14 +40,17 @@ export const IntentProvidersFactory = (
         CodegenCommand,
         CodegenService,
         ViewConfigCommand,
-        IntentConfig,
         MailerService,
         LocalizationService,
         EventQueueWorker,
         LoggerService,
         BuildProjectCommand,
         DevServerCommand,
+        ConfigService,
       );
+      this.bindWithFactory(CONFIG_FACTORY, async () => {
+        return ConfigBuilder.build(config);
+      }, []);
     }
 
     /**

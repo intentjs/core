@@ -1,18 +1,18 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import Knex, { Knex as KnexType } from 'knex';
-import { IntentConfig } from '../config/service';
 import { logTime } from '../utils/helpers';
 import { InternalLogger } from '../utils/logger';
 import { BaseModel } from './baseModel';
 import { ConnectionNotFound } from './exceptions';
 import { DatabaseOptions, DbConnectionOptions } from './options';
+import { ConfigService } from '../config';
 
 @Injectable()
 export class ObjectionService implements OnModuleInit {
   static config: DatabaseOptions;
   static dbConnections: Record<string, KnexType>;
 
-  constructor(config: IntentConfig) {
+  constructor(config: ConfigService) {
     const dbConfig = config.get('db') as DatabaseOptions;
     if (!dbConfig) return;
     const defaultConnection = dbConfig.connections[dbConfig.default];

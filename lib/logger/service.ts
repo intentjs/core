@@ -2,7 +2,7 @@ import { join } from 'path';
 import { Injectable } from '@nestjs/common';
 import { path } from 'app-root-path';
 import * as winston from 'winston';
-import { IntentConfig } from '../config/service';
+import { ConfigService } from '../config/service';
 import { Obj } from '../utils';
 import { Num } from '../utils/number';
 import {
@@ -21,8 +21,8 @@ export class LoggerService {
   private static config: IntentLoggerOptions;
   private static options: any = {};
 
-  constructor(private readonly config: IntentConfig) {
-    const options = this.config.get<IntentLoggerOptions>('logger');
+  constructor(private readonly config: ConfigService) {
+    const options = this.config.get('logger') as IntentLoggerOptions;
     LoggerService.config = options;
     for (const conn in options.loggers) {
       LoggerService.options[conn] = LoggerService.createLogger(
