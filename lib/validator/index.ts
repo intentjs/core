@@ -24,8 +24,7 @@ export const Dto = createParamDecorator(
     if (contextType === 'ws') {
       return ctx.switchToWs().getClient()._dto;
     }
-    const request = ctx.switchToHttp().getRequest();
-    const intentRequest = request.intent.req() as Request;
-    return intentRequest.body();
+    const request = ctx.switchToHttp().getRequest() as Request;
+    return request.dto();
   },
 );
