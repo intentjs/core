@@ -4,19 +4,31 @@ export type StaticObjOrFunc<T> = T | (() => T | Promise<T>);
 
 export type Primitive = string | number | boolean | null | undefined;
 
-// Recursive type to build dot notations
-export type DotNotation<T, Prefix extends string = ''> = T extends Primitive
-  ? string
-  : T extends Array<infer U>
-    ? DotNotation<U, `${Prefix}${Prefix extends '' ? '' : '.'}${number}`>
-    : {
-        [K in keyof T]: T[K] extends Primitive
-          ? `${Prefix}${Prefix extends '' ? '' : '.'}${K & string}`
-          : DotNotation<
-              T[K],
-              `${Prefix}${Prefix extends '' ? '' : '.'}${K & string}`
-            >;
-      }[keyof T];
+type Depth = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+export type DotNotation<
+  T,
+  D extends number = 5,
+  Prefix extends string = '',
+> = D extends 0
+  ? never
+  : T extends Primitive
+    ? Prefix
+    : T extends Array<infer U>
+      ? DotNotation<
+          U,
+          Depth[D],
+          `${Prefix}${Prefix extends '' ? '' : '.'}${number}`
+        >
+      : {
+          [K in keyof T]: T[K] extends Primitive
+            ? `${Prefix}${Prefix extends '' ? '' : '.'}${K & string}`
+            : DotNotation<
+                T[K],
+                Depth[D],
+                `${Prefix}${Prefix extends '' ? '' : '.'}${K & string}`
+              >;
+        }[keyof T];
 
 export type GetNestedPropertyType<
   T,

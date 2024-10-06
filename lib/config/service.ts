@@ -35,38 +35,17 @@ export class ConfigService<G = undefined> {
      */
     if (!nsConfig) return null;
 
-    /**
-     * Build value as per the dynamicity.
-     */
-    if (nsConfig.get('dynamic')) {
-      return new Promise(async res => {
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        const factory = nsConfig.get('factory') as Function;
-        const values = await factory();
+    if (!paths.length) return nsConfig.get('static') as any;
 
-        if (!paths.length) {
-          res(values);
-          return;
-        }
+    const staticValues = nsConfig.get('static') as Omit<
+      NamespacedConfigMapValues,
+      'function'
+    >;
 
-        const valueOnPath = Obj.get<any>(values, paths.join('.'));
-        res(valueOnPath);
-      });
-    } else {
-      if (!paths.length) {
-        return nsConfig.get('static') as any;
-      }
-
-      const staticValues = nsConfig.get('static') as Omit<
-        NamespacedConfigMapValues,
-        'function'
-      >;
-
-      const valueOnPath = Obj.get<any>(staticValues, paths.join('.'));
-      if (valueOnPath) {
-        this.cachedConfig.set(key as string, valueOnPath);
-      }
-      return valueOnPath;
+    const valueOnPath = Obj.get<any>(staticValues, paths.join('.'));
+    if (valueOnPath) {
+      this.cachedConfig.set(key as string, valueOnPath);
     }
+    return valueOnPath;
   }
 }

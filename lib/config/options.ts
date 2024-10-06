@@ -1,12 +1,15 @@
 export type RegisterNamespaceOptions = {
-  dynamic?: boolean;
   encrypt?: boolean;
 };
 
-export type BuildConfigFromNS<T extends RegisterNamespaceReturnType<any, any>> =
-  {
-    [N in T as T['_']['namespace']]: T['$inferConfig'];
-  };
+export type BuildConfigFromNS<
+  T extends RegisterNamespaceReturnType<any, any>[],
+> = {
+  [N in T[number]['_']['namespace']]: Extract<
+    T[number],
+    { _: { namespace: N } }
+  >['$inferConfig'];
+};
 
 export type RegisterNamespaceReturnType<
   N extends string,
@@ -20,11 +23,7 @@ export type RegisterNamespaceReturnType<
   $inferConfig: T;
 };
 
-export type NamespacedConfigMapKeys =
-  | 'factory'
-  | 'static'
-  | 'dynamic'
-  | 'encrypt';
+export type NamespacedConfigMapKeys = 'factory' | 'static' | 'encrypt';
 
 export type NamespacedConfigMapValues =
   // eslint-disable-next-line @typescript-eslint/ban-types

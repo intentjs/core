@@ -4,6 +4,9 @@ import {
   RegisterNamespaceReturnType,
 } from './options';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config();
+
 export const registerNamespace = <N extends string, T>(
   namespace: LiteralString<N>,
   factory: () => T | Promise<T>,
@@ -13,7 +16,6 @@ export const registerNamespace = <N extends string, T>(
     _: {
       namespace,
       options: {
-        dynamic: options?.dynamic ?? false,
         encrypt: options?.encrypt ?? false,
       },
       factory,
