@@ -11,7 +11,7 @@ import { CommandMeta } from '../metadata';
 @Injectable()
 @Command('list', { desc: 'Command to list all the commands' })
 export class ListCommands {
-  public async handle(): Promise<void> {
+  public async handle(): Promise<boolean> {
     const commands = CommandMeta.getAllCommands();
 
     const list = [];
@@ -29,7 +29,9 @@ export class ListCommands {
     const formattedRows = columnify(list, { padStart: 2 });
     const groups = {};
     for (const row of formattedRows) {
-      const group = Str.before(row[0], ':').trim();
+      const group = Str.contains(row[0], ':')
+        ? Str.before(row[0], ':').trim()
+        : '#';
       if (groups[group]) {
         groups[group].push(row);
       } else {
@@ -60,8 +62,7 @@ export class ListCommands {
     );
     console.log();
     console.log(printRows.join('\n'));
-    console.log();
 
-    process.exit();
+    return true;
   }
 }
