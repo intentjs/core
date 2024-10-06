@@ -42,7 +42,9 @@ export class CommandRunner {
       console.log(_cli);
     }
 
-    await command.target(_cli);
+    const returnFromCommand = await command.target(_cli);
+    returnFromCommand && process.exit(1);
+
     return;
   }
 

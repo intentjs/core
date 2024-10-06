@@ -11,7 +11,7 @@ import { CommandMeta } from '../metadata';
 @Injectable()
 @Command('list', { desc: 'Command to list all the commands' })
 export class ListCommands {
-  public async handle(): Promise<void> {
+  public async handle(): Promise<boolean> {
     const commands = CommandMeta.getAllCommands();
 
     const list = [];
@@ -63,6 +63,6 @@ export class ListCommands {
     console.log();
     console.log(printRows.join('\n'));
 
-    process.exit();
+    return true;
   }
 }

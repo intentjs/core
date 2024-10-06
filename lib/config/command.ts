@@ -13,7 +13,7 @@ export class ViewConfigCommand {
   @Command('config:view {namespace}', {
     desc: 'Command to view config for a given namespace',
   })
-  async handle(_cli: ConsoleIO): Promise<void> {
+  async handle(_cli: ConsoleIO): Promise<boolean> {
     const namespace = _cli.argument<string>('namespace');
     const config = this.config.get(namespace);
     if (!config) {
@@ -31,6 +31,6 @@ export class ViewConfigCommand {
     // eslint-disable-next-line no-console
     console.log(printRows.join('\n'));
 
-    process.exit();
+    return true;
   }
 }
