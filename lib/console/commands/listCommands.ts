@@ -29,7 +29,9 @@ export class ListCommands {
     const formattedRows = columnify(list, { padStart: 2 });
     const groups = {};
     for (const row of formattedRows) {
-      const group = Str.before(row[0], ':').trim();
+      const group = Str.contains(row[0], ':')
+        ? Str.before(row[0], ':').trim()
+        : '#';
       if (groups[group]) {
         groups[group].push(row);
       } else {
@@ -60,7 +62,6 @@ export class ListCommands {
     );
     console.log();
     console.log(printRows.join('\n'));
-    console.log();
 
     process.exit();
   }
