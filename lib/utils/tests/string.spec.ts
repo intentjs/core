@@ -70,6 +70,105 @@ describe('String Helper', () => {
     expect(Str.headline(sentence)).toBe('Is This Real?');
   });
 
+  it('should validate if the string is email or not', () => {
+    const samples = {
+      'hi@tryintent.com': true,
+      'tryintent.com': false,
+    };
+    for (const email in samples) {
+      expect(Str.isEmail(email)).toStrictEqual(samples[email]);
+    }
+  });
+
+  it('should validate if the given string is a valid JSON or not', () => {
+    const samples = {
+      '{"name": "Intent"}': true,
+      '{"name": "Intent"': false,
+    };
+
+    for (const json in samples) {
+      expect(Str.isJson(json)).toStrictEqual(samples[json]);
+    }
+  });
+
+  it('should validate if the string is a valid URL or not', () => {
+    const samples = {
+      'https://tryintent.com': true,
+      'tryintent.com': true,
+      'docs.tryintent.com': true,
+      'http2://tryintent.com': false,
+    };
+
+    for (const url in samples) {
+      expect(Str.isUrl(url)).toStrictEqual(samples[url]);
+    }
+  });
+
+  it('should validate if the string is valid ulid or not', () => {
+    const samples = {
+      ABCDOKMK: false,
+      '01ARZ3NDEKTSV4RRFFQ69G5FAV': true,
+    };
+    for (const ulid in samples) {
+      expect(Str.isUlid(ulid)).toStrictEqual(samples[ulid]);
+    }
+  });
+
+  it('should transform the string to kebab case', () => {
+    const samples = {
+      intent_js: 'intent-js',
+      'quick brown fox jumps': 'quick-brown-fox-jumps',
+      "Hey_there, What's up?": 'hey-there-what-s-up',
+    };
+    for (const str in samples) {
+      expect(Str.kebab(str)).toStrictEqual(samples[str]);
+    }
+  });
+
+  it('should convert the first character of a string to lowercase', () => {
+    const samples = {
+      INTENT: 'iNTENT',
+      Intent: 'intent',
+    };
+    for (const str in samples) {
+      expect(Str.lcfirst(str)).toStrictEqual(samples[str]);
+    }
+  });
+
+  it('returns the correct length of a string', () => {
+    expect(Str.len('intent')).toStrictEqual(6);
+    expect(Str.len(undefined)).toStrictEqual(0);
+  });
+
+  it('should returns only `n` length of character for a given string', () => {
+    const sentence = 'The quick brown fox jumps over a lazy dog.';
+    expect(Str.limit(sentence, 15)).toStrictEqual('The quick brown...');
+    expect(Str.limit(sentence, 15, '!!!')).toStrictEqual('The quick brown!!!');
+    expect(Str.limit(sentence, 500)).toStrictEqual(sentence);
+  });
+
+  it('should converts the string to lowercase', () => {
+    expect(Str.lower('HEY THERE!!')).toStrictEqual('hey there!!');
+  });
+
+  it('should mask the string after certain characters', () => {
+    expect(Str.mask('hi@tryintent.com', '*', 7)).toStrictEqual(
+      'hi@tryi*********',
+    );
+  });
+
+  it('should pad both ends of the string with character to a defined length', () => {
+    expect(Str.padBoth('intent', 10, '--')).toStrictEqual('--intent--');
+  });
+
+  it('should only pad left of the string with character to a defined length', () => {
+    expect(Str.padLeft('intent', 10, '--')).toStrictEqual('----intent');
+  });
+
+  it('should only pad right of the string with character to a defined length', () => {
+    expect(Str.padRight('intent', 10, '--')).toStrictEqual('intent----');
+  });
+
   it('should pluralize the sentence', () => {
     const string = `Vinayak ${Str.pluralize('have')} 5 ${Str.pluralize(
       'apple',

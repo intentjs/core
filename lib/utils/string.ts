@@ -208,7 +208,7 @@ export class Str {
     return !Str.isString(value);
   };
 
-  static len = (str: string): number => {
+  static len = (str?: string): number => {
     return str?.length ?? 0;
   };
 
