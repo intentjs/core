@@ -169,6 +169,54 @@ describe('String Helper', () => {
     expect(Str.padRight('intent', 10, '--')).toStrictEqual('intent----');
   });
 
+  it('should remove the given substring in a given string', () => {
+    const sentence = 'The quick brown fox jumps over a lazy dog.';
+    expect(Str.remove(sentence, 'quick ')).toStrictEqual(
+      'The brown fox jumps over a lazy dog.',
+    );
+    expect(Str.remove(sentence, ' ')).toStrictEqual(
+      'Thequickbrownfoxjumpsoveralazydog.',
+    );
+  });
+
+  it('should repeat the given string defined number of times.', () => {
+    expect(Str.repeat('chug ', 5)).toStrictEqual('chug chug chug chug chug ');
+  });
+
+  it('should replace the given string with another string', () => {
+    expect(Str.replace('I hate intent!', 'hate', 'love')).toStrictEqual(
+      'I love intent!',
+    );
+    expect(Str.replace('I Hate intent!', 'hate', 'love', true)).toStrictEqual(
+      'I love intent!',
+    );
+  });
+
+  it('should replace the matching string sequentially with the string array', () => {
+    const str = 'I will be there between ? and ?';
+    expect(Str.replaceArray(str, '?', ['8:30', '9:30PM'])).toStrictEqual(
+      'I will be there between 8:30 and 9:30PM',
+    );
+  });
+
+  it('should only replace the first matching string with the the replacement string', () => {
+    const sentence = 'the quick brown fox jumps over the lazy dog.';
+    expect(Str.replaceFirst(sentence, 'the', 'a')).toStrictEqual(
+      'a quick brown fox jumps over the lazy dog.',
+    );
+  });
+
+  it('should only replace the last matching string with the the replacement string', () => {
+    const sentence = 'the quick brown fox jumps over the lazy dog.';
+    expect(Str.replaceLast(sentence, 'the', 'a')).toStrictEqual(
+      'the quick brown fox jumps over a lazy dog.',
+    );
+  });
+
+  it('should correctly reverse the given string', () => {
+    expect(Str.reverse('wtf! why reverse?')).toStrictEqual('?esrever yhw !ftw');
+  });
+
   it('should pluralize the sentence', () => {
     const string = `Vinayak ${Str.pluralize('have')} 5 ${Str.pluralize(
       'apple',
