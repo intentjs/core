@@ -3,11 +3,10 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class IntentConfig {
-  private static cachedConfig: Map<string, any>;
+  private static cachedConfig = new Map<string, any>();
   private static config: ConfigService;
 
   constructor(private config: ConfigService) {
-    IntentConfig.cachedConfig = new Map<string, any>();
     IntentConfig.config = config;
   }
 
