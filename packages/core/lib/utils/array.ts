@@ -145,4 +145,21 @@ export class Arr {
 
     return undefined;
   }
+
+  static intersect<T = string | number, M = T>(
+    arr1: T[],
+    arr2: M[],
+  ): Array<T | M> {
+    const tempMap = new Map<T | M, number>();
+    const newArr = [] as Array<T | M>;
+    for (const val of arr1) {
+      tempMap.set(val, 1);
+    }
+
+    for (const val2 of arr2) {
+      if (tempMap.has(val2)) newArr.push(val2);
+    }
+
+    return newArr;
+  }
 }
