@@ -102,26 +102,24 @@ export class Obj {
     return !Obj.isEmpty(obj);
   }
 
-  static get<T>(
+  static get<T = any>(
     obj: Record<string, any>,
     key: string,
-    ...aliasKeys: string[]
+    defaultValue?: T,
   ): T {
-    const keys = [key, ...aliasKeys];
-    for (const key of keys) {
-      if (key in obj) return obj[key];
-      const splitKeys = key.split('.');
-      if (!splitKeys.length) return;
+    if (key in obj) return obj[key];
+    const splitKeys = key.split('.');
+    if (!splitKeys.length) return;
 
-      if (Arr.isArray(obj[splitKeys[0]])) {
-        return Arr.get(obj[splitKeys[0]], splitKeys.slice(1).join('.'));
-      }
-
-      if (Obj.isObj(obj[splitKeys[0]])) {
-        return Obj.get(obj[splitKeys[0]], splitKeys.slice(1).join('.'));
-      }
+    if (Arr.isArray(obj[splitKeys[0]])) {
+      return Arr.get(obj[splitKeys[0]], splitKeys.slice(1).join('.'));
     }
-    return undefined;
+
+    if (Obj.isObj(obj[splitKeys[0]])) {
+      return Obj.get(obj[splitKeys[0]], splitKeys.slice(1).join('.'));
+    }
+
+    return defaultValue;
   }
 
   static sort<T = Record<string, any>>(obj: T): T {

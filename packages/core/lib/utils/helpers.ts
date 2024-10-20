@@ -12,28 +12,14 @@ import { join } from 'path';
 import { findProjectRoot } from './path';
 
 export const isEmpty = (value: any) => {
-  if (Str.isString(value)) {
-    return value === '';
-  }
-
-  if (Arr.isArray(value)) {
-    return !value.length;
-  }
-
-  if (Obj.isObj(value)) {
-    return Obj.isEmpty(value);
-  }
-
-  if (Number.isNaN(value) || value === undefined) {
-    return true;
-  }
-
+  if (Str.isString(value)) return value === '';
+  if (Arr.isArray(value)) return !value.length;
+  if (Obj.isObj(value)) return Obj.isEmpty(value);
+  if (Number.isNaN(value) || value === undefined) return true;
   return false;
 };
 
-export const isBoolean = (value: any): boolean => {
-  return typeof value === 'boolean';
-};
+export const isBoolean = (value: any): boolean => typeof value === 'boolean';
 
 export const toBoolean = (value: any) => {
   const val = String(value);

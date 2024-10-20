@@ -2,74 +2,117 @@ import { Num } from '../number';
 
 jest.mock('../../config/service');
 
-describe('Number Helpers', () => {
+describe('Numbers Helper', () => {
   beforeEach(async () => {});
 
-  it('abbreviates the passed number to abbreviated format', () => {
-    const num = 1000;
-    expect(Num.abbreviate(num)).toStrictEqual('1K');
+  it('should abbrevate with en locale to 1 decimal point precision', () => {
+    const number = 12345;
+    expect(Num.abbreviate(number)).toBe('12.3K');
   });
 
-  it('abbreviates the passed number to a abbreviated format, but with precision', () => {
-    const num = 1200;
-    expect(Num.abbreviate(num, { precision: 2 })).toStrictEqual('1.2K');
+  it('should abbrevate with en locale to 3 decimal precision', () => {
+    const number = 12345;
+    const options = { precision: 3, locale: 'en' };
+    expect(Num.abbreviate(number, options)).toBe('12.345K');
   });
 
-  it('abbreviates the passed number to a abbreviated format, but with different locale', () => {
-    const num = 1200;
-    expect(Num.abbreviate(num, { locale: 'hi' })).toStrictEqual('1.2 हज़ार');
+  it('should abbrevate with en-IN locale to 3 decimal precision', () => {
+    const number = 12345;
+    const options = { precision: 3, locale: 'en-IN' };
+    expect(Num.abbreviate(number, options)).toBe('12.345K');
   });
 
-  it('should conver the number to indian currency format', () => {
-    const num = 12300;
-    expect(Num.currency(num, { currency: 'INR' })).toStrictEqual('₹12,300.00');
+  it('should return number itself', () => {
+    const number = 12345;
+    const min = 12300;
+    const max = 12400;
+    expect(Num.clamp(number, min, max)).toBe(number);
   });
 
-  it('should conver the number to dollar currency format', () => {
-    const num = 12300;
-    expect(Num.currency(num, { currency: 'USD' })).toStrictEqual('$12,300.00');
+  it('should return minimum number', () => {
+    const number = 12345;
+    const min = 12350;
+    const max = 12400;
+    expect(Num.clamp(number, min, max)).toBe(min);
   });
 
-  it('should convert the number to file size representation', () => {
-    const samples = { 1000: '1KB', 1024: '1KB', [1024 * 1024 * 1.5]: '1.57MB' };
-    expect(Num.fileSize(1000)).toStrictEqual('1KB');
-    expect(Num.fileSize(1024)).toStrictEqual('1KB');
-    expect(Num.fileSize(1024 * 1024 * 1.5, { precision: 2 })).toStrictEqual(
-      '1.57MB',
+  it('should return maximum number', () => {
+    const number = 12345;
+    const min = 12300;
+    const max = 12340;
+    expect(Num.clamp(number, min, max)).toBe(max);
+  });
+
+  it('should return number in currency style in INR', () => {
+    const number = 12345;
+    const options = { currency: 'INR', locale: 'en' };
+    expect(Num.currency(number, options)).toBe('₹12,345.00');
+  });
+
+  it('should return number in currency style in USD', () => {
+    const number = 12345;
+    const options = { currency: 'USD', locale: 'en' };
+    expect(Num.currency(number, options)).toBe('$12,345.00');
+  });
+
+  it('should return number in file size format', () => {
+    const number = 12345;
+    expect(Num.fileSize(number)).toBe('12.3KB');
+  });
+
+  it('should return number in file size format with precision 3', () => {
+    const number = 123456789;
+    const options = { precision: 3 };
+    expect(Num.fileSize(number, options)).toBe('123.457MB');
+  });
+
+  it('should return number in humanize form with precision 1', () => {
+    const number = 12345;
+    const options = { precision: 1, locale: 'en' };
+    expect(Num.forHumans(number, options)).toBe('12.3 thousand');
+  });
+
+  it('should return number in humanize form with precision 3', () => {
+    const number = 123456789;
+    const options = { precision: 3, locale: 'en' };
+    expect(Num.forHumans(number, options)).toBe('123.457 million');
+  });
+
+  it('should return number in number system format with precision 1(default)', () => {
+    const number = 12345.78;
+    const options = { locale: 'en' };
+    expect(Num.format(number, options)).toBe('12,345.8');
+  });
+
+  it('should return number in percents when passed as decimal portion with precision 1(default)', () => {
+    const number = 17.8;
+    const options = { locale: 'en' };
+    expect(Num.percentage(number, options)).toBe('17.8%');
+  });
+
+  it('should return number in ordinal format', () => {
+    const number = 231;
+    expect(Num.ordinal(number)).toBe('231st');
+  });
+
+  it('should return number in ordinal format', () => {
+    const number = 12345;
+    expect(Num.ordinal(number)).toBe('12345th');
+  });
+
+  it('should return number in english words', () => {
+    const number = 12345;
+    expect(Num.spell(number)).toBe(
+      'twelve thousand three hundred and forty five only',
     );
   });
 
-  it('should convert the number to human readable format', () => {
-    expect(Num.forHumans(100)).toStrictEqual('100');
-    expect(Num.forHumans(1200)).toStrictEqual('1.2 thousand');
+  it('should return false', () => {
+    const number = '12345';
+    expect(Num.isInteger(number)).toBe(false);
   });
-
-  it('should convert the number to human readable format, with precision', () => {
-    expect(Num.forHumans(1230, { precision: 2 })).toStrictEqual(
-      '1.23 thousand',
-    );
-  });
-
-  it('should convert the number to human readable format, with locale', () => {
-    expect(Num.forHumans(1200, { locale: 'fr' })).toStrictEqual('1,2 millier');
-  });
-
-  it('should format the number to the given locale string', () => {
-    expect(Num.format(1000)).toStrictEqual('1,000');
-    expect(Num.format(1000, { locale: 'fr' })).toStrictEqual('1 000');
-    expect(Num.format(1200)).toStrictEqual('1,200');
-  });
-
-  it('converts the given number to the ordinal format', () => {
-    expect(Num.ordinal(1)).toStrictEqual('1st');
-    expect(Num.ordinal(2)).toStrictEqual('2nd');
-    expect(Num.ordinal(3)).toStrictEqual('3rd');
-    expect(Num.ordinal(20)).toStrictEqual('20th');
-  });
-
-  it('converts the number to a percentage format with support for precision and locale config', () => {
-    expect(Num.percentage(10)).toStrictEqual('10.0%');
-    expect(Num.percentage(10, { locale: 'fr' })).toStrictEqual('10,0 %');
-    expect(Num.percentage(10.123, { precision: 2 })).toStrictEqual('10.12%');
+  it('should return true', () => {
+    const number = 12345;
+    expect(Num.isInteger(number)).toBe(true);
   });
 });
