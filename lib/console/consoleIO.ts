@@ -7,7 +7,7 @@ import { ConsoleLogger } from './logger';
 export class ConsoleIO {
   schema: ArgumentParserOutput;
   rawValues: Record<string, any>;
-  values: Record<string, any> = { arguments: {}, options: {} };
+  values = { arguments: {}, options: {} };
   hasErrors: boolean;
   missingArguments: string[];
 
@@ -34,6 +34,14 @@ export class ConsoleIO {
 
   option<T>(key: string): T {
     return this.values.options[key];
+  }
+
+  arguments(): Record<string, any> {
+    return this.values.arguments;
+  }
+
+  options(): Record<string, any> {
+    return this.values.options;
   }
 
   handle(): ConsoleIO {
@@ -68,16 +76,11 @@ export class ConsoleIO {
     this.validateArguments();
     if (this.hasErrors) return this;
 
-    /**
-     * Parse options
-     */
     for (const option of this.schema.options) {
-      const value = Obj.get(this.argv, option.name, ...option.alias);
-      if (value) {
-        this.values.options[option.name] = value;
-      } else {
-        this.values.options[option.name] = option.defaultValue;
-      }
+      const values = Object.values(
+        Obj.pick(this.argv, [option.name, ...option.alias]),
+      );
+      this.values.options[option.name] = values[0] ? values[0] : undefined;
     }
 
     return this;
