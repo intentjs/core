@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IntentConfig } from '../config/service';
+import { ConfigService } from '../config/service';
 import { logTime } from '../utils';
 import { InternalLogger } from '../utils/logger';
 import { MailData, MailerOptions } from './interfaces';
@@ -11,7 +11,7 @@ export class MailerService {
   private static options: MailerOptions;
   private static channels: Record<string, BaseProvider>;
 
-  constructor(private config: IntentConfig) {
+  constructor(private config: ConfigService) {
     const options = this.config.get('mailers') as MailerOptions;
 
     MailerService.options = options;

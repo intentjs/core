@@ -2,7 +2,7 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { useContainer } from 'class-validator';
 import 'console.mute';
-import { IntentConfig } from '../../config/service';
+import { ConfigService } from '../../config/service';
 import { IntentExceptionFilter } from '../../exceptions';
 import { IntentAppContainer, ModuleBuilder } from '../../foundation';
 import { Type } from '../../interfaces';
@@ -60,13 +60,13 @@ export class IntentHttpServer {
 
     await this.container.boot(app);
 
-    const config = app.get(IntentConfig, { strict: false });
+    const config = app.get(ConfigService, { strict: false });
 
     this.configureErrorReporter(config.get('app.sentry'));
 
     // options?.globalPrefix && app.setGlobalPrefix(options.globalPrefix);
 
-    await app.listen(config.get<number>('app.port') || 5001);
+    await app.listen((config.get('app.port') as number) || 5001);
   }
 
   configureErrorReporter(config: Record<string, any>) {

@@ -1,5 +1,5 @@
 import { Injectable, Type } from '@nestjs/common';
-import { IntentConfig } from '../config/service';
+import { ConfigService } from '../config/service';
 import { logTime } from '../utils/helpers';
 import { InternalLogger } from '../utils/logger';
 import { Local, S3Storage } from './drivers';
@@ -21,8 +21,8 @@ export class StorageService {
   private static disks: { [key: string]: any };
   private static options: StorageOptions;
 
-  constructor(private config: IntentConfig) {
-    StorageService.options = this.config.get('filesystem');
+  constructor(private config: ConfigService) {
+    StorageService.options = this.config.get('filesystem') as StorageOptions;
     const disksConfig = StorageService.options.disks;
     StorageService.disks = {};
     for (const diskName in StorageService.options.disks) {

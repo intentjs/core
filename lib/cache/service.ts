@@ -1,10 +1,10 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { IntentConfig } from '../config/service';
 import { logTime } from '../utils/helpers';
 import { InternalLogger } from '../utils/logger';
 import { InMemoryDriver } from './drivers/inMemory';
 import { RedisDriver } from './drivers/redis';
 import { CacheDriver, CacheOptions } from './interfaces';
+import { ConfigService } from '../config';
 
 @Injectable()
 export class CacheService implements OnModuleInit {
@@ -12,8 +12,8 @@ export class CacheService implements OnModuleInit {
   public static data: CacheOptions;
   static stores: Record<string, CacheDriver>;
 
-  constructor(config: IntentConfig) {
-    CacheService.data = config.get('cache');
+  constructor(config: ConfigService) {
+    CacheService.data = config.get('cache') as CacheOptions;
   }
 
   onModuleInit() {

@@ -1,5 +1,5 @@
 import { Injectable, Type } from '@nestjs/common';
-import { IntentConfig } from '../config/service';
+import { ConfigService } from '../config/service';
 import { logTime } from '../utils/helpers';
 import { InternalLogger } from '../utils/logger';
 import { Str } from '../utils/string';
@@ -24,8 +24,8 @@ export class QueueService {
 
   private static connections: Record<string, any> = {};
 
-  constructor(private config: IntentConfig) {
-    const options = this.config.get<QueueOptions>('queue');
+  constructor(private config: ConfigService) {
+    const options = this.config.get('queue') as QueueOptions;
     if (!options) return;
     for (const connName in options.connections) {
       const time = Date.now();
