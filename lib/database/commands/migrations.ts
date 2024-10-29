@@ -11,7 +11,7 @@ export class DbOperationsCommand {
   @Command('migrate:status {--connection==}', {
     desc: 'Command to show the status of all migrations',
   })
-  async migrateStatus(_cli: ConsoleIO): Promise<void> {
+  async migrateStatus(_cli: ConsoleIO): Promise<void | boolean> {
     const options = ObjectionService.config;
 
     const conn = _cli.option<string>('connection') || options.default;
@@ -31,13 +31,13 @@ export class DbOperationsCommand {
     }
 
     _cli.table(['Migration', 'Status'], statusList);
-    process.exit();
+    return true;
   }
 
   @Command('migrate {--connection==}', {
     desc: 'Command to run the pending migrations',
   })
-  async migrationUp(_cli: ConsoleIO): Promise<void> {
+  async migrationUp(_cli: ConsoleIO): Promise<void | boolean> {
     const options = ObjectionService.config;
     const conn = _cli.option<string>('connection') || options.default;
     const knex = ObjectionService.connection(conn);
@@ -49,7 +49,7 @@ export class DbOperationsCommand {
 
     if (migrations.length === 0) {
       _cli.info('No migrations to run');
-      process.exit();
+      return true;
     }
 
     _cli.info(`Batch Number: ${batch}`);
@@ -57,13 +57,13 @@ export class DbOperationsCommand {
       _cli.success(migration);
     }
 
-    process.exit();
+    return true;
   }
 
   @Command('migrate:rollback {--connection==}', {
     desc: 'Command to rollback the previous batch of migrations',
   })
-  async migrateRollback(_cli: ConsoleIO) {
+  async migrateRollback(_cli: ConsoleIO): Promise<void | boolean> {
     const options = ObjectionService.config;
     const conn = _cli.option<string>('connection') || options.default;
     const knex = ObjectionService.connection(conn);
@@ -75,7 +75,7 @@ export class DbOperationsCommand {
 
     if (migrations.length === 0) {
       _cli.info('No migrations to rollback. Already at the base migration');
-      process.exit();
+      return true;
     }
 
     _cli.info(`Reverted Batch: ${batch}`);
@@ -83,13 +83,13 @@ export class DbOperationsCommand {
       _cli.success(migration);
     }
 
-    process.exit();
+    return true;
   }
 
   @Command('migrate:reset {--connection==}', {
     desc: 'Command to reset the migration',
   })
-  async migrateReset(_cli: ConsoleIO) {
+  async migrateReset(_cli: ConsoleIO): Promise<boolean> {
     const options = ObjectionService.config;
     const conn = _cli.option<string>('connection') || options.default;
     const knex = ObjectionService.connection(conn);
@@ -101,7 +101,7 @@ export class DbOperationsCommand {
 
     if (!confirm) {
       _cli.info('Thank you! Exiting...');
-      process.exit();
+      return true;
     }
 
     const password = await _cli.password(
@@ -112,7 +112,7 @@ export class DbOperationsCommand {
       const conPassword = connConfig.connection?.['password'];
       if (conPassword && password !== conPassword) {
         _cli.error(' Wrong Password. Exiting... ');
-        process.exit();
+        return true;
       }
     }
 
@@ -122,7 +122,7 @@ export class DbOperationsCommand {
 
     if (migrations.length === 0) {
       _cli.info('No migrations to rollback. Already at the base migration');
-      process.exit();
+      return true;
     }
 
     _cli.info('Rollback of following migrations are done:');
@@ -130,13 +130,13 @@ export class DbOperationsCommand {
       _cli.success(migration);
     }
 
-    process.exit();
+    return true;
   }
 
   @Command('make:migration {name} {--connection=}', {
     desc: 'Command to create a new migration',
   })
-  async makeMigration(_cli: ConsoleIO) {
+  async makeMigration(_cli: ConsoleIO): Promise<boolean> {
     const options = ObjectionService.config;
     const name = _cli.argument<string>('name');
     const conn = _cli.option<string>('connection') || options.default;
@@ -150,6 +150,6 @@ export class DbOperationsCommand {
 
     const paths = res.split('/');
     _cli.success(paths[paths.length - 1]);
-    process.exit();
+    return true;
   }
 }

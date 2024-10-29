@@ -6,7 +6,7 @@ export interface CommandMetaOptions {
 }
 
 export interface CommandObject extends ArgumentParserOutput {
-  target: (cli: ConsoleIO) => Promise<void>;
+  target: (cli: ConsoleIO) => Promise<void | boolean>;
   expression: string;
   meta: CommandMetaOptions;
 }
