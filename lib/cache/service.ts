@@ -6,7 +6,6 @@ import {
   InMemoryDriverOption,
   RedisDriverOption,
 } from './interfaces';
-import { ConfigService } from '../config';
 
 @Injectable()
 export class CacheService {
