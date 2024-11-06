@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+
+/*
+|--------------------------------------------------------------------------
+| JavaScript entrypoint for running ace commands
+|--------------------------------------------------------------------------
+|
+| !!! DO NOT MODIFY THIS FILE !!!
+|
+| Since, "node" binary cannot directly run the Typescript source, we need a JS based
+| entrypoint to run intent commands.
+|
+*/
+
+/**
+ *  * Register hook to process TypeScript files using ts-node
+ */
+require('ts-node').register();
+
+/**
+ * Import console commands entrypoint
+ */
+require('./bin/console');
