@@ -2,9 +2,13 @@
   "name": "root",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "apps/*"
+    "packages/*"
   ],
+  "scripts": {
+    "build": "tsc -b -v packages",
+    "build:dev": "tsc -b -v packages --watch",
+    "clean": "tsc -b --clean packages"
+  },
   "dependencies": {},
   "devDependencies": {
     "lerna": "^8.1.8"
