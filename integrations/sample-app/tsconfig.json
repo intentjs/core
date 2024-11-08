@@ -20,7 +20,11 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@intentjs/core": ["../../packages/core"],
+      "@intentjs/cli": ["../../packages/cli"],
+    }
   },
   "include": ["app", "bin", "libs", "config", "resources"],
   "exclude": ["node_modules","dist"],
