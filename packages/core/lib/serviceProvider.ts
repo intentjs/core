@@ -26,6 +26,10 @@ export const IntentProvidersFactory = (
 ): Type<ServiceProvider> => {
   return class extends ServiceProvider {
     register() {
+      this.bindWithFactory(CONFIG_FACTORY, async () => {
+        return ConfigBuilder.build(config);
+      }, []);
+
       this.import(DiscoveryModule);
       this.bind(
         IntentExplorer,
@@ -48,9 +52,6 @@ export const IntentProvidersFactory = (
         DevServerCommand,
         ConfigService,
       );
-      this.bindWithFactory(CONFIG_FACTORY, async () => {
-        return ConfigBuilder.build(config);
-      }, []);
     }
 
     /**
