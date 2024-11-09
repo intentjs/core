@@ -21,6 +21,8 @@ dist
 # temporary reports
 eslint_report.json
 
+storage
+
 #yarn
 .pnp.*
 .yarn/*

@@ -1,6 +1,5 @@
 import { join } from 'path';
 import { Injectable } from '@nestjs/common';
-import { path } from 'app-root-path';
 import { readdirSync, readFileSync } from 'fs-extra';
 import { ConfigService } from '../config/service';
 import { Obj } from '../utils';
@@ -26,7 +25,7 @@ export class LocalizationService {
     const data: Record<string, any> = {};
 
     LocalizationService.readFiles(
-      join(path, dir),
+      join(dir),
       function (filename: string, content: any) {
         data[filename.split('.')[0]] = JSON.parse(content);
       },
@@ -179,8 +178,9 @@ export class LocalizationService {
   }
 
   private static readFiles(dirname: string, onFileContent: any) {
-    const fss = readdirSync(dirname);
-    fss.forEach((filename: string) => {
+    const dirFs = readdirSync(dirname);
+
+    dirFs.forEach((filename: string) => {
       const fileData = readFileSync(dirname + '/' + filename, {
         encoding: 'utf-8',
       });

@@ -25,9 +25,9 @@ export class QueueService {
   private static connections: Record<string, any> = {};
 
   constructor(private config: ConfigService) {
-    console.log(this.config);
     const options = this.config.get('queue') as QueueOptions;
     if (!options) return;
+
     for (const connName in options.connections) {
       const time = Date.now();
       const connection = options.connections[connName];
