@@ -125,15 +125,24 @@ export class SwcFileTransformer {
 
   watchIncludedFiles(tsConfigPath: string, onChange: () => void) {
     const tsConfig = this.tsConfigLoader.load(tsConfigPath);
+    console.log(tsConfig.includeDirs);
+    const { includeDirs } = tsConfig;
+
     const watcher = chokidar.watch(
-      tsConfig.includeDirs.map((dir: string) => join(dir, "**/*.ts")),
+      [...includeDirs, "../../node_modules/@intentjs/**/*"].map((dir: string) =>
+        join(dir, "**/*.ts")
+      ),
       {
         persistent: true,
         ignoreInitial: true,
         awaitWriteFinish: { stabilityThreshold: 50, pollInterval: 10 },
       }
     );
+    console.log("running chokidar");
 
-    watcher.on("add", () => onChange()).on("change", () => onChange());
+    watcher
+      .on("add", () => onChange())
+      .on("change", () => onChange())
+      .on("error", () => onChange());
   }
 }

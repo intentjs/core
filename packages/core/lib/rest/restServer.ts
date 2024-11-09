@@ -48,6 +48,10 @@ export class RestServer {
       app.setGlobalPrefix(options.globalPrefix);
     }
 
+    console.log(
+      'starting server on ',
+      options?.port || (config.get('app.port') as number),
+    );
     await app.listen(options?.port || (config.get('app.port') as number));
   }
 

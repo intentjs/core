@@ -1,6 +1,5 @@
 {
-
-
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "module": "commonjs",
@@ -20,11 +19,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@intentjs/core": ["../../packages/core"],
-      "@intentjs/cli": ["../../packages/cli"],
-    }
+    "noFallthroughCasesInSwitch": false
   },
   "include": ["app", "bin", "libs", "config", "resources"],
   "exclude": ["node_modules","dist"],
