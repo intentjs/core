@@ -11,3 +11,5 @@ lib/**/*.d.ts
 commands/**/*.d.ts
 actions/**/*.d.ts
 bin/**/*.d.ts
+
+tsconfig.build.tsbuildinfo

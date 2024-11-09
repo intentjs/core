@@ -1,5 +1,5 @@
 {
-  "name": "@intentjs/sample-app",
+  "name": "sample-app",
   "version": "0.0.3",
   "description": "A sample app for testing out @intentjs/core integrations.",
   "author": "Vinayak Sarawagi <vinayaksarawagi25@gmail.com>",
@@ -14,8 +14,8 @@
   },
   "homepage": "https://github.com/intentjs/new-app-starter",
   "scripts": {
-    "dev": "./node_modules/.bin/intent start --watch",
-    "build": "./node_modules/.bin/intent build",
+    "dev": "intent start --watch",
+    "build": "intent build",
     "format": "prettier --write \"app/**/*.ts\" \"test/**/*.ts\"",
     "start": "./node_modules/.bin/intent start",
     "start:dev": "./node_modules/.bin/intent start --watch",
@@ -27,6 +27,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@intentjs/cli": "^0.0.3",
+    "@intentjs/core": "^0.1.35",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",

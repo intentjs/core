@@ -21,5 +21,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
   },
+  "include": ["lib", "resources"],
   "exclude": ["node_modules", "tests", "dist", "**/*spec.ts"]
 }

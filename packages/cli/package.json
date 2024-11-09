@@ -22,6 +22,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "dev": "tsc --watch",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public"
   },
