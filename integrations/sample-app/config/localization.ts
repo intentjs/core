@@ -1,4 +1,5 @@
 import { LocalizationOptions, registerNamespace } from '@intentjs/core';
+import { join } from 'path';
 
 export default registerNamespace(
   'localization',
@@ -13,7 +14,7 @@ export default registerNamespace(
      * used when you use the `Storage` facade to access your
      * files.
      */
-    path: 'resources/lang',
+    path: join(__dirname, '../../resources/lang'),
 
     /**
      * -----------------------------------------------------

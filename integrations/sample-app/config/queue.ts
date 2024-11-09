@@ -12,7 +12,7 @@ export default registerNamespace('queue', (): QueueOptions => {
      * This will be used to determine the messag queue where
      * the message should be processed.
      */
-    default: process.env.DEFAULT_QUEUE || 'sync',
+    default: process.env.DEFAULT_QUEUE || 'sync2',
 
     /**
      * -----------------------------------------------------
@@ -33,12 +33,10 @@ export default registerNamespace('queue', (): QueueOptions => {
         queue: 'default',
       },
 
-      /**
-       * sync: {
-       *   driver: 'sync',
-       *   listenerType: 'poll',
-       * },
-       */
+      sync: {
+        driver: 'sync',
+        listenerType: 'poll',
+      },
 
       /**
        * sqs: {
