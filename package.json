@@ -7,7 +7,6 @@
   ],
   "scripts": {
     "build": "tsc -b -v packages",
-    "predev": "npm run build -w packages/core",
     "dev": "concurrently \"npm run dev:core\" \"npm run dev:sample-app\" --names \"@intentjs/core,sample-app\" --prefix-colors \"blue,green\"",
     "dev:core": "npm run dev -w packages/core",
     "dev:sample-app": "npm run dev -w integrations/sample-app",

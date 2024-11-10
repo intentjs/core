@@ -49,7 +49,7 @@ export class RestServer {
     }
 
     console.log(
-      'starting server on ',
+      'starting server on 2222',
       options?.port || (config.get('app.port') as number),
     );
     await app.listen(options?.port || (config.get('app.port') as number));

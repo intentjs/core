@@ -6,7 +6,7 @@ import { StorageService } from './service';
 @Injectable()
 export class Storage {
   static build(config: S3DiskOptions | LocalDiskOptions): StorageDriver {
-    return StorageService.buildDriver(config);
+    return StorageService.makeDriver(config);
   }
 
   static disk(disk?: string) {

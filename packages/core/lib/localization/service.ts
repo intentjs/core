@@ -18,7 +18,7 @@ export class LocalizationService {
     UNKNOWN: 0,
   };
 
-  constructor(private config: ConfigService) {
+  constructor(config: ConfigService) {
     const options = config.get('localization') as LocalizationOptions;
 
     const { path: dir, fallbackLang } = options;

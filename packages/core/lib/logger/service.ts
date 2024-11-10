@@ -18,25 +18,15 @@ import {
 
 @Injectable()
 export class LoggerService {
+  private static store = new Map<string, winston.Logger>();
   private static config: IntentLoggerOptions;
-  private static options: any = {};
 
-  constructor(private readonly config: ConfigService) {
-    const options = this.config.get('logger') as IntentLoggerOptions;
-    LoggerService.config = options;
-    for (const conn in options.loggers) {
-      LoggerService.options[conn] = LoggerService.createLogger(
-        options.loggers[conn],
-      );
-    }
-  }
-
-  static getConnection(conn?: string): winston.Logger {
-    conn = conn || LoggerService.config.default;
-    return LoggerService.options[conn as string];
-  }
-
-  static createLogger(options: LoggerConfig) {
+  /**
+   * Method to make a new logger with the given config.
+   * @param options
+   * @returns
+   */
+  static makeLogger(options: LoggerConfig) {
     options = { ...defaultLoggerOptions(), ...options };
 
     const transportsConfig = [];
@@ -89,8 +79,14 @@ export class LoggerService {
     });
   }
 
-  static logger(conn?: string): winston.Logger {
-    return LoggerService.getConnection(conn);
+  static logger(name?: string): winston.Logger {
+    const options = ConfigService.get('logger') as IntentLoggerOptions;
+    name = name ?? options.default;
+    if (this.store.has(name)) return this.store.get(name);
+    const config = options.loggers[name];
+    const logger = LoggerService.makeLogger(config);
+    this.store.set(name, logger);
+    return logger;
   }
 
   private static buildFormatter(
