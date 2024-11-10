@@ -1,4 +1,3 @@
-import { render } from '@react-email/render';
 // eslint-disable-next-line import/no-named-as-default
 import IntentMailComponent from '../../resources/mail/emails';
 import { ConfigService } from '../config/service';
@@ -10,6 +9,7 @@ import {
   MailMessagePayload,
 } from './interfaces';
 import { AttachmentOptions } from './interfaces/provider';
+import { Package } from '../utils';
 
 export class MailMessage {
   private mailSubject?: string;
@@ -204,6 +204,7 @@ export class MailMessage {
 
     if (this.mailType === GENERIC_MAIL) {
       const templateConfig = ConfigService.get('mailers.template');
+      const { render } = Package.load('@react-email/render');
       const html = await render(
         IntentMailComponent({
           header: { value: { title: templateConfig.appName } },
@@ -224,6 +225,7 @@ export class MailMessage {
 
     if (this.mailType === VIEW_BASED_MAIL && this.viewFile) {
       const component = this.viewFile;
+      const { render } = Package.load('@react-email/render');
       const html = await render(component(this.payload));
 
       this.compiledHtml = html;
