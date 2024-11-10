@@ -12,6 +12,7 @@ export class ConfigService<G = undefined> {
   private static config: ConfigMap;
 
   constructor(@Inject(CONFIG_FACTORY) private config: ConfigMap) {
+    console.log(this.config);
     ConfigService.cachedConfig = new Map<ConfigPaths<G>, any>();
     ConfigService.config = this.config;
   }

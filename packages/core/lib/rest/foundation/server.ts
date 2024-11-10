@@ -1,7 +1,7 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { useContainer } from 'class-validator';
-import 'console.mute';
+// import 'console.mute';
 import { ConfigService } from '../../config/service';
 import { IntentExceptionFilter } from '../../exceptions';
 import { IntentAppContainer, ModuleBuilder } from '../../foundation';

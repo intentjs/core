@@ -55,6 +55,12 @@ export interface ResendOptions extends BaseProviderConfigOptions {
   from: string;
 }
 
+export type ChannelProviderOptions =
+  | NodemailerOptions
+  | MailgunOptions
+  | ResendOptions
+  | MailLoggerProviderOptions;
+
 export interface MailerOptions {
   default: string;
   template: {
@@ -62,11 +68,7 @@ export interface MailerOptions {
     footer?: { title?: string };
   };
   channels: {
-    [key: string]:
-      | NodemailerOptions
-      | MailgunOptions
-      | ResendOptions
-      | MailLoggerProviderOptions;
+    [key: string]: ChannelProviderOptions;
   };
 }
 
