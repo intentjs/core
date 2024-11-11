@@ -8,7 +8,7 @@ import { IntentAppContainer } from './app-container';
 export class ModuleBuilder {
   static build(container: IntentAppContainer, kernel?: Kernel) {
     const providers = container.scanProviders();
-    console.log(providers);
+
     const controllers = kernel?.controllers() || [];
     /**
      * Scan for global middlewares
