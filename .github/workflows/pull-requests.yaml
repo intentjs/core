@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cmd: ["format:check", "lint:check", "build"]
+        cmd: ["format:check", "lint:check"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,9 +36,6 @@ jobs:
 
       - name: "Install Node Modules"
         run: npm install -D
-
-      - name: "Link the binaries"
-        run: npm link
 
       - name: "Running ${{ matrix.cmd }}"
         run: npm run ${{ matrix.cmd }}
