@@ -6,17 +6,20 @@
     "integrations/*"
   ],
   "scripts": {
-    "build": "tsc -b -v packages",
+    "build": "npx lerna run build",
+    "clean:packages": "tsc -b --clean packages",
     "dev": "concurrently \"npm run dev:core\" \"npm run dev:sample-app\" --names \"@intentjs/core,sample-app\" --prefix-colors \"blue,green\"",
     "dev:core": "npm run dev -w packages/core",
     "dev:sample-app": "npm run dev -w integrations/sample-app",
-    "build:dev": "tsc -b -v packages --watch",
-    "clean": "tsc -b --clean packages"
+    "prepare": "husky"
   },
   "dependencies": {
     "concurrently": "^9.1.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "husky": "^9.1.6",
     "lerna": "^8.1.8"
   }
 }
