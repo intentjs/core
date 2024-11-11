@@ -21,7 +21,12 @@ dist
 # temporary reports
 eslint_report.json
 
-storage/logs
+# ignore the log files
+storage/**/*.log
+
+# ignore all transpiled files
+packages/**/*.d.ts
+packages/**/*.js
 
 #yarn
 .pnp.*

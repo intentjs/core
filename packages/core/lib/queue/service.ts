@@ -15,8 +15,7 @@ import {
 } from './drivers';
 import { QueueDrivers } from './strategy';
 import { ConfigService } from '../config';
-import { isEmpty } from 'lodash';
-import { Str } from '../utils';
+import { isEmpty, Str } from '../utils';
 
 @Injectable()
 export class QueueService {
