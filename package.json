@@ -9,6 +9,8 @@
     "build": "npx lerna run build",
     "format": "npx lerna run format",
     "lint": "npx lerna run lint",
+    "format:check": "npx lerna run format:check",
+    "lint:check": "npx lerna run lint:check",
     "packages:clean": "tsc -b --clean packages",
     "dev": "concurrently \"npm run dev:core\" \"npm run dev:sample-app\" --names \"@intentjs/core,sample-app\" --prefix-colors \"blue,green\"",
     "dev:core": "npm run dev -w packages/core",
