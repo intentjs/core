@@ -37,12 +37,9 @@ jobs:
       - name: "Install Node Modules"
         run: npm install -D
 
+      - name: "Link the binaries"
+        run: npm link
+
       - name: "Running ${{ matrix.cmd }}"
         run: npm run ${{ matrix.cmd }}
         continue-on-error: ${{ matrix.cmd == 'lint:check' }}
-
-      - name: Annotate Code Linting Results
-        if: ${{ matrix.cmd == 'lint:check' }}
-        uses: ataylorme/eslint-annotate-action@v3
-        with:
-          report-json: "eslint_report.json"
