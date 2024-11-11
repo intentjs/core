@@ -63,7 +63,6 @@ export class IntentHttpServer {
     const config = app.get(ConfigService, { strict: false });
 
     this.configureErrorReporter(config.get('app.sentry'));
-    console.log('memory consumption ===> ', process.memoryUsage());
 
     // options?.globalPrefix && app.setGlobalPrefix(options.globalPrefix);
     console.log('server listening on ===> ');
