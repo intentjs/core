@@ -7,7 +7,9 @@
   ],
   "scripts": {
     "build": "npx lerna run build",
-    "clean:packages": "tsc -b --clean packages",
+    "format": "npx lerna run format",
+    "lint": "npx lerna run lint",
+    "packages:clean": "tsc -b --clean packages",
     "dev": "concurrently \"npm run dev:core\" \"npm run dev:sample-app\" --names \"@intentjs/core,sample-app\" --prefix-colors \"blue,green\"",
     "dev:core": "npm run dev -w packages/core",
     "dev:sample-app": "npm run dev -w integrations/sample-app",

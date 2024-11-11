@@ -18,7 +18,7 @@ Help us keep Intent open and inclusive. Please read and follow our [Code of Cond
 
 ## <a name="question"></a> Got a Question or Problem?
 
-**Do not open issues for general support questions as we want to keep GitHub issues for bug reports and feature requests.** You've got much better chances of getting your question answered on [Stack Overflow][stackoverflow] where the questions should be tagged with tag `intentjs`.
+**Do not open issues for general support questions as we want to keep GitHub issues for bug reports and feature requests.** You've got much better chances of getting your questions answered on [Stack Overflow][stackoverflow] where the questions should be tagged with tag `intentjs`.
 
 Stack Overflow is a much better place to ask questions since:
 
@@ -60,13 +60,6 @@ We want to fix all the issues as soon as possible, but before fixing a bug we ne
 - version of Intent used
 - 3rd-party libraries and their versions
 - and most importantly - a use-case that fails
-
-<!--
-// TODO we need to create a playground, similar to plunkr
-
-A minimal reproduce scenario using a repository or Gist allows us to quickly confirm a bug (or point out coding problem) as well as confirm that we are fixing the right problem. If neither of these are not a suitable way to demonstrate the problem (for example for issues related to our npm packaging), please create a standalone git repository demonstrating the problem. -->
-
-<!-- We will be insisting on a minimal reproduce scenario in order to save maintainers time and ultimately be able to fix more bugs. Interestingly, from our experience users often find coding problems themselves while preparing a minimal plunk. We understand that sometimes it might be hard to extract essentials bits of code from a larger code-base but we really need to isolate the problem before we can fix it. -->
 
 Unfortunately, we are not able to investigate / fix bugs without a minimal reproduction, so if we don't hear back from you we are going to close an issue that doesn't have enough info to be reproduced.
 
@@ -155,40 +148,42 @@ from the main (upstream) repository:
 
 ## <a name="development"></a> Development Setup
 
-You will need [Node.js](https://nodejs.org) version >= 10.13.0 (except for v13).
+You will need [Node.js](https://nodejs.org) version >= 20.15.0.
 
 1. After cloning the repo, run:
 
 ```bash
-$ npm ci --legacy-peer-deps # (or yarn install)
+$ npm install
 ```
 
-2. In order to prepare your environment run `prepare.sh` shell script:
+2. In order to prepare the `integrations/sample-app`, run the `setup.sh` shell script.
 
 ```bash
-$ sh scripts/prepare.sh
+$ sh scripts/setup.sh
 ```
 
-That will compile fresh packages and afterward, move them all to `sample` directories.
+This will initialise some necessary files, run a build, link the binaries.
+
+3. Now get the project running using the `npm run dev` command.
+
+```bash
+$ npm run dev
+```
 
 ### <a name="common-scripts"></a>Commonly used NPM scripts
 
 ```bash
-# build all packages and move to "sample" directories
-$ npm run build
+# run the integration apps and packages locally
+$ npm run dev
+
+# Build the project
+npm run build
 
 # run the full unit tests suite
 $ npm run test
 
-# run integration tests
-# docker is required(!)
-$ sh scripts/run-integration.sh
-
 # run linter
 $ npm run lint
-
-# build all packages and put them near to their source .ts files
-$ npm run build:prod
 ```
 
 ## <a name="rules"></a> Coding Rules
@@ -260,18 +255,11 @@ The scope should have the name of the npm package affected (as perceived by pers
 
 The following is the list of supported scopes:
 
-- **common**: for changes made on `packages/common` directory
 - **core**: for changes made on `packages/core` directory
-- **sample**: for changes made on `packages/sample` directory
-- **microservices**: for changes made on `packages/microservices` directory
-- **express**: for changes made on `packages/platform-express` directory
-- **fastify**: for changes made on `packages/platform-fastify` directory
-- **socket.io**: for changes made on `packages/platform-socket.io` directory
-- **ws**: for changes made on `packages/platform-ws` directory
-- **testing**: for changes made on `packages/testing` directory
-- **websockets**: for changes made on `packages/websockets` directory
+- **cli**: for changes made on `packages/cli` directory
+- **integrations/sample-app**: for changes made on `integrations/sample-app` directory
 
-If your change affect more than one package, separate the scopes with a comma (e.g. `common,core`).
+If your change affect more than one package, separate the scopes with a comma (e.g. `core,cli`).
 
 There are currently a few exceptions to the "use package name" rule:
 
