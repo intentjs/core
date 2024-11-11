@@ -27,7 +27,7 @@
     "dev": "tsc -p tsconfig.json --watch",
     "format:check": "prettier --check \"lib/**/*.ts\" \"tests/**/*.ts\"",
     "lint": "eslint --fix",
-    "lint:check": "eslint \"{lib,tests}/**/*.ts\" --output-file eslint_report.json --format json",
+    "lint:check": "eslint \"{lib,tests}/**/*.ts\"",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
     "prepublish:next": "npm run build",
