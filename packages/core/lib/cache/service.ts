@@ -10,18 +10,24 @@ import {
 @Injectable()
 export class CacheService {
   static driverMap = { redis: RedisDriver, memory: InMemoryDriver };
-  static stores: Record<string, CacheDriver>;
+  static stores = new Map<string, CacheDriver>();
 
   constructor() {}
 
   static createStore(
     store: string,
-    options: RedisDriverOption | InMemoryDriverOption,
+    options?: RedisDriverOption | InMemoryDriverOption,
   ) {
-    if (CacheService.stores[store]) return CacheService.stores[store];
+    /**
+     * Check if the store has already been cached.
+     * If yes, then return the same cache driver.
+     * Else, create a new driver.
+     */
+    if (this.stores.has(store)) return this.stores.get(store);
+
     const { driver: driverName } = options;
     const storeDriver = CacheService.driverMap[driverName];
-    CacheService.stores[store] = new storeDriver(options as any);
-    return CacheService.stores[store];
+    this.stores.set(store, new storeDriver(options as any));
+    return this.stores.get(store);
   }
 }
