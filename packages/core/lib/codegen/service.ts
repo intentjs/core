@@ -1,23 +1,25 @@
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { Injectable } from '@nestjs/common';
-import { path } from 'app-root-path';
 import { Eta } from 'eta';
 import { Node, Project, SyntaxKind } from 'ts-morph';
+import { findProjectRoot } from '../utils';
 
 @Injectable()
 export class CodegenService {
   private templateEngine: Eta;
+  private rootPath: string;
 
   constructor() {
     this.templateEngine = new Eta({
       cache: true,
       views: join(__dirname, '../../../resources/stubs'),
     });
+    this.rootPath = findProjectRoot();
   }
 
   async checkIfFileAlreadyExists(filePath: string): Promise<void> {
-    const doesFileExists = existsSync(join(path, filePath));
+    const doesFileExists = existsSync(join(this.rootPath, filePath));
     if (doesFileExists) {
       throw new Error(`${filePath} already exists`);
     }
@@ -29,14 +31,18 @@ export class CodegenService {
 
     const content = await this.templateEngine.renderAsync('config', input);
     const project = new Project({});
-    const newFile = project.createSourceFile(join(path, filePath), content, {
-      overwrite: false,
-    });
+    const newFile = project.createSourceFile(
+      join(this.rootPath, filePath),
+      content,
+      {
+        overwrite: false,
+      },
+    );
     await newFile.save();
 
     // update the index.ts file
     const indexFile = project.addSourceFileAtPath(
-      join(path, 'config/index.ts'),
+      join(this.rootPath, 'config/index.ts'),
     );
 
     indexFile.addImportDeclaration({
@@ -66,7 +72,7 @@ export class CodegenService {
     const project = new Project();
     const content = await this.templateEngine.renderAsync('controller', input);
     const newController = project.createSourceFile(
-      join(path, filePath),
+      join(this.rootPath, filePath),
       content,
       { overwrite: false },
     );
@@ -74,7 +80,7 @@ export class CodegenService {
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, 'app', 'module.ts'),
+      join(this.rootPath, 'app', 'module.ts'),
     );
     const classDeclaration = moduleFile.getClassOrThrow('AppModule');
     const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
@@ -108,7 +114,7 @@ export class CodegenService {
     const project = new Project();
     const content = await this.templateEngine.renderAsync('service', input);
     const newController = project.createSourceFile(
-      join(path, filePath),
+      join(this.rootPath, filePath),
       content,
       { overwrite: false },
     );
@@ -116,7 +122,7 @@ export class CodegenService {
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, 'app', 'module.ts'),
+      join(this.rootPath, 'app', 'module.ts'),
     );
     const classDeclaration = moduleFile.getClassOrThrow('AppModule');
     const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
@@ -150,7 +156,7 @@ export class CodegenService {
     const project = new Project();
     const content = await this.templateEngine.renderAsync('exception', input);
     const newException = project.createSourceFile(
-      join(path, filePath),
+      join(this.rootPath, filePath),
       content,
       { overwrite: false },
     );
@@ -169,7 +175,7 @@ export class CodegenService {
     const project = new Project();
 
     const newSourceFile = project.createSourceFile(
-      join(path, filePath),
+      join(this.rootPath, filePath),
       content,
       { overwrite: false },
     );
@@ -177,7 +183,7 @@ export class CodegenService {
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, 'app', 'module.ts'),
+      join(this.rootPath, 'app', 'module.ts'),
     );
 
     const classDeclaration = moduleFile.getClassOrThrow('AppModule');
@@ -214,7 +220,7 @@ export class CodegenService {
     const project = new Project();
     const content = await this.templateEngine.renderAsync('job', input);
     const newController = project.createSourceFile(
-      join(path, filePath),
+      join(this.rootPath, filePath),
       content,
       { overwrite: false },
     );
@@ -222,7 +228,7 @@ export class CodegenService {
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, 'app', 'module.ts'),
+      join(this.rootPath, 'app', 'module.ts'),
     );
     const classDeclaration = moduleFile.getClassOrThrow('AppModule');
     const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
@@ -256,7 +262,7 @@ export class CodegenService {
     const project = new Project();
     const content = await this.templateEngine.renderAsync('model', input);
     const newController = project.createSourceFile(
-      join(path, filePath),
+      join(this.rootPath, filePath),
       content,
       { overwrite: false },
     );
@@ -270,7 +276,7 @@ export class CodegenService {
     const project = new Project();
     const content = await this.templateEngine.renderAsync('event', input);
     const newException = project.createSourceFile(
-      join(path, filePath),
+      join(this.rootPath, filePath),
       content,
       { overwrite: false },
     );
@@ -284,7 +290,7 @@ export class CodegenService {
     const project = new Project();
     const content = await this.templateEngine.renderAsync('listener', input);
     const newController = project.createSourceFile(
-      join(path, filePath),
+      join(this.rootPath, filePath),
       content,
       { overwrite: false },
     );
@@ -292,7 +298,7 @@ export class CodegenService {
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, 'app', 'module.ts'),
+      join(this.rootPath, 'app', 'module.ts'),
     );
     const classDeclaration = moduleFile.getClassOrThrow('AppModule');
     const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
@@ -326,7 +332,7 @@ export class CodegenService {
     const project = new Project();
     const content = await this.templateEngine.renderAsync('command', input);
     const newController = project.createSourceFile(
-      join(path, filePath),
+      join(this.rootPath, filePath),
       content,
       { overwrite: false },
     );
@@ -334,7 +340,7 @@ export class CodegenService {
 
     // update module.ts
     const moduleFile = project.addSourceFileAtPath(
-      join(path, 'app', 'module.ts'),
+      join(this.rootPath, 'app', 'module.ts'),
     );
     const classDeclaration = moduleFile.getClassOrThrow('AppModule');
     const moduleDecorator = classDeclaration.getDecoratorOrThrow('Module');
@@ -368,7 +374,7 @@ export class CodegenService {
     const project = new Project();
     const content = await this.templateEngine.renderAsync('mail', input);
     const newException = project.createSourceFile(
-      join(path, filePath),
+      join(this.rootPath, filePath),
       content,
       { overwrite: false },
     );

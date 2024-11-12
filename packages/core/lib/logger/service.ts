@@ -1,9 +1,8 @@
 import { join } from 'path';
 import { Injectable } from '@nestjs/common';
-import { path } from 'app-root-path';
 import * as winston from 'winston';
 import { ConfigService } from '../config/service';
-import { Obj } from '../utils';
+import { findProjectRoot, Obj } from '../utils';
 import { Num } from '../utils/number';
 import {
   Formats,
@@ -28,6 +27,7 @@ export class LoggerService {
    */
   static makeLogger(options: LoggerConfig) {
     options = { ...defaultLoggerOptions(), ...options };
+    const projectRoot = findProjectRoot();
 
     const transportsConfig = [];
     for (const transportOptions of options.transports) {
@@ -59,7 +59,7 @@ export class LoggerService {
 
       if (transportOptions.transport === Transports.File) {
         options['filename'] = join(
-          path,
+          projectRoot,
           'storage/logs',
           transportOptions.options?.['filename'],
         );

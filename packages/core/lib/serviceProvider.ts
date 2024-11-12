@@ -1,7 +1,7 @@
 import { DiscoveryModule } from '@nestjs/core';
 import { CacheService } from './cache';
-import { CodegenCommand } from './codegen/command';
-import { CodegenService } from './codegen/service';
+// import { CodegenCommand } from './codegen/command';
+// import { CodegenService } from './codegen/service';
 import { ViewConfigCommand } from './config/command';
 import { ListCommands } from './console';
 import { ObjectionService } from './database';
@@ -43,8 +43,8 @@ export const IntentProvidersFactory = (
         QueueService,
         QueueConsoleCommands,
         QueueMetadata,
-        CodegenCommand,
-        CodegenService,
+        // CodegenCommand,
+        // CodegenService,
         ViewConfigCommand,
         MailerService,
         LocalizationService,

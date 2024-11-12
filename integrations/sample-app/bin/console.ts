@@ -5,13 +5,13 @@ import {
   ConsoleLogger,
 } from '@intentjs/core';
 import yargs from 'yargs-parser';
-// import 'console.mute';
+import 'console.mute';
 
 async function bootstrap() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { ApplicationContainer } = require('app/boot/container');
 
-  // console['mute']();
+  console['mute']();
   await ContainerFactory.createStandalone(ApplicationContainer);
   console['resume']();
 
