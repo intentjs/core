@@ -1,4 +1,10 @@
-import { registerNamespace, StorageOptions } from '@intentjs/core';
+import { fromIni } from '@aws-sdk/credential-providers';
+import {
+  findProjectRoot,
+  registerNamespace,
+  StorageOptions,
+} from '@intentjs/core';
+import { join } from 'path';
 
 export default registerNamespace(
   'filesystem',
@@ -31,17 +37,15 @@ export default registerNamespace(
       disks: {
         local: {
           driver: 'local',
-          basePath: 'storage/uploads',
+          basePath: join(findProjectRoot(), 'storage/uploads'),
         },
 
-        /**
-         *  s3: {
-         *    driver: 's3',
-         *    region: process.env.AWS_REGION,
-         *    bucket: process.env.S3_BUCKET,
-         *    credentials: fromIni({ profile: process.env.AWS_PROFILE }),
-         *  },
-         */
+        s3: {
+          driver: 's3',
+          region: process.env.AWS_REGION,
+          bucket: process.env.S3_BUCKET,
+          credentials: fromIni({ profile: process.env.AWS_PROFILE }),
+        },
       },
     }) as StorageOptions,
 );

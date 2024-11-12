@@ -29,6 +29,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.689.0",
+    "@aws-sdk/credential-providers": "^3.687.0",
+    "@aws-sdk/s3-request-presigner": "^3.689.0",
     "@intentjs/cli": "^0.0.3",
     "@intentjs/core": "*",
     "bcrypt": "^5.1.1",
