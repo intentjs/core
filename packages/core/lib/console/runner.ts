@@ -43,7 +43,10 @@ export class CommandRunner {
     }
 
     const returnFromCommand = await command.target(_cli);
-    returnFromCommand && process.exit(1);
+
+    process.nextTick(() => {
+      returnFromCommand && process.exit(1);
+    });
 
     return;
   }
