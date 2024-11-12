@@ -33,7 +33,6 @@ export const isBoolean = (value: any): boolean => {
 };
 
 export const toBoolean = (value: any) => {
-  if (!Str.isString(value) || typeof value !== 'boolean') return undefined;
   const val = String(value);
   return [true, 'yes', 'on', '1', 1, 'true'].includes(val?.toLowerCase());
 };

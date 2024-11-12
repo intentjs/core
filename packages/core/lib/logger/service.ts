@@ -18,7 +18,6 @@ import {
 @Injectable()
 export class LoggerService {
   private static store = new Map<string, winston.Logger>();
-  private static config: IntentLoggerOptions;
 
   /**
    * Method to make a new logger with the given config.
@@ -29,16 +28,12 @@ export class LoggerService {
     options = { ...defaultLoggerOptions(), ...options };
     const projectRoot = findProjectRoot();
 
+    const config = ConfigService.get('logger') as IntentLoggerOptions;
     const transportsConfig = [];
     for (const transportOptions of options.transports) {
       let transport = transportOptions.transport;
 
-      if (
-        LoggerService.config.disableConsole &&
-        transport === Transports.Console
-      ) {
-        continue;
-      }
+      if (config.disableConsole && transport === Transports.Console) continue;
 
       const formats = Num.isInteger(transportOptions.format)
         ? [transportOptions.format]
@@ -72,7 +67,6 @@ export class LoggerService {
       );
     }
 
-    options.transports = transportsConfig;
     return winston.createLogger({
       transports: transportsConfig,
       level: options.level,
@@ -80,12 +74,15 @@ export class LoggerService {
   }
 
   static logger(name?: string): winston.Logger {
-    const options = ConfigService.get('logger') as IntentLoggerOptions;
-    name = name ?? options.default;
+    const config = ConfigService.get('logger') as IntentLoggerOptions;
+    name = name ?? config.default;
+
     if (this.store.has(name)) return this.store.get(name);
-    const config = options.loggers[name];
-    const logger = LoggerService.makeLogger(config);
+
+    const options = config.loggers[name];
+    const logger = LoggerService.makeLogger(options);
     this.store.set(name, logger);
+
     return logger;
   }
 
