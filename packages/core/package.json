@@ -69,7 +69,6 @@
     "@nestjs/core": "^10.4.4",
     "@nestjs/platform-express": "^10.4.1",
     "@react-email/components": "^0.0.25",
-    "app-root-path": "^3.1.0",
     "archy": "^1.0.0",
     "axios": "^1.7.7",
     "class-transformer": "^0.5.1",

@@ -1,12 +1,12 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { Injectable } from '@nestjs/common';
-import { path } from 'app-root-path';
 import * as pc from 'picocolors';
 import { columnify } from '../../utils/columnify';
 import { Str } from '../../utils/string';
 import { Command } from '../decorators';
 import { CommandMeta } from '../metadata';
+import { findProjectRoot } from '../../utils';
 
 @Injectable()
 @Command('list', { desc: 'Command to list all the commands' })
@@ -52,7 +52,7 @@ export class ListCommands {
      * Read package.json
      */
     const packageJson = JSON.parse(
-      readFileSync(join(path, 'package.json')).toString(),
+      readFileSync(join(findProjectRoot(), 'package.json')).toString(),
     );
     console.log();
     console.log(
