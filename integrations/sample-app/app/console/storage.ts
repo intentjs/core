@@ -1,6 +1,6 @@
 import { Command, ConsoleIO, Storage } from '@intentjs/core';
 
-@Command('test:storage')
+@Command('test:storage', { desc: 'Command to test the storage drivers' })
 export class TestStorageConsoleCommand {
   async handle(_cli: ConsoleIO): Promise<boolean> {
     _cli.info('Testing the storage');
