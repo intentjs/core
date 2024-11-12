@@ -5,6 +5,7 @@ import {
 } from '@intentjs/core';
 import { TestCacheConsoleCommand } from 'app/console/cache';
 import { GreetingCommand } from 'app/console/greeting';
+import { TestStorageConsoleCommand } from 'app/console/storage';
 
 export class ConsoleServiceProvider extends ServiceProvider {
   /**
@@ -12,10 +13,13 @@ export class ConsoleServiceProvider extends ServiceProvider {
    */
   register() {
     this.bind(GreetingCommand, TestCacheConsoleCommand);
+    this.bind(TestStorageConsoleCommand);
   }
 
   /**
    * Bootstrap any application service here.
+   *
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   boot(app: IntentApplication | IntentApplicationContext) {}
 }
