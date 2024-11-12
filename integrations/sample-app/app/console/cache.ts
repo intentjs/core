@@ -1,6 +1,6 @@
 import { Cache, Command, ConsoleIO } from '@intentjs/core';
 
-@Command('test:cache')
+@Command('test:cache', { desc: 'Command to test the cache drivers' })
 export class TestCacheConsoleCommand {
   async handle(_cli: ConsoleIO): Promise<boolean> {
     _cli.info('Testing the cache');
