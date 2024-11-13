@@ -12,7 +12,7 @@ export default registerNamespace('queue', (): QueueOptions => {
      * This will be used to determine the messag queue where
      * the message should be processed.
      */
-    default: process.env.DEFAULT_QUEUE || 'sync2',
+    default: process.env.DEFAULT_QUEUE || 'sync',
 
     /**
      * -----------------------------------------------------
@@ -51,19 +51,17 @@ export default registerNamespace('queue', (): QueueOptions => {
        * },
        */
 
-      /**
-       * redis: {
-       *   driver: 'redis',
-       *   listenerType: 'poll',
-       *   host: process.env.REDIS_HOST,
-       *   port: +process.env.REDIS_PORT,
-       *   queue: process.env.QUEUE_NAME,
-       *   username: process.env.REDIS_USERNAME,
-       *   password: process.env.REDIS_PASSWORD,
-       *   prefix: '',
-       *   database: 0,
-       * },
-       */
+      redis: {
+        driver: 'redis',
+        listenerType: 'poll',
+        host: process.env.REDIS_HOST,
+        port: +process.env.REDIS_PORT,
+        queue: process.env.QUEUE_NAME,
+        username: process.env.REDIS_USERNAME,
+        password: process.env.REDIS_PASSWORD,
+        prefix: '',
+        database: 0,
+      },
     },
   };
 });

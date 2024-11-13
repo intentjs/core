@@ -6,6 +6,7 @@ import {
 import { TestCacheConsoleCommand } from 'app/console/cache';
 import { GreetingCommand } from 'app/console/greeting';
 import { TestLogConsoleCommand } from 'app/console/log';
+import { TestQueueConsoleCommand } from 'app/console/queue';
 import { TestStorageConsoleCommand } from 'app/console/storage';
 
 export class ConsoleServiceProvider extends ServiceProvider {
@@ -16,6 +17,7 @@ export class ConsoleServiceProvider extends ServiceProvider {
     this.bind(GreetingCommand, TestCacheConsoleCommand);
     this.bind(TestStorageConsoleCommand);
     this.bind(TestLogConsoleCommand);
+    this.bind(TestQueueConsoleCommand);
   }
 
   /**
