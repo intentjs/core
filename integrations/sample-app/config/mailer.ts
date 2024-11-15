@@ -46,13 +46,11 @@ export default registerNamespace(
        * },
        */
 
-      /**
-       * resend: {
-       *   provider: 'resend',
-       *   apiKey: process.env.RESEND_API_KEY,
-       *   from: process.env.FROM_ADDRESS,
-       * },
-       */
+      resend: {
+        provider: 'resend',
+        apiKey: process.env.RESEND_API_KEY,
+        from: process.env.FROM_ADDRESS,
+      },
     },
 
     template: {
