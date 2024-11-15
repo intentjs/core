@@ -30,7 +30,8 @@ export class MailerService {
   }
 
   static async send(options: BaseProviderSendOptions, providerName?: string) {
-    const config = ConfigService.get('mailer');
+    const config = ConfigService.get('mailers');
+
     providerName = providerName ?? config.default;
     const providerConfig = config.channels[providerName];
     const mailData = (await options.mail.getMailData()) as MailData;
