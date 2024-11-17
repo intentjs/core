@@ -1,7 +1,6 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { useContainer } from 'class-validator';
-// import 'console.mute';
 import { ConfigService } from '../../config/service';
 import { IntentExceptionFilter } from '../../exceptions';
 import { IntentAppContainer, ModuleBuilder } from '../../foundation';
@@ -9,6 +8,9 @@ import { Type } from '../../interfaces';
 import { Obj, Package } from '../../utils';
 import { Kernel } from '../foundation/kernel';
 import { requestMiddleware } from '../middlewares/functional/requestSerializer';
+import pc from 'picocolors';
+import { printBulletPoints } from '../../utils/console-helpers';
+import 'console.mute';
 
 export class IntentHttpServer {
   private kernel: Kernel;
@@ -36,11 +38,11 @@ export class IntentHttpServer {
   }
 
   async start() {
+    console['mute']();
     const module = ModuleBuilder.build(this.container, this.kernel);
-
-    // console['mute']();
     const app = await NestFactory.create<NestExpressApplication>(module, {
       bodyParser: true,
+      logger: false,
     });
 
     if (this.errorHandler) {
@@ -52,8 +54,6 @@ export class IntentHttpServer {
     app.useBodyParser('raw');
     app.useBodyParser('urlencoded');
 
-    // console['resume']();
-
     app.use(requestMiddleware);
 
     useContainer(app.select(module), { fallbackOnErrors: true });
@@ -64,9 +64,36 @@ export class IntentHttpServer {
 
     this.configureErrorReporter(config.get('app.sentry'));
 
-    // options?.globalPrefix && app.setGlobalPrefix(options.globalPrefix);
-    console.log('server listening on ===> ');
-    await app.listen((config.get('app.port') as number) || 5001);
+    const port = config.get('app.port');
+    const hostname = config.get('app.hostname');
+    const environment = config.get('app.env');
+    const debug = config.get('app.debug');
+
+    await app.listen(+port || 5001, hostname);
+
+    console['resume']();
+
+    console.clear();
+
+    console.log(`  ${pc.green(pc.bold('Intent'))} ${pc.green('v1.5.0')}`);
+    console.log();
+
+    printBulletPoints([
+      ['➜', 'environment', environment],
+      ['➜', 'debug', debug],
+      ['➜', 'hostname', hostname],
+      ['➜', 'port', port],
+    ]);
+
+    const url = new URL(
+      ['127.0.0.1', '0.0.0.0'].includes(hostname)
+        ? 'http://localhost'
+        : `http://${hostname}`,
+    );
+    url.port = port;
+
+    console.log();
+    console.log(`  ${pc.white('Listening on')}: ${pc.cyan(url.toString())}`);
   }
 
   configureErrorReporter(config: Record<string, any>) {

@@ -1,7 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import Knex, { Knex as KnexType } from 'knex';
-import { logTime } from '../utils/helpers';
-import { InternalLogger } from '../utils/logger';
 import { BaseModel } from './baseModel';
 import { ConnectionNotFound } from './exceptions';
 import { DatabaseOptions, DbConnectionOptions } from './options';
@@ -33,20 +31,8 @@ export class ObjectionService implements OnModuleInit {
 
       try {
         await connection.raw(dbOptions.validateQuery || 'select 1+1 as result');
-        InternalLogger.success(
-          'DatabaseService',
-          `Was able to successfully validate [${connName}] connection ${logTime(
-            Date.now() - time,
-          )}`,
-        );
       } catch (_e) {
         const e = _e as Error;
-        InternalLogger.error(
-          'DatabaseService',
-          `Validation for connection [${connName}] failed with reason ${
-            e.message
-          } ${logTime(Date.now() - time)}`,
-        );
       }
     }
   }
