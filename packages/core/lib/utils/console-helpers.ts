@@ -44,3 +44,12 @@ export const jsonToArchy = (obj: Record<string, any>, key = '') => {
 
   return { label, nodes };
 };
+
+export const printBulletPoints = (rows: string[][]) => {
+  for (const row of rows) {
+    const [style, attribute, value] = row;
+    console.log(
+      `  ${pc.green(pc.dim(style))} ${pc.white(attribute)}: ${pc.yellow(value)}`,
+    );
+  }
+};

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LocalDiskOptions, S3DiskOptions } from './interfaces';
 import { StorageDriver } from './interfaces';
-import { InternalLogger } from '../utils/logger';
 import { DiskNotFoundException } from './exceptions/diskNotFound';
 import { ConfigService } from '../config';
 import { DriverMap } from './driver-mapper';

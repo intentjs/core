@@ -15,6 +15,7 @@ export interface AppConfig {
   env: string;
   debug: boolean;
   url: string;
+  hostname?: string;
   port: number;
   cors: CorsOptions | CorsOptionsDelegate<any>;
   error?: {
