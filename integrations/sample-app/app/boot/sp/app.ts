@@ -4,6 +4,7 @@ import {
   IntentApplicationContext,
   ServiceProvider,
 } from '@intentjs/core';
+import { IntentController } from 'app/http/controllers/icon';
 import { QueueJobs } from 'app/jobs/job';
 import { UserDbRepository } from 'app/repositories/userDbRepository';
 import { UserService } from 'app/services';
@@ -28,6 +29,7 @@ export class AppServiceProvider extends ServiceProvider {
      * Read more - https://tryintent.com/docs/providers#class-based-providers
      */
     this.bindWithClass('USER_DB_REPO', UserDbRepository);
+    this.bind(IntentController);
 
     this.bind(QueueJobs);
   }

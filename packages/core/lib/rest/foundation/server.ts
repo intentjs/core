@@ -1,9 +1,18 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import {
+  DiscoveryService,
+  HttpAdapterHost,
+  MetadataScanner,
+  NestFactory,
+} from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { useContainer } from 'class-validator';
 import { ConfigService } from '../../config/service';
 import { IntentExceptionFilter } from '../../exceptions';
-import { IntentAppContainer, ModuleBuilder } from '../../foundation';
+import {
+  ContainerFactory,
+  IntentAppContainer,
+  ModuleBuilder,
+} from '../../foundation';
 import { Type } from '../../interfaces';
 import { Obj, Package } from '../../utils';
 import { Kernel } from '../foundation/kernel';
@@ -11,6 +20,7 @@ import { requestMiddleware } from '../middlewares/functional/requestSerializer';
 import pc from 'picocolors';
 import { printBulletPoints } from '../../utils/console-helpers';
 import 'console.mute';
+import { CustomServer } from './custom-server/explorer';
 
 export class IntentHttpServer {
   private kernel: Kernel;
@@ -37,8 +47,26 @@ export class IntentHttpServer {
     return this;
   }
 
+  async startCustomServer() {
+    const module = ModuleBuilder.build(this.container, this.kernel);
+    const app = await NestFactory.createApplicationContext(module);
+    const ds = app.get(DiscoveryService, { strict: false });
+    const ms = app.get(MetadataScanner, { strict: false });
+
+    const customServer = new CustomServer();
+    customServer.build(ds, ms);
+    const config = app.get(ConfigService, { strict: false });
+
+    const port = config.get('app.port');
+    const hostname = config.get('app.hostname');
+    const environment = config.get('app.env');
+    const debug = config.get('app.debug');
+
+    customServer.listen(+port);
+  }
+
   async start() {
-    console['mute']();
+    // console['mute']();
     const module = ModuleBuilder.build(this.container, this.kernel);
     const app = await NestFactory.create<NestExpressApplication>(module, {
       bodyParser: true,
@@ -71,11 +99,10 @@ export class IntentHttpServer {
 
     await app.listen(+port || 5001, hostname);
 
-    console['resume']();
+    // console['resume']();
 
     console.clear();
 
-    console.log(`  ${pc.green(pc.bold('Intent'))} ${pc.green('v1.5.0')}`);
     console.log();
 
     printBulletPoints([
