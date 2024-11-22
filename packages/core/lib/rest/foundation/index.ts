@@ -1,4 +1,4 @@
-export * from './guards/baseGuard';
+export * from './guards/base-guard';
 export * from './guards/decorator';
 export * from './methods';
 export * from './interface';

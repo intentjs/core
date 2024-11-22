@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { IntentApplication, Type } from '../../interfaces';
-import { IntentGuard } from './guards/baseGuard';
+import { IntentGuard } from './guards/base-guard';
 import { MiddlewareConfigurator } from './middlewares/configurator';
 import { IntentMiddleware } from './middlewares/middleware';
 

@@ -1,8 +1,14 @@
+import { Type } from '../../../interfaces';
+import { SetMetadata } from '../../../reflections';
+import { IntentGuard } from '../guards/base-guard';
+
 export const CONTROLLER_KEY = '@intentjs/controller_path';
 export const CONTROLLER_OPTIONS = '@intentjs/controller_options';
 
 export const METHOD_KEY = '@intentjs/controller_method_key';
 export const METHOD_PATH = '@intentjs/controller_method_path';
+
+export const GUARD_KEY = '@intentjs/controller_guards';
 
 export type ControllerOptions = {
   host?: string;
@@ -38,3 +44,14 @@ export function IGet(path?: string, options?: ControllerOptions) {
     return descriptor;
   };
 }
+
+export const IUseGuards = (...guards: Type<IntentGuard>[]) => {
+  return function (target: object, key?: string | symbol, descriptor?: any) {
+    if (key) {
+      Reflect.defineMetadata(GUARD_KEY, guards, target, key);
+      return;
+    }
+    Reflect.defineMetadata(GUARD_KEY, guards, target);
+    return;
+  };
+};

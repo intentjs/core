@@ -18,7 +18,8 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "concurrently": "^9.1.0"
+    "concurrently": "^9.1.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.48.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",

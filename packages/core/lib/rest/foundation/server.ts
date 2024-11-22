@@ -2,6 +2,7 @@ import {
   DiscoveryService,
   HttpAdapterHost,
   MetadataScanner,
+  ModuleRef,
   NestFactory,
 } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -21,6 +22,7 @@ import pc from 'picocolors';
 import { printBulletPoints } from '../../utils/console-helpers';
 import 'console.mute';
 import { CustomServer } from './custom-server/explorer';
+import { serve } from '@hono/node-server';
 
 export class IntentHttpServer {
   private kernel: Kernel;
@@ -52,9 +54,10 @@ export class IntentHttpServer {
     const app = await NestFactory.createApplicationContext(module);
     const ds = app.get(DiscoveryService, { strict: false });
     const ms = app.get(MetadataScanner, { strict: false });
+    const mr = app.get(ModuleRef, { strict: false });
 
     const customServer = new CustomServer();
-    customServer.build(ds, ms);
+    const hono = await customServer.build(ds, ms, mr);
     const config = app.get(ConfigService, { strict: false });
 
     const port = config.get('app.port');
@@ -62,7 +65,10 @@ export class IntentHttpServer {
     const environment = config.get('app.env');
     const debug = config.get('app.debug');
 
-    customServer.listen(+port);
+    serve({
+      port,
+      fetch: hono.fetch,
+    });
   }
 
   async start() {
