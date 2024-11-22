@@ -1,19 +1,16 @@
 import { Injectable, IntentGuard, Reflector } from '@intentjs/core';
-import { HonoRequest } from 'hono';
+import { Request, Response } from 'hyper-express';
 
 @Injectable()
 export class CustomGuard extends IntentGuard {
-  guard(
-    req: HonoRequest,
+  async guard(
+    req: Request,
     res: Response,
     reflector: Reflector,
-  ): boolean | Promise<boolean> {
+  ): Promise<boolean> {
     console.log('urnning inside guard');
-    console.log({
-      method: req.method,
-      url: req.url,
-      headers: req.header(),
-      query: req.query(),
+    await req.multipart(async (field) => {
+      console.log('field ===> ', field.name, field.file);
     });
     return false;
   }

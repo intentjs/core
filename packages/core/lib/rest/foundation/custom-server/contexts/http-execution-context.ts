@@ -1,13 +1,16 @@
-import { Context, HonoRequest } from 'hono';
+import { Request, Response } from 'hyper-express';
 
 export class HttpExecutionContext {
-  constructor(private readonly honoContext: Context) {}
+  constructor(
+    private readonly request: Request,
+    private readonly response: Response,
+  ) {}
 
-  getRequest(): HonoRequest {
-    return this.honoContext.req;
+  getRequest(): Request {
+    return this.request;
   }
 
-  getResponse(): any {
-    return this.honoContext.res;
+  getResponse(): Response {
+    return this.response;
   }
 }

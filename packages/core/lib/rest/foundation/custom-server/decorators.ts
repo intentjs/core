@@ -45,6 +45,14 @@ export function IGet(path?: string, options?: ControllerOptions) {
   };
 }
 
+export function IPost(path?: string, options?: ControllerOptions) {
+  return function (target: object, key?: string | symbol, descriptor?: any) {
+    Reflect.defineMetadata(METHOD_KEY, HttpMethods.POST, target, key);
+    Reflect.defineMetadata(METHOD_PATH, path, target, key);
+    return descriptor;
+  };
+}
+
 export const IUseGuards = (...guards: Type<IntentGuard>[]) => {
   return function (target: object, key?: string | symbol, descriptor?: any) {
     if (key) {

@@ -1,6 +1,4 @@
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
-import { Context, Hono } from 'hono';
-import { serve } from '@hono/node-server';
 import {
   CONTROLLER_KEY,
   GUARD_KEY,
@@ -15,16 +13,16 @@ import { HttpRouteHandler } from './http-handler';
 import { ResponseHandler } from './response-handler';
 import { ExecutionContext } from './execution-context';
 import { HttpExecutionContext } from './contexts/http-execution-context';
-import { exec } from 'child_process';
+import HyperExpress, { Request, Response } from 'hyper-express';
 
 export class CustomServer {
-  private hono = new Hono();
+  private hyper = new HyperExpress.Server();
 
   async build(
     discoveryService: DiscoveryService,
     metadataScanner: MetadataScanner,
     moduleRef: ModuleRef,
-  ): Promise<Hono> {
+  ): Promise<HyperExpress.Server> {
     const providers = discoveryService.getProviders();
     for (const provider of providers) {
       const { instance } = provider;
@@ -42,7 +40,7 @@ export class CustomServer {
       }
     }
 
-    return this.hono;
+    return this.hyper;
   }
 
   async exploreRoutes(instance: any, key: string, moduleRef: ModuleRef) {
@@ -81,9 +79,9 @@ export class CustomServer {
 
     const responseHandler = new ResponseHandler();
 
-    const cb = async (c: Context) => {
+    const cb = async (hReq: Request, hRes: Response) => {
       const now = performance.now();
-      const httpContext = new HttpExecutionContext(c);
+      const httpContext = new HttpExecutionContext(hReq, hRes);
       const executionContext = new ExecutionContext(
         httpContext,
         instance,
@@ -92,39 +90,57 @@ export class CustomServer {
 
       const resFromHandler = await handler.handle(executionContext);
 
-      const [type, res] = await responseHandler.handle(c, resFromHandler);
+      const [type, res] = await responseHandler.handle(
+        hReq,
+        hRes,
+        resFromHandler,
+      );
+
+      if (type === 'json') {
+        hRes
+          .header('Content-Type', 'application/json')
+          .send(JSON.stringify(res));
+      }
 
       console.log(
         'time to handle one http request ===> ',
         performance.now() - now,
       );
-
-      if (type === 'json') return c.json(res);
-      return c.json(res);
     };
 
-    if (pathMethod === HttpMethods.GET) {
-      this.hono.get(join(controllerKey, methodPath), cb);
-    } else if (pathMethod === HttpMethods.POST) {
-      this.hono.post(join(controllerKey, methodPath), cb);
-    } else if (pathMethod === HttpMethods.PUT) {
-      this.hono.put(join(controllerKey, methodPath), cb);
-    } else if (pathMethod === HttpMethods.PATCH) {
-      this.hono.patch(join(controllerKey, methodPath), cb);
-    } else if (pathMethod === HttpMethods.DELETE) {
-      this.hono.delete(join(controllerKey, methodPath), cb);
-    } else if (pathMethod === HttpMethods.OPTIONS) {
-      this.hono.options(join(controllerKey, methodPath), cb);
-    } else if (pathMethod === HttpMethods.ANY) {
-      this.hono.all(join(controllerKey, methodPath), cb);
-    }
-  }
+    const fullPath = join(controllerKey, methodPath);
+    switch (pathMethod) {
+      case HttpMethods.GET:
+        this.hyper.get(fullPath, cb);
+        break;
 
-  //   listen(port: number, hostname?: string);
-  listen(port: number) {
-    serve({
-      port,
-      fetch: this.hono.fetch,
-    });
+      case HttpMethods.POST:
+        this.hyper.post(fullPath, cb);
+        break;
+
+      case HttpMethods.DELETE:
+        this.hyper.delete(fullPath, cb);
+        break;
+
+      case HttpMethods.HEAD:
+        this.hyper.head(fullPath, cb);
+        break;
+
+      case HttpMethods.PUT:
+        this.hyper.put(fullPath, cb);
+        break;
+
+      case HttpMethods.PATCH:
+        this.hyper.patch(fullPath, cb);
+        break;
+
+      case HttpMethods.OPTIONS:
+        this.hyper.options(fullPath, cb);
+        break;
+
+      case HttpMethods.ANY:
+        this.hyper.any(fullPath, cb);
+        break;
+    }
   }
 }

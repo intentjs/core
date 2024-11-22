@@ -1,5 +1,3 @@
-import { Context } from 'hono';
-
 export class IntentRequestObj {
   constructor(
     public readonly param: Function,

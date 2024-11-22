@@ -1,4 +1,3 @@
-import { Context } from 'hono';
 import { IntentGuard } from '../guards/base-guard';
 import { IntentMiddleware } from '../middlewares/middleware';
 import { ExecutionContext } from './execution-context';

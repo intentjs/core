@@ -1,7 +1,6 @@
-import { Response } from 'hono/dist/types/client/types';
 import { Reflector } from '../../../reflections';
 import { ExecutionContext } from '../custom-server/execution-context';
-import { HonoRequest } from 'hono';
+import { Request, Response } from 'hyper-express';
 
 export abstract class IntentGuard {
   async handle(context: ExecutionContext): Promise<boolean> {
@@ -24,7 +23,7 @@ export abstract class IntentGuard {
   }
 
   abstract guard(
-    req: HonoRequest,
+    req: Request,
     res: Response,
     reflector: Reflector,
   ): boolean | Promise<boolean>;

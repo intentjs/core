@@ -7,4 +7,4 @@ IntentHttpServer.init()
   .useContainer(ApplicationContainer)
   .useKernel(HttpKernel)
   .handleErrorsWith(ApplicationExceptionFilter)
-  .startCustomServer();
+  .start();
