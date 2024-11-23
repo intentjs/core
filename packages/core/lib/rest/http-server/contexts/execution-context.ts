@@ -1,5 +1,5 @@
 import { GenericClass } from '../../../interfaces';
-import { HttpExecutionContext } from './contexts/http-execution-context';
+import { HttpExecutionContext } from './http-execution-context';
 
 export class ExecutionContext {
   constructor(

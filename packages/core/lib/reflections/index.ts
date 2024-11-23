@@ -1,2 +1,2 @@
 export * from './reflector';
-export * from './setMetadata';
+export * from './set-metadata';

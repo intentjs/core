@@ -2,7 +2,7 @@ import { Type } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { ValidationError, validate } from 'class-validator';
 import { ConfigService } from '../config/service';
-import { ValidationFailed } from '../exceptions/validationfailed';
+import { ValidationFailed } from '../exceptions/validation-failed';
 import { Obj } from '../utils';
 
 export class Validator<T> {

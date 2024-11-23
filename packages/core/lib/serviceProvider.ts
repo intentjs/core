@@ -20,6 +20,7 @@ import { StorageService } from './storage/service';
 import { BuildProjectCommand } from './dev-server/build';
 import { DevServerCommand } from './dev-server/serve';
 import { CONFIG_FACTORY, ConfigBuilder, ConfigService } from './config';
+import { ListRouteCommand } from './console/commands/route-list';
 
 export const IntentProvidersFactory = (
   config: any[],
@@ -43,6 +44,7 @@ export const IntentProvidersFactory = (
         QueueService,
         QueueConsoleCommands,
         QueueMetadata,
+        ListRouteCommand,
         // CodegenCommand,
         // CodegenService,
         ViewConfigCommand,

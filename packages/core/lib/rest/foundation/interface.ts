@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { IncomingHttpHeaders } from 'http';
-import { Request as ERequest, Response as EResponse } from 'express';
+import { Request as ERequest } from 'express';
 import { Type } from '../../interfaces';
-
-export type Response = EResponse;
 
 export interface Request extends ERequest {
   logger: Function;

@@ -1,4 +1,5 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpStatus } from '../rest';
+import { HttpException } from './http-exception';
 
 export class ValidationFailed extends HttpException {
   private errors: Record<string, any>;

@@ -134,3 +134,7 @@ export const getTime = () => {
 
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds} ${ampm}`;
 };
+
+export const isUndefined = (val: any) => {
+  return val === undefined;
+};

@@ -15,7 +15,10 @@ import { requestMiddleware } from '../middlewares/functional/requestSerializer';
 import pc from 'picocolors';
 import { printBulletPoints } from '../../utils/console-helpers';
 import 'console.mute';
-import { CustomServer } from './custom-server/explorer';
+import { Server } from 'hyper-express';
+import { HyperServer, RouteExplorer } from '../http-server';
+
+const signals = ['SIGTERM', 'SIGINT', 'SIGUSR2'];
 
 export class IntentHttpServer {
   private kernel: Kernel;
@@ -45,22 +48,47 @@ export class IntentHttpServer {
   async start() {
     const module = ModuleBuilder.build(this.container, this.kernel);
     const app = await NestFactory.createApplicationContext(module);
+
     const ds = app.get(DiscoveryService, { strict: false });
     const ms = app.get(MetadataScanner, { strict: false });
     const mr = app.get(ModuleRef, { strict: false });
+    const errorHandler = await mr.create(this.errorHandler);
 
     useContainer(app.select(module), { fallbackOnErrors: true });
 
-    const customServer = new CustomServer();
-    const server = await customServer.build(ds, ms, mr);
-    const config = app.get(ConfigService, { strict: false });
+    const routeExplorer = new RouteExplorer();
+    const routes = await routeExplorer.exploreFullRoutes(
+      ds,
+      ms,
+      mr,
+      errorHandler,
+    );
 
+    const customServer = new HyperServer();
+    const server = await customServer.build(routes);
+
+    const config = app.get(ConfigService, { strict: false });
+    this.configureErrorReporter(config.get('app.sentry'));
+
+    const port = config.get('app.port');
+    const hostname = config.get('app.hostname');
+
+    await this.container.boot(app);
+
+    await server.listen(port, hostname || '0.0.0.0');
+
+    for (const signal of signals) {
+      process.on(signal, () => this.shutdown(server, signal));
+    }
+
+    this.printToConsole(config);
+  }
+
+  printToConsole(config: ConfigService<unknown>) {
     const port = config.get('app.port');
     const hostname = config.get('app.hostname');
     const environment = config.get('app.env');
     const debug = config.get('app.debug');
-
-    await server.listen(port, hostname || '0.0.0.0');
 
     printBulletPoints([
       ['➜', 'environment', environment],
@@ -75,68 +103,22 @@ export class IntentHttpServer {
         : `http://${hostname}`,
     );
     url.port = port;
-    this.configureErrorReporter(config.get('app.sentry'));
 
     console.log();
     console.log(`  ${pc.white('Listening on')}: ${pc.cyan(url.toString())}`);
   }
 
-  // async start() {
-  //   // console['mute']();
-  //   const module = ModuleBuilder.build(this.container, this.kernel);
-  //   const app = await NestFactory.create<NestExpressApplication>(module, {
-  //     bodyParser: true,
-  //     logger: false,
-  //   });
+  async shutdown(server: Server, signal: string): Promise<void> {
+    console.log(`\nReceived ${signal}, starting graceful shutdown...`);
 
-  //   if (this.errorHandler) {
-  //     const { httpAdapter } = app.get(HttpAdapterHost);
-  //     app.useGlobalFilters(new this.errorHandler(httpAdapter));
-  //   }
-
-  //   app.useBodyParser('json');
-  //   app.useBodyParser('raw');
-  //   app.useBodyParser('urlencoded');
-
-  //   app.use(requestMiddleware);
-
-  //   useContainer(app.select(module), { fallbackOnErrors: true });
-
-  //   await this.container.boot(app);
-
-  //   const config = app.get(ConfigService, { strict: false });
-
-  //   this.configureErrorReporter(config.get('app.sentry'));
-
-  //   const port = config.get('app.port');
-  //   const hostname = config.get('app.hostname');
-  //   const environment = config.get('app.env');
-  //   const debug = config.get('app.debug');
-
-  //   await app.listen(+port || 5001, hostname);
-  //   // console['resume']();
-
-  //   console.clear();
-
-  //   console.log();
-
-  //   printBulletPoints([
-  //     ['➜', 'environment', environment],
-  //     ['➜', 'debug', debug],
-  //     ['➜', 'hostname', hostname],
-  //     ['➜', 'port', port],
-  //   ]);
-
-  //   const url = new URL(
-  //     ['127.0.0.1', '0.0.0.0'].includes(hostname)
-  //       ? 'http://localhost'
-  //       : `http://${hostname}`,
-  //   );
-  //   url.port = port;
-
-  //   console.log();
-  //   console.log(`  ${pc.white('Listening on')}: ${pc.cyan(url.toString())}`);
-  // }
+    if (server) {
+      await new Promise(res =>
+        server.close(() => {
+          res(1);
+        }),
+      );
+    }
+  }
 
   configureErrorReporter(config: Record<string, any>) {
     if (!config) return;

@@ -1,5 +1,5 @@
 import { Type } from '../../../interfaces';
-import { RequestMethod } from '../methods';
+import { RequestMethod } from '../../http-server/methods';
 import { IntentMiddleware } from './middleware';
 
 /**

@@ -1,9 +1,10 @@
 import { Reflector } from '../../../reflections';
-import { ExecutionContext } from '../custom-server/execution-context';
-import { Request, Response } from 'hyper-express';
+import { Request } from 'hyper-express';
+import { ForbiddenException } from '../../../exceptions/forbidden-exception';
+import { ExecutionContext, Response } from '../../http-server';
 
 export abstract class IntentGuard {
-  async handle(context: ExecutionContext): Promise<boolean> {
+  async handle(context: ExecutionContext): Promise<void> {
     /**
      * Get Express Request Object
      */
@@ -19,7 +20,10 @@ export abstract class IntentGuard {
      */
     const reflector = new Reflector(context.getClass(), context.getHandler());
 
-    return this.guard(request, response, reflector);
+    const validationFromGuard = await this.guard(request, response, reflector);
+    if (!validationFromGuard) {
+      throw new ForbiddenException('Forbidden Resource');
+    }
   }
 
   abstract guard(

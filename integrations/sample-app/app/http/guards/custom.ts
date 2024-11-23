@@ -1,5 +1,5 @@
-import { Injectable, IntentGuard, Reflector } from '@intentjs/core';
-import { Request, Response } from 'hyper-express';
+import { Injectable, IntentGuard, Reflector, Response } from '@intentjs/core';
+import { Request } from 'hyper-express';
 
 @Injectable()
 export class CustomGuard extends IntentGuard {
@@ -8,10 +8,9 @@ export class CustomGuard extends IntentGuard {
     res: Response,
     reflector: Reflector,
   ): Promise<boolean> {
-    console.log('urnning inside guard');
     await req.multipart(async (field) => {
       console.log('field ===> ', field.name, field.file);
     });
-    return false;
+    return true;
   }
 }
