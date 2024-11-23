@@ -2,9 +2,11 @@ import { Type } from '../../../interfaces';
 import { RequestMethod } from '../../http-server/methods';
 import { IntentMiddleware } from './middleware';
 
-/**
- *
- */
+type MiddlewareRuleApplicationInfo =
+  | string
+  | Type<any>
+  | { path: string; method: RequestMethod };
+
 export class MiddlewareConfigurator {
   private rules: { [key: string]: MiddlewareRule } = {};
 
@@ -26,11 +28,6 @@ export class MiddlewareConfigurator {
     return Object.values(this.rules);
   }
 }
-
-type MiddlewareRuleApplicationInfo =
-  | string
-  | Type<any>
-  | { path: string; method: RequestMethod };
 
 export class MiddlewareRule {
   public appliedFor: Array<MiddlewareRuleApplicationInfo> = [];

@@ -49,6 +49,8 @@ export class IntentHttpServer {
     const module = ModuleBuilder.build(this.container, this.kernel);
     const app = await NestFactory.createApplicationContext(module);
 
+    const globalGuards = this.kernel.guards();
+
     const ds = app.get(DiscoveryService, { strict: false });
     const ms = app.get(MetadataScanner, { strict: false });
     const mr = app.get(ModuleRef, { strict: false });
@@ -57,12 +59,9 @@ export class IntentHttpServer {
     useContainer(app.select(module), { fallbackOnErrors: true });
 
     const routeExplorer = new RouteExplorer();
-    const routes = await routeExplorer.exploreFullRoutes(
-      ds,
-      ms,
-      mr,
-      errorHandler,
-    );
+    const routes = await routeExplorer
+      .useGlobalGuards(globalGuards)
+      .exploreFullRoutes(ds, ms, mr, errorHandler);
 
     const customServer = new HyperServer();
     const server = await customServer.build(routes);

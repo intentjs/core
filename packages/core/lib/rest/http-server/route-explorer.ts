@@ -19,6 +19,8 @@ import { ROUTE_ARGS } from './constants';
 import { RouteArgType } from './param-decorators';
 
 export class RouteExplorer {
+  guards: Type<IntentGuard>[] = [];
+
   async exploreFullRoutes(
     discoveryService: DiscoveryService,
     metadataScanner: MetadataScanner,
@@ -120,6 +122,10 @@ export class RouteExplorer {
     ] as Type<IntentGuard>[];
 
     const composedGuards = [];
+    for (const globalGuard of this.guards) {
+      composedGuards.push(await moduleRef.create(globalGuard));
+    }
+
     for (const guardType of composedGuardTypes) {
       composedGuards.push(await moduleRef.create(guardType));
     }
@@ -161,5 +167,10 @@ export class RouteExplorer {
       path: join(controllerKey, methodPath),
       httpHandler: cb,
     };
+  }
+
+  useGlobalGuards(guards: Type<IntentGuard>[]): RouteExplorer {
+    this.guards.push(...guards);
+    return this;
   }
 }

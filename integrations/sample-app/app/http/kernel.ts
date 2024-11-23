@@ -10,6 +10,8 @@ import {
 } from '@intentjs/core';
 import { UserController } from './controllers/app';
 import { AuthController } from './controllers/auth';
+import { CustomGuard } from './guards/custom';
+import { GlobalGuard } from './guards/global';
 
 export class HttpKernel extends Kernel {
   /**
@@ -50,7 +52,7 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/guards
    */
   public guards(): Type<IntentGuard>[] {
-    return [];
+    return [GlobalGuard];
   }
 
   /**
