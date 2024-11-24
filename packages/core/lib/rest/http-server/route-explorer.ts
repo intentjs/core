@@ -1,13 +1,17 @@
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
 import { join } from 'path';
 import { HttpRoute } from './interfaces';
-import { Request, Response as HResponse } from 'hyper-express';
+import { Request, Response as HResponse, MiddlewareNext } from 'hyper-express';
 import { HttpExecutionContext } from './contexts/http-execution-context';
 import { HttpRouteHandler } from './http-handler';
 import { Response } from './response';
 import { ExecutionContext } from './contexts/execution-context';
 import { IntentExceptionFilter } from '../../exceptions';
-import { IntentGuard } from '../foundation';
+import {
+  IntentGuard,
+  IntentMiddleware,
+  MiddlewareConfigurator,
+} from '../foundation';
 import { Type } from '../../interfaces';
 import {
   CONTROLLER_KEY,
@@ -21,15 +25,20 @@ import { createRequestFromHyper } from './request';
 
 export class RouteExplorer {
   guards: Type<IntentGuard>[] = [];
+  middlewares: Type<IntentMiddleware>[] = [];
+  middlewareConfigurator: MiddlewareConfigurator;
+
+  constructor(
+    private discoveryService: DiscoveryService,
+    private metadataScanner: MetadataScanner,
+    private moduleRef: ModuleRef,
+  ) {}
 
   async exploreFullRoutes(
-    discoveryService: DiscoveryService,
-    metadataScanner: MetadataScanner,
-    moduleRef: ModuleRef,
     errorHandler: IntentExceptionFilter,
   ): Promise<HttpRoute[]> {
     const routes = [];
-    const providers = discoveryService.getProviders();
+    const providers = this.discoveryService.getProviders();
     for (const provider of providers) {
       const { instance } = provider;
       //   if (
@@ -40,12 +49,11 @@ export class RouteExplorer {
       //     return;
       //   }
 
-      const methodNames = metadataScanner.getAllMethodNames(instance);
+      const methodNames = this.metadataScanner.getAllMethodNames(instance);
       for (const methodName of methodNames) {
         const route = await this.scanFullRoute(
           instance,
           methodName,
-          moduleRef,
           errorHandler,
         );
         route && routes.push(route);
@@ -99,7 +107,6 @@ export class RouteExplorer {
   async scanFullRoute(
     instance: any,
     key: string,
-    moduleRef: ModuleRef,
     errorHandler: IntentExceptionFilter,
   ): Promise<HttpRoute> {
     const controllerKey = Reflect.getMetadata(
@@ -124,20 +131,18 @@ export class RouteExplorer {
 
     const composedGuards = [];
     for (const globalGuard of this.guards) {
-      composedGuards.push(await moduleRef.create(globalGuard));
+      composedGuards.push(await this.moduleRef.create(globalGuard));
     }
 
     for (const guardType of composedGuardTypes) {
-      composedGuards.push(await moduleRef.create(guardType));
+      composedGuards.push(await this.moduleRef.create(guardType));
     }
 
     const middlewares = [];
 
-    const routeArgs = Reflect.getMetadata(
-      ROUTE_ARGS,
-      instance.constructor,
-      key,
-    ) as RouteArgType[];
+    const routeArgs =
+      Reflect.getMetadata(ROUTE_ARGS, instance.constructor, key) ||
+      ([] as RouteArgType[]);
 
     const handler = new HttpRouteHandler(
       middlewares,
@@ -146,18 +151,20 @@ export class RouteExplorer {
       errorHandler,
     );
 
-    const cb = async (hReq: Request, hRes: HResponse) => {
+    const cb = async (hReq: Request, hRes: HResponse, next: MiddlewareNext) => {
       const req = await createRequestFromHyper(hReq);
 
       const httpContext = new HttpExecutionContext(req, new Response());
       const context = new ExecutionContext(httpContext, instance, methodRef);
+
       const args = [];
+
       for (const routeArg of routeArgs) {
-        if (routeArg.handler) {
-          args.push(routeArg.handler(routeArg.data, context));
-        } else {
-          args.push(httpContext.getInjectableValueFromArgType(routeArg));
-        }
+        args.push(
+          routeArg.handler
+            ? routeArg.handler(routeArg.data, context)
+            : httpContext.getInjectableValueFromArgType(routeArg),
+        );
       }
 
       const res = await handler.handle(context, args);
@@ -174,6 +181,18 @@ export class RouteExplorer {
 
   useGlobalGuards(guards: Type<IntentGuard>[]): RouteExplorer {
     this.guards.push(...guards);
+    return this;
+  }
+
+  useGlobalMiddlewares(middlewares: Type<IntentMiddleware>[]): RouteExplorer {
+    this.middlewares = middlewares;
+    return this;
+  }
+
+  useRouteMiddlewares(
+    middlewareConfigurator: MiddlewareConfigurator,
+  ): RouteExplorer {
+    this.middlewareConfigurator = middlewareConfigurator;
     return this;
   }
 }

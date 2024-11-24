@@ -11,20 +11,20 @@ import { join } from 'path';
 import { ConfigService } from '../../config';
 
 export const createRequestFromHyper = async (hReq: HyperRequest) => {
-  const headers = { ...hReq.headers };
+  const headers = hReq.headers;
+  const enabledParsers = (ConfigService.get('http.parsers') as string[]) || [];
 
-  const enabledParsers = ConfigService.get('http.parsers') || [];
   const contentType = headers['content-type'] || '';
-
   let body = undefined;
+
   if (
     enabledParsers.includes('urlencoded') &&
-    contentType.includes('application/x-www-form-urlencoded')
+    contentType === 'application/x-www-form-urlencoded'
   ) {
     body = await hReq.urlencoded();
   } else if (
     enabledParsers.includes('json') &&
-    contentType.includes('application/json')
+    contentType === 'application/json'
   ) {
     body = await hReq.json();
   } else if (
@@ -36,14 +36,11 @@ export const createRequestFromHyper = async (hReq: HyperRequest) => {
     for (const [key, value] of multipartData.entries()) {
       body[key] = value;
     }
-  } else if (
-    enabledParsers.includes('plain') &&
-    contentType.includes('text/plain')
-  ) {
+  } else if (enabledParsers.includes('plain') && contentType === 'text/plain') {
     body = await hReq.text();
   } else if (
-    (enabledParsers.includes('html') && contentType.includes('text/html')) ||
-    (enabledParsers.includes('xml') && contentType.includes('application/xml'))
+    (enabledParsers.includes('html') && contentType === 'text/html') ||
+    (enabledParsers.includes('xml') && contentType === 'application/xml')
   ) {
     body = (await hReq.buffer()).toString();
   } else {
@@ -56,9 +53,8 @@ export const createRequestFromHyper = async (hReq: HyperRequest) => {
     hReq.url,
     headers,
     { ...hReq.query_parameters },
-    { ...hReq.path_parameters },
+    hReq.path_parameters,
     body,
-    hReq.text.bind(hReq),
     hReq.buffer.bind(hReq),
     hReq.path,
     hReq.protocol,
@@ -78,7 +74,6 @@ export class Request {
     public readonly query: Record<string, any>,
     public readonly params: Record<string, any>,
     public readonly body: any,
-    public readonly text: () => Promise<string>,
     public readonly buffer: () => Promise<Buffer>,
     public readonly path: string,
     public readonly protocol: string,

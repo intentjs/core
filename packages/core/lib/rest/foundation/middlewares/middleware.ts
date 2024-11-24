@@ -1,16 +1,16 @@
 import { NestMiddleware } from '@nestjs/common';
 import { NextFunction } from 'express';
-import { Request } from 'hyper-express';
-import { Response } from '../../http-server';
+import { Request, Response } from '../../http-server';
+import { MiddlewareNext } from 'hyper-express';
 
 export abstract class IntentMiddleware implements NestMiddleware {
-  async use(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async use(req: Request, res: Response, next: MiddlewareNext): Promise<void> {
     await this.boot(req, res, next);
   }
 
   abstract boot(
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: MiddlewareNext,
   ): void | Promise<void>;
 }

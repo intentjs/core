@@ -1,6 +1,7 @@
 import {
   CorsMiddleware,
   HelmetMiddleware,
+  HttpMethods,
   IntentApplication,
   IntentGuard,
   IntentMiddleware,
@@ -10,8 +11,7 @@ import {
 } from '@intentjs/core';
 import { UserController } from './controllers/app';
 import { AuthController } from './controllers/auth';
-import { CustomGuard } from './guards/custom';
-import { GlobalGuard } from './guards/global';
+import { SampleMiddleware } from './middlewares/sample';
 
 export class HttpKernel extends Kernel {
   /**
@@ -41,7 +41,11 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/middlewares
    */
   public routeMiddlewares(configurator: MiddlewareConfigurator) {
-    return;
+    configurator
+      .use(SampleMiddleware)
+      .for({ path: '/icon/sample', method: HttpMethods.POST });
+
+    configurator.use(SampleMiddleware).for('/icon/plain');
   }
 
   /**

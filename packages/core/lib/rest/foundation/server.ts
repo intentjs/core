@@ -16,6 +16,8 @@ import { printBulletPoints } from '../../utils/console-helpers';
 import 'console.mute';
 import { Server } from 'hyper-express';
 import { HyperServer, RouteExplorer } from '../http-server';
+import { MiddlewareConfigurator } from './middlewares/configurator';
+import { MiddlewareComposer } from './middlewares/middleware-composer';
 
 const signals = ['SIGTERM', 'SIGINT', 'SIGUSR2'];
 
@@ -58,10 +60,23 @@ export class IntentHttpServer {
 
     useContainer(app.select(module), { fallbackOnErrors: true });
 
-    const routeExplorer = new RouteExplorer();
+    const middlewareConfigurator = new MiddlewareConfigurator();
+    this.kernel.routeMiddlewares(middlewareConfigurator);
+
+    const composer = new MiddlewareComposer(
+      mr,
+      middlewareConfigurator,
+      this.kernel.middlewares(),
+    );
+
+    composer.handle();
+
+    const routeExplorer = new RouteExplorer(ds, ms, mr);
     const routes = await routeExplorer
       .useGlobalGuards(globalGuards)
-      .exploreFullRoutes(ds, ms, mr, errorHandler);
+      .useGlobalMiddlewares(this.kernel.middlewares())
+      .useRouteMiddlewares(middlewareConfigurator)
+      .exploreFullRoutes(errorHandler);
 
     const serverOptions = config.get('http.server');
 

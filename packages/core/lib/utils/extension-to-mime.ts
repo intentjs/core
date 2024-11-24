@@ -2402,4 +2402,4 @@ export const EXTENSTION_TO_MIME = {
   zir: 'application/vnd.zul',
   zirz: 'application/vnd.zul',
   zmm: 'application/vnd.handheld-entertainment+xml',
-};
+} as const;

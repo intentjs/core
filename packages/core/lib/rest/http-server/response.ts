@@ -94,8 +94,8 @@ export class Response {
     /**
      * Set the headers
      */
-    for (const [key, value] of this.responseHeaders.entries()) {
-      res.setHeader(key, value);
+    for (const key of this.responseHeaders.keys()) {
+      res.setHeader(key, this.responseHeaders.get(key));
     }
 
     if (this.bodyData instanceof StreamableFile) {
@@ -121,7 +121,7 @@ export class Response {
       }
 
       //   this.bodyData.getStream().once('error')
-      res.stream(this.bodyData.getStream());
+      return res.stream(this.bodyData.getStream());
     }
 
     return res.send(this.bodyData);

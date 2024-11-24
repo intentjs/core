@@ -1,7 +1,7 @@
-import { HttpMethods } from './decorators';
 import HyperExpress from 'hyper-express';
-import { HttpRoute } from './interfaces';
-import { HttpConfig } from '../../interfaces';
+import { HttpMethods, HttpRoute } from './interfaces';
+import { HttpStatus } from '@nestjs/common';
+import './request-ext';
 
 export class HyperServer {
   protected hyper: HyperExpress.Server;
@@ -51,6 +51,9 @@ export class HyperServer {
       }
     }
 
+    // this.hyper.set_not_found_handler((req: HyperExpress.Request, res: HyperExpress.Response) => {
+    //   return res.status(HttpStatus.NOT_FOUND).type('text').send()
+    // })
     return this.hyper;
   }
 }

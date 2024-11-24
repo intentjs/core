@@ -23,14 +23,26 @@ export class IntentController {
   @UseGuard(CustomGuard)
   async getHello(
     @Req() req: Request,
-    // @Query() query: Record<string, any>,
-    // @Query('b') bQuery: string,
-    // @Param('name') name: string,
-    // @Param() pathParams: string,
-    // @Host() hostname: string,
-    // @IP() ips: string,
-    // @Accepts() accepts: string,
+    @Query() query: Record<string, any>,
+    @Query('b') bQuery: string,
+    @Param('name') name: string,
+    @Param() pathParams: string,
+    @Host() hostname: string,
+    @IP() ips: string,
+    @Accepts() accepts: string,
   ) {
+    // console.log(
+    //   await req.file('file1'),
+    //   await req.file('file2'),
+    //   query,
+    //   bQuery,
+    //   name,
+    //   pathParams,
+    //   hostname,
+    //   accepts,
+    //   ips,
+    //   'inside post method',
+    // );
     // throw new Error('hello there');
     return { hello: 'world' };
   }

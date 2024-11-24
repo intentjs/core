@@ -1,11 +1,11 @@
 import { Type } from '../../../interfaces';
-import { RequestMethod } from '../../http-server/methods';
+import { HttpMethods } from '../../http-server';
 import { IntentMiddleware } from './middleware';
 
 type MiddlewareRuleApplicationInfo =
   | string
   | Type<any>
-  | { path: string; method: RequestMethod };
+  | { path: string; method: HttpMethods };
 
 export class MiddlewareConfigurator {
   private rules: { [key: string]: MiddlewareRule } = {};
@@ -31,7 +31,7 @@ export class MiddlewareConfigurator {
 
 export class MiddlewareRule {
   public appliedFor: Array<MiddlewareRuleApplicationInfo> = [];
-  public excludedFor: Array<string | { path: string; method: RequestMethod }> =
+  public excludedFor: Array<string | { path: string; method: HttpMethods }> =
     [];
 
   constructor(public middleware: Type<IntentMiddleware>) {}
@@ -42,7 +42,7 @@ export class MiddlewareRule {
   }
 
   exclude(
-    ...path: Array<string | { path: string; method: RequestMethod }>
+    ...path: Array<string | { path: string; method: HttpMethods }>
   ): this {
     this.excludedFor.push(...path);
     return this;

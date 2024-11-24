@@ -9,21 +9,11 @@ import {
   METHOD_KEY,
   METHOD_PATH,
 } from './constants';
+import { HttpMethods } from './interfaces';
 
 export type ControllerOptions = {
   host?: string;
 };
-
-export enum HttpMethods {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  PATCH = 'PATCH',
-  OPTIONS = 'OPTIONS',
-  HEAD = 'HEAD',
-  DELETE = 'DELETE',
-  ANY = 'ANY',
-}
 
 export function Controller(path?: string, options?: ControllerOptions) {
   return applyDecorators(Injectable(), ControllerMetadata(path, options));
