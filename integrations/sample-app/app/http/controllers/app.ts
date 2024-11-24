@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Request } from '@intentjs/core';
+import { Controller, Get, Req } from '@intentjs/core';
 import { UserService } from 'app/services';
 
 @Controller()
@@ -7,7 +7,7 @@ export class UserController {
 
   @Get()
   async getHello(@Req() req: Request) {
-    console.log(req.all());
+    console.log(req.body);
     return this.service.getHello();
   }
 }

@@ -11,7 +11,6 @@ import { IntentAppContainer, ModuleBuilder } from '../../foundation';
 import { Type } from '../../interfaces';
 import { Obj, Package } from '../../utils';
 import { Kernel } from '../foundation/kernel';
-import { requestMiddleware } from '../middlewares/functional/requestSerializer';
 import pc from 'picocolors';
 import { printBulletPoints } from '../../utils/console-helpers';
 import 'console.mute';

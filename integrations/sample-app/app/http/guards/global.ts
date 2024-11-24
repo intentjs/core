@@ -1,5 +1,10 @@
-import { Injectable, IntentGuard, Reflector, Response } from '@intentjs/core';
-import { Request } from 'hyper-express';
+import {
+  Injectable,
+  IntentGuard,
+  Reflector,
+  Request,
+  Response,
+} from '@intentjs/core';
 
 @Injectable()
 export class GlobalGuard extends IntentGuard {

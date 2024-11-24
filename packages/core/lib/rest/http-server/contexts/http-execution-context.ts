@@ -21,6 +21,7 @@ export class HttpExecutionContext {
     switch (type) {
       case RouteParamtypes.REQUEST:
         return this.getRequest();
+
       case RouteParamtypes.RESPONSE:
         return this.getResponse();
 
