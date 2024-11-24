@@ -1,7 +1,7 @@
 import { Reflector } from '../../../reflections';
-import { Request } from 'hyper-express';
 import { ForbiddenException } from '../../../exceptions/forbidden-exception';
 import { ExecutionContext, Response } from '../../http-server';
+import { Request } from '../../http-server/request';
 
 export abstract class IntentGuard {
   async handle(context: ExecutionContext): Promise<void> {

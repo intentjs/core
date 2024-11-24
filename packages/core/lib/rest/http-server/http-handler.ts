@@ -12,11 +12,10 @@ export class HttpRouteHandler {
     protected readonly exceptionFilter: IntentExceptionFilter,
   ) {}
 
-  async handle(context: ExecutionContext): Promise<[any, Response]> {
+  async handle(context: ExecutionContext, args: any[]): Promise<Response> {
     // for (const middleware of this.middlewares) {
     //   await middleware.use({}, {});
     // }
-
     try {
       /**
        * Handle the Guards
@@ -28,18 +27,18 @@ export class HttpRouteHandler {
       /**
        * Handle the request
        */
-      const responseFromHandler = await this.handler;
+      const responseFromHandler = await this.handler(...args);
 
       if (responseFromHandler instanceof Response) {
-        return [, responseFromHandler];
+        return responseFromHandler;
       } else {
         const response = context.switchToHttp().getResponse();
         response.body(responseFromHandler);
-        return [, response];
+        return response;
       }
     } catch (e) {
       const res = this.exceptionFilter.catch(context, e);
-      return [undefined, res];
+      return res;
     }
   }
 }

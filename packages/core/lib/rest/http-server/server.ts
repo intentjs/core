@@ -1,15 +1,19 @@
 import { HttpMethods } from './decorators';
 import HyperExpress from 'hyper-express';
 import { HttpRoute } from './interfaces';
+import { HttpConfig } from '../../interfaces';
 
 export class HyperServer {
   protected hyper: HyperExpress.Server;
 
-  constructor() {
-    this.hyper = new HyperExpress.Server();
-  }
+  constructor() {}
 
-  async build(routes: HttpRoute[]): Promise<HyperExpress.Server> {
+  async build(
+    routes: HttpRoute[],
+    config: HyperExpress.ServerConstructorOptions,
+  ): Promise<HyperExpress.Server> {
+    this.hyper = new HyperExpress.Server(config || {});
+
     for (const route of routes) {
       const { path, httpHandler } = route;
       switch (route.method) {

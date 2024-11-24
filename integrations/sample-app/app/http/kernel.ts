@@ -52,7 +52,7 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/guards
    */
   public guards(): Type<IntentGuard>[] {
-    return [GlobalGuard];
+    return [];
   }
 
   /**

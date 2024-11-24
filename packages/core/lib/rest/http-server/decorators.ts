@@ -2,14 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { applyDecorators } from '../../reflections/apply-decorators';
 import { Type } from '../../interfaces';
 import { IntentGuard } from '../foundation';
-
-export const CONTROLLER_KEY = '@intentjs/controller_path';
-export const CONTROLLER_OPTIONS = '@intentjs/controller_options';
-
-export const METHOD_KEY = '@intentjs/controller_method_key';
-export const METHOD_PATH = '@intentjs/controller_method_path';
-
-export const GUARD_KEY = '@intentjs/controller_guards';
+import {
+  CONTROLLER_KEY,
+  CONTROLLER_OPTIONS,
+  GUARD_KEY,
+  METHOD_KEY,
+  METHOD_PATH,
+} from './constants';
 
 export type ControllerOptions = {
   host?: string;
@@ -57,61 +56,40 @@ export type RouteDecoratorType = (
 export const Get: RouteDecoratorType = (path, options) =>
   createRouteDecorators(HttpMethods.GET, path, options);
 
-export function Post(path?: string, options?: ControllerOptions) {
-  return function (target: object, key?: string | symbol, descriptor?: any) {
-    Reflect.defineMetadata(METHOD_KEY, HttpMethods.POST, target, key);
-    Reflect.defineMetadata(METHOD_PATH, path, target, key);
-    return descriptor;
-  };
-}
+export const Post: RouteDecoratorType = (
+  path: string,
+  options?: ControllerOptions,
+) => createRouteDecorators(HttpMethods.POST, path, options);
 
-export function Put(path?: string, options?: ControllerOptions) {
-  return function (target: object, key?: string | symbol, descriptor?: any) {
-    Reflect.defineMetadata(METHOD_KEY, HttpMethods.PUT, target, key);
-    Reflect.defineMetadata(METHOD_PATH, path, target, key);
-    return descriptor;
-  };
-}
+export const Put: RouteDecoratorType = (
+  path: string,
+  options?: ControllerOptions,
+) => createRouteDecorators(HttpMethods.PUT, path, options);
 
-export function Patch(path?: string, options?: ControllerOptions) {
-  return function (target: object, key?: string | symbol, descriptor?: any) {
-    Reflect.defineMetadata(METHOD_KEY, HttpMethods.PATCH, target, key);
-    Reflect.defineMetadata(METHOD_PATH, path, target, key);
-    return descriptor;
-  };
-}
+export const Patch: RouteDecoratorType = (
+  path: string,
+  options?: ControllerOptions,
+) => createRouteDecorators(HttpMethods.PATCH, path, options);
 
-export function Delete(path?: string, options?: ControllerOptions) {
-  return function (target: object, key?: string | symbol, descriptor?: any) {
-    Reflect.defineMetadata(METHOD_KEY, HttpMethods.DELETE, target, key);
-    Reflect.defineMetadata(METHOD_PATH, path, target, key);
-    return descriptor;
-  };
-}
+export const Delete: RouteDecoratorType = (
+  path: string,
+  options?: ControllerOptions,
+) => createRouteDecorators(HttpMethods.DELETE, path, options);
 
-export function Options(path?: string, options?: ControllerOptions) {
-  return function (target: object, key?: string | symbol, descriptor?: any) {
-    Reflect.defineMetadata(METHOD_KEY, HttpMethods.OPTIONS, target, key);
-    Reflect.defineMetadata(METHOD_PATH, path, target, key);
-    return descriptor;
-  };
-}
+export const Options: RouteDecoratorType = (
+  path: string,
+  options?: ControllerOptions,
+) => createRouteDecorators(HttpMethods.OPTIONS, path, options);
 
-export function Head(path?: string, options?: ControllerOptions) {
-  return function (target: object, key?: string | symbol, descriptor?: any) {
-    Reflect.defineMetadata(METHOD_KEY, HttpMethods.HEAD, target, key);
-    Reflect.defineMetadata(METHOD_PATH, path, target, key);
-    return descriptor;
-  };
-}
+export const Head: RouteDecoratorType = (
+  path: string,
+  options?: ControllerOptions,
+) => createRouteDecorators(HttpMethods.HEAD, path, options);
 
-export function Any(path?: string, options?: ControllerOptions) {
-  return function (target: object, key?: string | symbol, descriptor?: any) {
-    Reflect.defineMetadata(METHOD_KEY, HttpMethods.ANY, target, key);
-    Reflect.defineMetadata(METHOD_PATH, path, target, key);
-    return descriptor;
-  };
-}
+export const ANY: RouteDecoratorType = (
+  path: string,
+  options?: ControllerOptions,
+) => createRouteDecorators(HttpMethods.ANY, path, options);
 
 export const UseGuard = (...guards: Type<IntentGuard>[]) => {
   return function (target: object, key?: string | symbol, descriptor?: any) {

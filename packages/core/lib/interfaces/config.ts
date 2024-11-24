@@ -3,6 +3,8 @@ import {
   CorsOptionsDelegate,
 } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { GenericClass } from '.';
+import { HyperServer } from '../rest';
+import { ServerConstructorOptions } from 'hyper-express';
 
 export interface SentryConfig {
   dsn: string;
@@ -22,4 +24,17 @@ export interface AppConfig {
     validationErrorSerializer?: GenericClass;
   };
   sentry?: SentryConfig;
+}
+
+export type RequestParsers =
+  | 'json'
+  | 'urlencoded'
+  | 'formdata'
+  | 'plain'
+  | 'html'
+  | 'binary';
+
+export interface HttpConfig {
+  parsers: RequestParsers[];
+  server?: ServerConstructorOptions;
 }

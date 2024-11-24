@@ -1,5 +1,6 @@
 import {
   Accepts,
+  Body,
   Controller,
   Get,
   Host,
@@ -8,10 +9,10 @@ import {
   Post,
   Query,
   Req,
-  Request,
   UseGuard,
 } from '@intentjs/core';
 import { CustomGuard } from '../guards/custom';
+import { Request } from '@intentjs/core/dist/lib/rest/http-server/request';
 
 @Controller('/icon')
 @UseGuard(CustomGuard)
@@ -22,15 +23,14 @@ export class IntentController {
   @UseGuard(CustomGuard)
   async getHello(
     @Req() req: Request,
-    @Query() query: Record<string, any>,
-    @Query('b') bQuery: string,
-    @Param('name') name: string,
-    @Param() pathParams: string,
-    @Host() hostname: string,
-    @IP() ips: string,
-    @Accepts() accepts: string,
+    // @Query() query: Record<string, any>,
+    // @Query('b') bQuery: string,
+    // @Param('name') name: string,
+    // @Param() pathParams: string,
+    // @Host() hostname: string,
+    // @IP() ips: string,
+    // @Accepts() accepts: string,
   ) {
-    // console.log(query, bQuery, name, pathParams, hostname, accepts, ips);
     // throw new Error('hello there');
     return { hello: 'world' };
   }
@@ -50,8 +50,32 @@ export class IntentController {
   }
 
   @Post('/json')
-  async postJson(@Req() req: Request) {
-    return { hello: 'world' };
+  async postJson(
+    @Req() req: Request,
+    @Query() query: Record<string, any>,
+    @Query('b') bQuery: string,
+    @Param('name') name: string,
+    @Param() pathParams: string,
+    @Host() hostname: string,
+    @IP() ips: string,
+    @Accepts() accepts: string,
+    @Body() body: any,
+  ) {
+    console.log('inside post method');
+    console.log(
+      await req.file('file1'),
+      await req.file('file2'),
+      // query,
+      // bQuery,
+      // name,
+      // pathParams,
+      // hostname,
+      // accepts,
+      // ips,
+      // 'inside post method',
+      // body,
+    );
+    return { hello: 'world from POST /json' };
   }
 
   @Post('/multipart')

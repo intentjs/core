@@ -1,6 +1,6 @@
-import { Request } from 'hyper-express';
 import { Response } from '../response';
 import { RouteArgType, RouteParamtypes } from '../param-decorators';
+import { Request } from '../request';
 
 export class HttpExecutionContext {
   constructor(
@@ -26,9 +26,9 @@ export class HttpExecutionContext {
 
       case RouteParamtypes.QUERY:
         if (data) {
-          return this.request.query_parameters[data as string];
+          return this.request.query[data as string];
         }
-        return { ...this.request.query_parameters };
+        return this.request.query;
 
       case RouteParamtypes.ACCEPTS:
         return this.request.accepts();
@@ -43,10 +43,10 @@ export class HttpExecutionContext {
 
       case RouteParamtypes.PARAM:
         if (data) {
-          return this.request.path_parameters[data as string];
+          return this.request.params[data as string];
         }
 
-        return { ...this.request.path_parameters };
+        return { ...this.request.params };
 
       case RouteParamtypes.SESSION:
 
@@ -61,14 +61,14 @@ export class HttpExecutionContext {
         return this.request.raw;
 
       case RouteParamtypes.USER_AGENT:
-        return this.request.header('user-agent');
+        return this.request.headers['user-agent'];
 
       case RouteParamtypes.HOST:
         return this.request.url;
 
       case RouteParamtypes.HEADERS:
         if (data) {
-          return this.request.header(data as string);
+          return this.request.headers[data as string];
         }
 
         return { ...(this.request.headers || {}) };

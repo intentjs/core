@@ -9,9 +9,7 @@ export class GlobalGuard extends IntentGuard {
     reflector: Reflector,
   ): Promise<boolean> {
     console.log('inside global guard');
-    // await req.multipart(async (field) => {
-    //   console.log('field ===> ', field.name, field.file);
-    // });
+
     return true;
   }
 }

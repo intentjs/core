@@ -55,6 +55,7 @@ export class IntentHttpServer {
     const ms = app.get(MetadataScanner, { strict: false });
     const mr = app.get(ModuleRef, { strict: false });
     const errorHandler = await mr.create(this.errorHandler);
+    const config = app.get(ConfigService, { strict: false });
 
     useContainer(app.select(module), { fallbackOnErrors: true });
 
@@ -63,10 +64,11 @@ export class IntentHttpServer {
       .useGlobalGuards(globalGuards)
       .exploreFullRoutes(ds, ms, mr, errorHandler);
 
-    const customServer = new HyperServer();
-    const server = await customServer.build(routes);
+    const serverOptions = config.get('http.server');
 
-    const config = app.get(ConfigService, { strict: false });
+    const customServer = new HyperServer();
+    const server = await customServer.build(routes, serverOptions);
+
     this.configureErrorReporter(config.get('app.sentry'));
 
     const port = config.get('app.port');

@@ -1,10 +1,4 @@
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
-import {
-  CONTROLLER_KEY,
-  GUARD_KEY,
-  METHOD_KEY,
-  METHOD_PATH,
-} from './decorators';
 import { join } from 'path';
 import { HttpRoute } from './interfaces';
 import { Request, Response as HResponse } from 'hyper-express';
@@ -15,8 +9,15 @@ import { ExecutionContext } from './contexts/execution-context';
 import { IntentExceptionFilter } from '../../exceptions';
 import { IntentGuard } from '../foundation';
 import { Type } from '../../interfaces';
-import { ROUTE_ARGS } from './constants';
+import {
+  CONTROLLER_KEY,
+  GUARD_KEY,
+  METHOD_KEY,
+  METHOD_PATH,
+  ROUTE_ARGS,
+} from './constants';
 import { RouteArgType } from './param-decorators';
+import { createRequestFromHyper } from './request';
 
 export class RouteExplorer {
   guards: Type<IntentGuard>[] = [];
@@ -108,7 +109,7 @@ export class RouteExplorer {
     if (!controllerKey) return;
     const pathMethod = Reflect.getMetadata(METHOD_KEY, instance, key);
     const methodPath = Reflect.getMetadata(METHOD_PATH, instance, key);
-    const methodRef = instance[key];
+    const methodRef = instance[key].bind(instance);
     const controllerGuards = Reflect.getMetadata(
       GUARD_KEY,
       instance.constructor,
@@ -138,10 +139,18 @@ export class RouteExplorer {
       key,
     ) as RouteArgType[];
 
-    const cb = async (hReq: Request, hRes: HResponse) => {
-      const httpContext = new HttpExecutionContext(hReq, new Response());
-      const context = new ExecutionContext(httpContext, instance, methodRef);
+    const handler = new HttpRouteHandler(
+      middlewares,
+      composedGuards,
+      methodRef,
+      errorHandler,
+    );
 
+    const cb = async (hReq: Request, hRes: HResponse) => {
+      const req = await createRequestFromHyper(hReq);
+
+      const httpContext = new HttpExecutionContext(req, new Response());
+      const context = new ExecutionContext(httpContext, instance, methodRef);
       const args = [];
       for (const routeArg of routeArgs) {
         if (routeArg.handler) {
@@ -151,15 +160,9 @@ export class RouteExplorer {
         }
       }
 
-      const handler = new HttpRouteHandler(
-        middlewares,
-        composedGuards,
-        instance[key].apply(instance, args),
-        errorHandler,
-      );
+      const res = await handler.handle(context, args);
 
-      const [error, res] = await handler.handle(context);
-      return res.reply(hRes);
+      res.reply(hReq, hRes);
     };
 
     return {

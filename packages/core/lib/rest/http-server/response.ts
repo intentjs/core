@@ -1,4 +1,4 @@
-import { Response as HResponse } from 'hyper-express';
+import { Response as HResponse, Request as HRequest } from 'hyper-express';
 import { StreamableFile } from './streamable-file';
 import { HttpStatus } from './status-codes';
 import {
@@ -14,6 +14,7 @@ export class Response {
 
   constructor() {
     this.responseHeaders = new Map<string, any>();
+    this.statusCode = HttpStatus.OK;
   }
 
   status(statusCode: HttpStatus): Response {
@@ -76,11 +77,27 @@ export class Response {
     return this;
   }
 
-  reply(res: HResponse) {
-    this.statusCode && res.status(this.statusCode);
+  reply(req: HRequest, res: HResponse) {
+    const { method } = req;
+
+    /**
+     * Set the status code of the response
+     */
+    if (!this.statusCode && method === 'POST') {
+      res.status(HttpStatus.CREATED);
+    } else if (this.statusCode) {
+      res.status(this.statusCode);
+    } else {
+      res.status(HttpStatus.OK);
+    }
+
+    /**
+     * Set the headers
+     */
     for (const [key, value] of this.responseHeaders.entries()) {
       res.setHeader(key, value);
     }
+
     if (this.bodyData instanceof StreamableFile) {
       const headers = this.bodyData.getHeaders();
       if (
