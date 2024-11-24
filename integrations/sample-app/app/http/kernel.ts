@@ -12,6 +12,8 @@ import {
 import { UserController } from './controllers/app';
 import { AuthController } from './controllers/auth';
 import { SampleMiddleware } from './middlewares/sample';
+import { IntentController } from './controllers/icon';
+import { GlobalMiddleware } from './middlewares/global';
 
 export class HttpKernel extends Kernel {
   /**
@@ -30,7 +32,7 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/middlewares
    */
   public middlewares(): Type<IntentMiddleware>[] {
-    return [CorsMiddleware, HelmetMiddleware];
+    return [GlobalMiddleware];
   }
 
   /**
@@ -43,7 +45,11 @@ export class HttpKernel extends Kernel {
   public routeMiddlewares(configurator: MiddlewareConfigurator) {
     configurator
       .use(SampleMiddleware)
-      .for({ path: '/icon/sample', method: HttpMethods.POST });
+      .for({ path: '/icon/sample', method: HttpMethods.POST })
+      .for(IntentController)
+      .exclude('/icon/:name');
+
+    configurator.use(GlobalMiddleware).exclude('/icon/:name');
 
     configurator.use(SampleMiddleware).for('/icon/plain');
   }

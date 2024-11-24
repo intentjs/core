@@ -1,10 +1,14 @@
 import HyperExpress from 'hyper-express';
 import { HttpMethods, HttpRoute } from './interfaces';
-import { HttpStatus } from '@nestjs/common';
-import './request-ext';
+import { IntentMiddleware } from '../foundation';
+import { requestMiddleware } from './request/middleware';
+import { Request } from './request';
 
 export class HyperServer {
   protected hyper: HyperExpress.Server;
+  globalMiddlewares: IntentMiddleware[] = [];
+  routeMiddlewares: Map<string, IntentMiddleware[]>;
+  excludedRouteMiddlewares: Map<string, string[]>;
 
   constructor() {}
 
@@ -13,6 +17,13 @@ export class HyperServer {
     config: HyperExpress.ServerConstructorOptions,
   ): Promise<HyperExpress.Server> {
     this.hyper = new HyperExpress.Server(config || {});
+    this.hyper.use(requestMiddleware);
+
+    // this.hyper.use(async (hReq, res, next) => {
+    //   for (const middleware of this.globalMiddlewares) {
+    //     await middleware.handle(req, res, next);
+    //   }
+    // });
 
     for (const route of routes) {
       const { path, httpHandler } = route;
@@ -55,5 +66,24 @@ export class HyperServer {
     //   return res.status(HttpStatus.NOT_FOUND).type('text').send()
     // })
     return this.hyper;
+  }
+
+  useGlobalMiddlewares(globalMiddlewares: IntentMiddleware[]): HyperServer {
+    this.globalMiddlewares = globalMiddlewares;
+    return this;
+  }
+
+  useExcludeMiddlewareRoutes(
+    routeMiddlewares: Map<string, string[]>,
+  ): HyperServer {
+    this.excludedRouteMiddlewares = routeMiddlewares;
+    return this;
+  }
+
+  useRouteMiddlewares(
+    routeMiddlewares: Map<string, IntentMiddleware[]>,
+  ): HyperServer {
+    this.routeMiddlewares = routeMiddlewares;
+    return this;
   }
 }

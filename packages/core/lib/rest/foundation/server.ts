@@ -14,8 +14,15 @@ import { Kernel } from '../foundation/kernel';
 import pc from 'picocolors';
 import { printBulletPoints } from '../../utils/console-helpers';
 import 'console.mute';
-import { Server } from 'hyper-express';
-import { HyperServer, RouteExplorer } from '../http-server';
+import { Response as HyperResponse, Server } from 'hyper-express';
+import {
+  ExecutionContext,
+  HttpExecutionContext,
+  HyperServer,
+  Request,
+  Response,
+  RouteExplorer,
+} from '../http-server';
 import { MiddlewareConfigurator } from './middlewares/configurator';
 import { MiddlewareComposer } from './middlewares/middleware-composer';
 
@@ -69,19 +76,31 @@ export class IntentHttpServer {
       this.kernel.middlewares(),
     );
 
-    composer.handle();
+    const globalMiddlewares = await composer.globalMiddlewares();
+    const routeMiddlewares = await composer.getRouteMiddlewares();
+    const excludedMiddlewares =
+      await composer.getExcludedMiddlewaresForRoutes();
 
     const routeExplorer = new RouteExplorer(ds, ms, mr);
     const routes = await routeExplorer
       .useGlobalGuards(globalGuards)
-      .useGlobalMiddlewares(this.kernel.middlewares())
-      .useRouteMiddlewares(middlewareConfigurator)
+      .useGlobalMiddlewares(globalMiddlewares)
+      .useRouteMiddlewares(routeMiddlewares)
+      .useExcludeMiddlewareRoutes(excludedMiddlewares)
       .exploreFullRoutes(errorHandler);
 
     const serverOptions = config.get('http.server');
 
     const customServer = new HyperServer();
     const server = await customServer.build(routes, serverOptions);
+
+    server.set_error_handler((hReq: any, hRes: HyperResponse, error: Error) => {
+      const res = new Response();
+      const httpContext = new HttpExecutionContext(hReq, new Response());
+      const context = new ExecutionContext(httpContext, null, null);
+      errorHandler.catch(context, error);
+      res.reply(hReq, hRes);
+    });
 
     this.configureErrorReporter(config.get('app.sentry'));
 

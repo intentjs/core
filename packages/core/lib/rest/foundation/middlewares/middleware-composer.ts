@@ -3,9 +3,12 @@ import { Type } from '../../../interfaces';
 import { MiddlewareConfigurator } from './configurator';
 import { IntentMiddleware } from './middleware';
 import { CONTROLLER_KEY } from '../../http-server/constants';
+import { ControllerScanner } from '../controller-scanner';
 
 export class MiddlewareComposer {
-  private middlewareRoute = new Map<string, any>();
+  private middlewareRoute = new Map<string, IntentMiddleware[]>();
+  private excludedMiddlewareRoutes = new Map<string, string[]>();
+
   private middlewareMap: Record<string, IntentMiddleware> = {};
 
   constructor(
@@ -14,55 +17,115 @@ export class MiddlewareComposer {
     private middlewares: Type<IntentMiddleware>[],
   ) {}
 
-  async handle() {
+  async globalMiddlewares(): Promise<IntentMiddleware[]> {
+    const globalMiddlewares = [];
+    for (const middleware of this.middlewares) {
+      const middlewareInstance = await this.moduleRef.create(middleware);
+      globalMiddlewares.push(middlewareInstance);
+    }
+    return globalMiddlewares;
+  }
+
+  async getRouteMiddlewares(): Promise<Map<string, IntentMiddleware[]>> {
     /**
      * Prepares a map like
      *
      * "GET:/route" => Middleware Collection
      * "*:/route" => Middleware Collection
      */
-    const routeMethodBasedMiddlewares = {};
     for (const rule of this.middlewareConfigurator.getAllRules()) {
-      const applyMiddlewareFor = [];
-
-      for (const appliedFor of rule.appliedFor) {
-        let routeUniqueKey = undefined;
-        if (typeof appliedFor === 'string') {
-          console.log(appliedFor);
-          routeUniqueKey = `*:${appliedFor}`;
-          await this.setMiddlewareForRoute(routeUniqueKey, rule.middleware);
-        } else if (
-          typeof appliedFor === 'object' &&
-          appliedFor.path &&
-          appliedFor.method
+      for (const excludedPath of rule.excludedFor) {
+        console.log('excluded ==> ', excludedPath);
+        if (
+          typeof excludedPath === 'object' &&
+          excludedPath.path &&
+          excludedPath.method
         ) {
-          routeUniqueKey = `${appliedFor.method}:${appliedFor.path}`;
-          this.setMiddlewareForRoute(routeUniqueKey, rule.middleware);
-        } else {
-          const controller = Reflect.getMetadata(CONTROLLER_KEY, appliedFor);
+          this.excludeMiddlewareForRoute(
+            `${excludedPath.method}:${excludedPath.path}`,
+            rule.middleware,
+          );
+        } else if (typeof excludedPath === 'string') {
+          await this.excludeMiddlewareForRoute(
+            `*:${excludedPath}`,
+            rule.middleware,
+          );
         }
       }
-
-      console.log(this.middlewareRoute);
-
-      //   const methodNames = this.metadataScanner.getAllMethodNames(instance);
-      //   for (const methodName of methodNames) {
-      //     const route = await this.scanFullRoute(
-      //       instance,
-      //       methodName,
-      //       errorHandler,
-      //     );
-      //     route && routes.push(route);
-      //   }
     }
 
-    console.log(this.middlewares, this.middlewareConfigurator);
+    for (const rule of this.middlewareConfigurator.getAllRules()) {
+      for (const appliedFor of rule.appliedFor) {
+        if (typeof appliedFor === 'string') {
+          await this.setMiddlewareForRoute(appliedFor, '*', rule.middleware);
+        } else if (typeof appliedFor === 'object' && appliedFor.path) {
+          this.setMiddlewareForRoute(
+            appliedFor.path,
+            appliedFor.method,
+            rule.middleware,
+          );
+        } else {
+          const routes = new ControllerScanner().handle(
+            appliedFor as Type<any>,
+          );
+          for (const route of routes) {
+            this.setMiddlewareForRoute(
+              route.path,
+              route.method || '*',
+              rule.middleware,
+            );
+          }
+        }
+      }
+    }
+
+    return this.middlewareRoute;
   }
 
-  async setMiddlewareForRoute(
+  async getExcludedMiddlewaresForRoutes(): Promise<Map<string, string[]>> {
+    return this.excludedMiddlewareRoutes;
+  }
+
+  async excludeMiddlewareForRoute(
     routeKey: string,
     middleware: Type<IntentMiddleware>,
   ) {
+    const existingMiddlewares = this.excludedMiddlewareRoutes.get(
+      routeKey,
+    ) as any[];
+    if (existingMiddlewares) {
+      this.excludedMiddlewareRoutes.set(
+        routeKey,
+        existingMiddlewares.concat(middleware.name),
+      );
+      return;
+    }
+
+    this.excludedMiddlewareRoutes.set(routeKey, [middleware.name]);
+  }
+
+  async setMiddlewareForRoute(
+    routePath: string,
+    routeMethod: string,
+    middleware: Type<IntentMiddleware>,
+  ) {
+    const routeKey = `${routeMethod}:${routePath}`;
+
+    /**
+     * Check if the middleware is excluded for the specified route
+     */
+    const excludedMiddlewareNames =
+      this.excludedMiddlewareRoutes.get(routeKey) || [];
+    const excludedMiddlewareNamesWithoutMethod =
+      this.excludedMiddlewareRoutes.get(`*:${routePath}`) || [];
+
+    const excludedMiddlewares = new Set([
+      ...excludedMiddlewareNames,
+      ...excludedMiddlewareNamesWithoutMethod,
+    ]);
+
+    if (excludedMiddlewares.has(middleware.name)) return;
+
     const existingMiddlewares = this.middlewareRoute.get(routeKey) as any[];
     if (existingMiddlewares) {
       const middlewareInstance = await this.moduleRef.create(middleware);

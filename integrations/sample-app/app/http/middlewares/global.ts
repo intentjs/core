@@ -5,9 +5,9 @@ import {
   Response,
 } from '@intentjs/core';
 
-export class SampleMiddleware extends IntentMiddleware {
+export class GlobalMiddleware extends IntentMiddleware {
   use(req: Request, res: Response, next: MiddlewareNext): void | Promise<void> {
-    console.log('inside middleware');
+    console.log('inside global middleware');
     next();
   }
 }

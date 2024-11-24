@@ -8,5 +8,5 @@ export * from './server';
 export * from './streamable-file';
 export * from './status-codes';
 export * from './param-decorators';
-export * from './request';
 export * from './interfaces';
+export * from './request';

@@ -1,0 +1,41 @@
+import { Request as HyperRequest } from 'hyper-express';
+import { UploadedFile } from '../../../storage/file-handlers/uploaded-file';
+import { Type } from '../../../interfaces';
+
+export interface Request extends HyperRequest {
+  $dto: any;
+  $user: any;
+  uploadedFiles: Map<string, UploadedFile | UploadedFile[]>;
+  setDto(dto: any): void;
+  dto(): any;
+  all(): Record<string, any>;
+  input<T = string>(name: string, defaultValue?: T): T;
+  string(name: string): string;
+  number(name: string): number;
+  boolean(name: string): boolean;
+  hasHeader(name: string): boolean;
+  bearerToken(): string;
+  httpHost(): string;
+  isHttp(): boolean;
+  isHttps(): boolean;
+  fullUrl(): string;
+  isMethod(method: string): boolean;
+  contentType(): string;
+  getAcceptableContentTypes(): string;
+  //   accepts(): string[];
+  expectsJson(): boolean;
+  validate<T>(schema: Type<T>): Promise<boolean>;
+  setUser(user: any): void;
+  user<T = any>(): T;
+  only(...keys: string[]): Record<string, any>;
+  except(...keys: string[]): Record<string, any>;
+  isPath(pathPattern: string): boolean;
+  has(...keys: string[]): boolean;
+  hasAny(...keys: string[]): boolean;
+  missing(...keys: string[]): boolean;
+  hasHeaders(...keys: string[]): boolean;
+  hasIncludes(): boolean;
+  includes(): string;
+  files(keys: string): Record<string, UploadedFile | UploadedFile[]>;
+  file<T = UploadedFile | UploadedFile[] | undefined>(key: string): Promise<T>;
+}

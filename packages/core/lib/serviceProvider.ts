@@ -44,7 +44,7 @@ export const IntentProvidersFactory = (
         QueueService,
         QueueConsoleCommands,
         QueueMetadata,
-        ListRouteCommand,
+        // ListRouteCommand,
         // CodegenCommand,
         // CodegenService,
         ViewConfigCommand,

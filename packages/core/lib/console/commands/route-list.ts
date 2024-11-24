@@ -10,8 +10,7 @@ export class ListRouteCommand {
   async handle() {
     const ds = this.moduleRef.get(DiscoveryService, { strict: false });
     const ms = this.moduleRef.get(MetadataScanner, { strict: false });
-
-    const routeExplorer = new RouteExplorer();
+    const routeExplorer = new RouteExplorer(ds, ms, this.moduleRef);
     const routes = routeExplorer.explorePlainRoutes(ds, ms);
 
     const formattedRows = columnify(routes, { padStart: 2 });

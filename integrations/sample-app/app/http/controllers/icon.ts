@@ -17,19 +17,23 @@ import { Request } from '@intentjs/core/dist/lib/rest/http-server/request';
 @Controller('/icon')
 @UseGuard(CustomGuard)
 export class IntentController {
-  constructor() {}
+  public service: any;
+
+  constructor() {
+    this.service = null;
+  }
 
   @Get('/:name')
   @UseGuard(CustomGuard)
   async getHello(
     @Req() req: Request,
-    @Query() query: Record<string, any>,
-    @Query('b') bQuery: string,
-    @Param('name') name: string,
-    @Param() pathParams: string,
-    @Host() hostname: string,
-    @IP() ips: string,
-    @Accepts() accepts: string,
+    // @Query() query: Record<string, any>,
+    // @Query('b') bQuery: string,
+    // @Param('name') name: string,
+    // @Param() pathParams: string,
+    // @Host() hostname: string,
+    // @IP() ips: string,
+    // @Accepts() accepts: string,
   ) {
     // console.log(
     //   await req.file('file1'),

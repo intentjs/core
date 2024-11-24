@@ -16,7 +16,7 @@ export abstract class IntentExceptionFilter {
     return '*';
   }
 
-  catch(context: ExecutionContext, exception: any) {
+  async catch(context: ExecutionContext, exception: any): Promise<any> {
     const ctx = context.switchToHttp();
 
     this.reportToSentry(exception);
@@ -26,7 +26,7 @@ export abstract class IntentExceptionFilter {
     return this.handleHttp(context, exception);
   }
 
-  handleHttp(context: ExecutionContext, exception: any) {
+  async handleHttp(context: ExecutionContext, exception: any): Promise<any> {
     const res = context.switchToHttp().getResponse();
 
     const debugMode = ConfigService.get('app.debug');

@@ -27,9 +27,9 @@ export class HttpExecutionContext {
 
       case RouteParamtypes.QUERY:
         if (data) {
-          return this.request.query[data as string];
+          return this.request.query_parameters[data as string];
         }
-        return this.request.query;
+        return { ...this.request.query_parameters };
 
       case RouteParamtypes.ACCEPTS:
         return this.request.accepts();

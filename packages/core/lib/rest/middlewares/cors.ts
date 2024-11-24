@@ -1,8 +1,8 @@
 import cors, { CorsOptions } from 'cors';
-import { NextFunction } from 'express';
 import { ConfigService } from '../../config/service';
 import { Injectable } from '../../foundation';
-import { IntentMiddleware, Request, Response } from '../foundation';
+import { IntentMiddleware, MiddlewareNext } from '../foundation';
+import { Request, Response } from '../http-server';
 
 @Injectable()
 export class CorsMiddleware extends IntentMiddleware {
@@ -10,7 +10,8 @@ export class CorsMiddleware extends IntentMiddleware {
     super();
   }
 
-  boot(req: Request, res: Response, next: NextFunction): void | Promise<void> {
+  use(req: Request, res: Response, next: MiddlewareNext): void | Promise<void> {
+    console.log(this.config.get('app.cors'));
     cors(this.config.get('app.cors') as CorsOptions);
     next();
   }

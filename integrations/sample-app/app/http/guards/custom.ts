@@ -1,5 +1,10 @@
-import { Injectable, IntentGuard, Reflector, Response } from '@intentjs/core';
-import { Request } from '@intentjs/core/dist/lib/rest/http-server/request';
+import {
+  Injectable,
+  IntentGuard,
+  Reflector,
+  Request,
+  Response,
+} from '@intentjs/core';
 
 @Injectable()
 export class CustomGuard extends IntentGuard {

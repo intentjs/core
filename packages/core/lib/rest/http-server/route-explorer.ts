@@ -1,17 +1,13 @@
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
 import { join } from 'path';
 import { HttpRoute } from './interfaces';
-import { Request, Response as HResponse, MiddlewareNext } from 'hyper-express';
+import { Response as HResponse, MiddlewareNext } from 'hyper-express';
 import { HttpExecutionContext } from './contexts/http-execution-context';
 import { HttpRouteHandler } from './http-handler';
 import { Response } from './response';
 import { ExecutionContext } from './contexts/execution-context';
 import { IntentExceptionFilter } from '../../exceptions';
-import {
-  IntentGuard,
-  IntentMiddleware,
-  MiddlewareConfigurator,
-} from '../foundation';
+import { IntentGuard, IntentMiddleware } from '../foundation';
 import { Type } from '../../interfaces';
 import {
   CONTROLLER_KEY,
@@ -21,12 +17,14 @@ import {
   ROUTE_ARGS,
 } from './constants';
 import { RouteArgType } from './param-decorators';
-import { createRequestFromHyper } from './request';
+import { Request } from './request';
 
 export class RouteExplorer {
   guards: Type<IntentGuard>[] = [];
-  middlewares: Type<IntentMiddleware>[] = [];
-  middlewareConfigurator: MiddlewareConfigurator;
+
+  globalMiddlewares: IntentMiddleware[] = [];
+  routeMiddlewares: Map<string, IntentMiddleware[]>;
+  excludedRouteMiddlewares: Map<string, string[]>;
 
   constructor(
     private discoveryService: DiscoveryService,
@@ -152,13 +150,10 @@ export class RouteExplorer {
     );
 
     const cb = async (hReq: Request, hRes: HResponse, next: MiddlewareNext) => {
-      const req = await createRequestFromHyper(hReq);
-
-      const httpContext = new HttpExecutionContext(req, new Response());
+      const httpContext = new HttpExecutionContext(hReq, new Response());
       const context = new ExecutionContext(httpContext, instance, methodRef);
 
       const args = [];
-
       for (const routeArg of routeArgs) {
         args.push(
           routeArg.handler
@@ -168,7 +163,6 @@ export class RouteExplorer {
       }
 
       const res = await handler.handle(context, args);
-
       res.reply(hReq, hRes);
     };
 
@@ -184,15 +178,22 @@ export class RouteExplorer {
     return this;
   }
 
-  useGlobalMiddlewares(middlewares: Type<IntentMiddleware>[]): RouteExplorer {
-    this.middlewares = middlewares;
+  useGlobalMiddlewares(globalMiddlewares: IntentMiddleware[]): RouteExplorer {
+    this.globalMiddlewares = globalMiddlewares;
+    return this;
+  }
+
+  useExcludeMiddlewareRoutes(
+    routeMiddlewares: Map<string, string[]>,
+  ): RouteExplorer {
+    this.excludedRouteMiddlewares = routeMiddlewares;
     return this;
   }
 
   useRouteMiddlewares(
-    middlewareConfigurator: MiddlewareConfigurator,
+    routeMiddlewares: Map<string, IntentMiddleware[]>,
   ): RouteExplorer {
-    this.middlewareConfigurator = middlewareConfigurator;
+    this.routeMiddlewares = routeMiddlewares;
     return this;
   }
 }
