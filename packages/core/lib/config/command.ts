@@ -1,10 +1,11 @@
-import { Command, ConsoleIO } from '../console';
 import { ConfigMap } from './options';
 import { CONFIG_FACTORY } from './constant';
 import pc from 'picocolors';
 import archy from 'archy';
-import { Inject } from '../foundation';
 import { jsonToArchy } from '../utils/console-helpers';
+import { Command } from '../console/decorators';
+import { ConsoleIO } from '../console/consoleIO';
+import { Inject } from '../foundation/decorators';
 
 @Command('config:view {--ns : Namespace of a particular config}', {
   desc: 'Command to view config for a given namespace',

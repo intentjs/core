@@ -2,7 +2,7 @@ import helmet from 'helmet';
 import { Injectable } from '../../foundation';
 import { IntentMiddleware, MiddlewareNext } from '../foundation';
 import { ConfigService } from '../../config';
-import { Request, Response } from '../http-server';
+import { Request, Response } from 'hyper-express';
 
 @Injectable()
 export class HelmetMiddleware extends IntentMiddleware {

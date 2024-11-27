@@ -1,6 +1,6 @@
-import { Inject, Injectable } from '../foundation';
+import { Inject, Injectable } from '../foundation/decorators';
 import { DotNotation, GetNestedPropertyType } from '../type-helpers';
-import { Obj } from '../utils';
+import { Obj } from '../utils/object';
 import { CONFIG_FACTORY } from './constant';
 import { ConfigMap, NamespacedConfigMapValues } from './options';
 

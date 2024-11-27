@@ -1,4 +1,4 @@
-import { HttpStatus } from '../rest';
+import { HttpStatus } from '../rest/http-server/status-codes';
 import { HttpException } from './http-exception';
 
 export class ValidationFailed extends HttpException {

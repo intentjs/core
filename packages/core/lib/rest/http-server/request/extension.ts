@@ -1,9 +1,9 @@
 import { UploadedFile } from '../../../storage/file-handlers/uploaded-file';
 import { isEmpty } from '../../../utils';
 import { Type } from '../../../interfaces';
-import { Validator } from '../../../validator';
 import { EXTENSTION_TO_MIME } from '../../../utils/extension-to-mime';
 import { Request } from './interfaces';
+import { Validator } from '../../../validator/validator';
 
 export const INTENT_REQUEST_EXTENSIONS = {
   $dto: null,

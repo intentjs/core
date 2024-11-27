@@ -1,12 +1,10 @@
-import { IntentExceptionFilter } from '../../exceptions';
-import { IntentGuard, IntentMiddleware } from '../foundation';
+import { IntentExceptionFilter } from '../../exceptions/base-exception-handler';
+import { IntentGuard } from '../foundation/guards/base-guard';
 import { ExecutionContext } from './contexts/execution-context';
-import { RouteArgType, RouteParamtypes } from './param-decorators';
 import { Response } from './response';
 
 export class HttpRouteHandler {
   constructor(
-    protected readonly middlewares: IntentMiddleware[],
     protected readonly guards: IntentGuard[],
     protected readonly handler: Function,
     protected readonly exceptionFilter: IntentExceptionFilter,

@@ -1,4 +1,4 @@
-import { InvalidValue } from '../exceptions';
+import { InvalidValue } from '../exceptions/invalid-value';
 import { Arr } from './array';
 
 export class Obj {

@@ -2,9 +2,8 @@ import {
   CorsOptions,
   CorsOptionsDelegate,
 } from '@nestjs/common/interfaces/external/cors-options.interface';
-import { GenericClass } from '.';
-import { HyperServer } from '../rest';
 import { ServerConstructorOptions } from 'hyper-express';
+import { GenericClass } from './utils';
 
 export interface SentryConfig {
   dsn: string;

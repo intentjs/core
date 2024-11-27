@@ -1,4 +1,5 @@
 import {
+  ConfigService,
   ExecutionContext,
   HttpException,
   IntentExceptionFilter,
@@ -6,6 +7,10 @@ import {
 } from '@intentjs/core';
 
 export class ApplicationExceptionFilter extends IntentExceptionFilter {
+  constructor(private config: ConfigService) {
+    super();
+  }
+
   doNotReport(): Array<Type<HttpException>> {
     return [];
   }

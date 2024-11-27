@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import 'reflect-metadata';
 import { ulid } from 'ulid';
-import { Obj } from '../utils';
+import { Obj } from '../utils/object';
 
 /**
  * Reflector is a class to easily fetch metadata from a class and request handler method

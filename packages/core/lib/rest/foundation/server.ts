@@ -15,16 +15,13 @@ import pc from 'picocolors';
 import { printBulletPoints } from '../../utils/console-helpers';
 import 'console.mute';
 import { Response as HyperResponse, Server } from 'hyper-express';
-import {
-  ExecutionContext,
-  HttpExecutionContext,
-  HyperServer,
-  Request,
-  Response,
-  RouteExplorer,
-} from '../http-server';
 import { MiddlewareConfigurator } from './middlewares/configurator';
 import { MiddlewareComposer } from './middlewares/middleware-composer';
+import { HyperServer } from '../http-server/server';
+import { HttpExecutionContext } from '../http-server/contexts/http-execution-context';
+import { ExecutionContext } from '../http-server/contexts/execution-context';
+import { Response } from '../http-server/response';
+import { RouteExplorer } from '../http-server/route-explorer';
 
 const signals = ['SIGTERM', 'SIGINT', 'SIGUSR2'];
 
@@ -55,17 +52,22 @@ export class IntentHttpServer {
 
   async start() {
     const module = ModuleBuilder.build(this.container, this.kernel);
-    const app = await NestFactory.createApplicationContext(module);
+    const app = await NestFactory.createApplicationContext(module, {
+      logger: ['error', 'warn'],
+    });
 
     const globalGuards = this.kernel.guards();
 
-    const ds = app.get(DiscoveryService, { strict: false });
+    const appModule = app.select(module);
+    const ds = app.get(DiscoveryService);
     const ms = app.get(MetadataScanner, { strict: false });
-    const mr = app.get(ModuleRef, { strict: false });
-    const errorHandler = await mr.create(this.errorHandler);
-    const config = app.get(ConfigService, { strict: false });
+    const mr = appModule.get(ModuleRef, { strict: true });
 
-    useContainer(app.select(module), { fallbackOnErrors: true });
+    const errorHandler = await mr.create(this.errorHandler);
+
+    const config = appModule.get(ConfigService);
+
+    useContainer(appModule, { fallbackOnErrors: true });
 
     const middlewareConfigurator = new MiddlewareConfigurator();
     this.kernel.routeMiddlewares(middlewareConfigurator);

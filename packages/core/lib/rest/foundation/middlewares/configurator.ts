@@ -1,5 +1,5 @@
 import { Type } from '../../../interfaces';
-import { HttpMethods } from '../../http-server';
+import { HttpMethods } from '../../http-server/interfaces';
 import { IntentMiddleware } from './middleware';
 
 type MiddlewareRuleApplicationInfo =

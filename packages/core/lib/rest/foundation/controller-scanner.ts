@@ -1,11 +1,11 @@
 import { join } from 'path';
 import { Type } from '../../interfaces';
-import { HttpRoute } from '../http-server';
 import {
   CONTROLLER_KEY,
   METHOD_KEY,
   METHOD_PATH,
 } from '../http-server/constants';
+import { HttpRoute } from '../http-server/interfaces';
 
 export class ControllerScanner {
   handle(cls: Type<any>): HttpRoute[] {

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { applyDecorators } from '../../reflections/apply-decorators';
 import { Type } from '../../interfaces';
-import { IntentGuard } from '../foundation';
 import {
   CONTROLLER_KEY,
   CONTROLLER_OPTIONS,
@@ -10,6 +9,7 @@ import {
   METHOD_PATH,
 } from './constants';
 import { HttpMethods } from './interfaces';
+import { IntentGuard } from '../foundation/guards/base-guard';
 
 export type ControllerOptions = {
   host?: string;

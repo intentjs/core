@@ -2,8 +2,8 @@ import { Request as HyperRequest } from 'hyper-express';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { ulid } from 'ulid';
-import { Str } from '../../../utils';
 import { UploadedFile } from '../../../storage/file-handlers/uploaded-file';
+import { Str } from '../../../utils/string';
 
 export const processMultipartData = async (
   req: HyperRequest,

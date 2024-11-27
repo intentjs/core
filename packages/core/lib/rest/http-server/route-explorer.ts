@@ -6,8 +6,6 @@ import { HttpExecutionContext } from './contexts/http-execution-context';
 import { HttpRouteHandler } from './http-handler';
 import { Response } from './response';
 import { ExecutionContext } from './contexts/execution-context';
-import { IntentExceptionFilter } from '../../exceptions';
-import { IntentGuard, IntentMiddleware } from '../foundation';
 import { Type } from '../../interfaces';
 import {
   CONTROLLER_KEY,
@@ -17,7 +15,10 @@ import {
   ROUTE_ARGS,
 } from './constants';
 import { RouteArgType } from './param-decorators';
-import { Request } from './request';
+import { Request } from './request/interfaces';
+import { IntentGuard } from '../foundation/guards/base-guard';
+import { IntentMiddleware } from '../foundation/middlewares/middleware';
+import { IntentExceptionFilter } from '../../exceptions/base-exception-handler';
 
 export class RouteExplorer {
   guards: Type<IntentGuard>[] = [];
@@ -114,6 +115,9 @@ export class RouteExplorer {
     if (!controllerKey) return;
     const pathMethod = Reflect.getMetadata(METHOD_KEY, instance, key);
     const methodPath = Reflect.getMetadata(METHOD_PATH, instance, key);
+
+    if (!pathMethod) return;
+
     const methodRef = instance[key].bind(instance);
     const controllerGuards = Reflect.getMetadata(
       GUARD_KEY,
@@ -143,7 +147,6 @@ export class RouteExplorer {
       ([] as RouteArgType[]);
 
     const handler = new HttpRouteHandler(
-      middlewares,
       composedGuards,
       methodRef,
       errorHandler,

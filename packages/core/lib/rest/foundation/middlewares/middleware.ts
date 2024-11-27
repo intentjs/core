@@ -1,5 +1,4 @@
-import { Request, Response } from '../../http-server';
-import { MiddlewareNext } from 'hyper-express';
+import { MiddlewareNext, Request, Response } from 'hyper-express';
 
 export abstract class IntentMiddleware {
   async handle(

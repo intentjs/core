@@ -32,7 +32,7 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/middlewares
    */
   public middlewares(): Type<IntentMiddleware>[] {
-    return [GlobalMiddleware];
+    return [GlobalMiddleware, CorsMiddleware, GlobalMiddleware];
   }
 
   /**

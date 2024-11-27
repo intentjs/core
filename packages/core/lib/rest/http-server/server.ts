@@ -1,8 +1,7 @@
 import HyperExpress from 'hyper-express';
 import { HttpMethods, HttpRoute } from './interfaces';
-import { IntentMiddleware } from '../foundation';
 import { requestMiddleware } from './request/middleware';
-import { Request } from './request';
+import { IntentMiddleware } from '../foundation/middlewares/middleware';
 
 export class HyperServer {
   protected hyper: HyperExpress.Server;
@@ -19,11 +18,11 @@ export class HyperServer {
     this.hyper = new HyperExpress.Server(config || {});
     this.hyper.use(requestMiddleware);
 
-    // this.hyper.use(async (hReq, res, next) => {
-    //   for (const middleware of this.globalMiddlewares) {
-    //     await middleware.handle(req, res, next);
-    //   }
-    // });
+    this.hyper.use(async (hReq, res, next) => {
+      for (const middleware of this.globalMiddlewares) {
+        await middleware.handle(hReq, res, next);
+      }
+    });
 
     for (const route of routes) {
       const { path, httpHandler } = route;

@@ -4,8 +4,8 @@ import { Package } from '../utils';
 import { Type } from '../interfaces';
 import { HttpException } from './http-exception';
 import { ValidationFailed } from './validation-failed';
-import { ExecutionContext } from '../rest/http-server';
 import { HttpStatus } from '../rest/http-server/status-codes';
+import { ExecutionContext } from '../rest/http-server/contexts/execution-context';
 
 export abstract class IntentExceptionFilter {
   doNotReport(): Array<Type<HttpException>> {

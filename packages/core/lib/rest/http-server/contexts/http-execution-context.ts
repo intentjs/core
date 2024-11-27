@@ -1,6 +1,6 @@
 import { Response } from '../response';
 import { RouteArgType, RouteParamtypes } from '../param-decorators';
-import { Request } from '../request';
+import { Request } from '../request/interfaces';
 
 export class HttpExecutionContext {
   constructor(

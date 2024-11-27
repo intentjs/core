@@ -1,15 +1,12 @@
 import { ModuleRef } from '@nestjs/core';
-import { Type } from '../../../interfaces';
 import { MiddlewareConfigurator } from './configurator';
 import { IntentMiddleware } from './middleware';
-import { CONTROLLER_KEY } from '../../http-server/constants';
 import { ControllerScanner } from '../controller-scanner';
+import { Type } from '../../../interfaces/utils';
 
 export class MiddlewareComposer {
   private middlewareRoute = new Map<string, IntentMiddleware[]>();
   private excludedMiddlewareRoutes = new Map<string, string[]>();
-
-  private middlewareMap: Record<string, IntentMiddleware> = {};
 
   constructor(
     private moduleRef: ModuleRef,
@@ -20,8 +17,9 @@ export class MiddlewareComposer {
   async globalMiddlewares(): Promise<IntentMiddleware[]> {
     const globalMiddlewares = [];
     for (const middleware of this.middlewares) {
-      const middlewareInstance = await this.moduleRef.create(middleware);
-      globalMiddlewares.push(middlewareInstance);
+      console.log(middleware);
+      globalMiddlewares.push(await this.moduleRef.create(middleware));
+      console.log(globalMiddlewares);
     }
     return globalMiddlewares;
   }

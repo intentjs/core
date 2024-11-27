@@ -1,7 +1,8 @@
 import { Reflector } from '../../../reflections';
 import { ForbiddenException } from '../../../exceptions/forbidden-exception';
-import { ExecutionContext, Response } from '../../http-server';
-import { Request } from '../../http-server/request';
+import { Request } from '../../http-server/request/interfaces';
+import { ExecutionContext } from '../../http-server/contexts/execution-context';
+import { Response } from '../../http-server/response';
 
 export abstract class IntentGuard {
   async handle(context: ExecutionContext): Promise<void> {
