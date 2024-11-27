@@ -17,9 +17,7 @@ export class MiddlewareComposer {
   async globalMiddlewares(): Promise<IntentMiddleware[]> {
     const globalMiddlewares = [];
     for (const middleware of this.middlewares) {
-      console.log(middleware);
       globalMiddlewares.push(await this.moduleRef.create(middleware));
-      console.log(globalMiddlewares);
     }
     return globalMiddlewares;
   }
@@ -33,7 +31,6 @@ export class MiddlewareComposer {
      */
     for (const rule of this.middlewareConfigurator.getAllRules()) {
       for (const excludedPath of rule.excludedFor) {
-        console.log('excluded ==> ', excludedPath);
         if (
           typeof excludedPath === 'object' &&
           excludedPath.path &&

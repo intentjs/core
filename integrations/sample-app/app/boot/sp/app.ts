@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  IntentApplication,
-  IntentApplicationContext,
-  ServiceProvider,
-} from '@intentjs/core';
+import { IntentApplicationContext, ServiceProvider } from '@intentjs/core';
 import { IntentController } from 'app/http/controllers/icon';
 import { QueueJobs } from 'app/jobs/job';
 import { UserDbRepository } from 'app/repositories/userDbRepository';

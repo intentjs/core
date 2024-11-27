@@ -42,6 +42,4 @@ export const requestMiddleware = async (
   } catch (error) {
     console.error('Request parsing error:', error);
   }
-
-  next();
 };

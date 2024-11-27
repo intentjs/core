@@ -94,7 +94,9 @@ export class IntentHttpServer {
     const serverOptions = config.get('http.server');
 
     const customServer = new HyperServer();
-    const server = await customServer.build(routes, serverOptions);
+    const server = await customServer
+      .useGlobalMiddlewares(globalMiddlewares)
+      .build(routes, serverOptions);
 
     server.set_error_handler((hReq: any, hRes: HyperResponse, error: Error) => {
       const res = new Response();

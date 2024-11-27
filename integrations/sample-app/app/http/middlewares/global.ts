@@ -7,8 +7,7 @@ export class GlobalMiddleware extends IntentMiddleware {
     super();
   }
 
-  use(req: Request, res: Response, next: MiddlewareNext): void | Promise<void> {
-    console.log('inside global middleware');
+  use(req: Request, res: Response, next: MiddlewareNext): void {
     next();
   }
 }

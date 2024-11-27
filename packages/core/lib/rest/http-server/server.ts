@@ -18,11 +18,9 @@ export class HyperServer {
     this.hyper = new HyperExpress.Server(config || {});
     this.hyper.use(requestMiddleware);
 
-    this.hyper.use(async (hReq, res, next) => {
-      for (const middleware of this.globalMiddlewares) {
-        await middleware.handle(hReq, res, next);
-      }
-    });
+    for (const middleware of this.globalMiddlewares) {
+      this.hyper.use(middleware.use.bind(middleware));
+    }
 
     for (const route of routes) {
       const { path, httpHandler } = route;

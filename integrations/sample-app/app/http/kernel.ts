@@ -1,8 +1,6 @@
 import {
   CorsMiddleware,
-  HelmetMiddleware,
   HttpMethods,
-  IntentApplication,
   IntentGuard,
   IntentMiddleware,
   Kernel,
@@ -32,7 +30,7 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/middlewares
    */
   public middlewares(): Type<IntentMiddleware>[] {
-    return [GlobalMiddleware, CorsMiddleware, GlobalMiddleware];
+    return [GlobalMiddleware, CorsMiddleware];
   }
 
   /**
