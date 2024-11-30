@@ -22,8 +22,7 @@ import {
 } from '@intentjs/core';
 import { CustomGuard } from '../guards/custom';
 import { Request, UploadedFile } from '@intentjs/hyper-express';
-import { CustomParam } from '../decorators/custom-param';
-import { createReadStream, readFileSync } from 'fs';
+import { createReadStream } from 'fs';
 import { join } from 'path';
 import { LoginDto } from 'app/validators/auth';
 
@@ -140,7 +139,7 @@ export class IntentController {
     );
 
     return new StreamableFile(readStream, { type: 'image/jpeg' });
-    return res.stream(new StreamableFile(readStream, { type: 'image/jpeg' }));
+    // return res.stream(new StreamableFile(readStream, { type: 'image/jpeg' }));
 
     return { hello: 'world from POST /json' };
   }
