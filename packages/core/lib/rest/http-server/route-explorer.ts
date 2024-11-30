@@ -156,8 +156,8 @@ export class RouteExplorer {
       const args = [];
       for (const routeArg of routeArgs) {
         args.push(
-          routeArg.handler
-            ? routeArg.handler(routeArg.data, context)
+          routeArg.factory
+            ? routeArg.factory(routeArg.data, context)
             : httpContext.getInjectableValueFromArgType(routeArg),
         );
       }

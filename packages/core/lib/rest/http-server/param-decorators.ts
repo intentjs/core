@@ -22,7 +22,7 @@ export enum RouteParamtypes {
 export type RouteArgType = {
   type: RouteParamtypes;
   data: object | string | number;
-  handler: CustomRouteParamDecoratorHandler;
+  factory: CustomRouteParamDecoratorFactory;
 };
 
 function createRouteParamDecorator(paramType: RouteParamtypes) {
@@ -39,24 +39,26 @@ function createRouteParamDecorator(paramType: RouteParamtypes) {
     };
 }
 
-type CustomRouteParamDecoratorHandler = (
-  data: any,
+type CustomRouteParamDecoratorFactory<T = string | object | number | any> = (
+  data: T,
   context: ExecutionContext,
 ) => any;
 
-export function createParamDecorator(
-  handler: CustomRouteParamDecoratorHandler,
-): ParameterDecorator {
-  return (data?: string | object | number) => (target, key, index) => {
-    const args = Reflect.getMetadata(ROUTE_ARGS, target.constructor, key) || [];
-    args[index] = {
-      data: data,
-      handler,
-    };
+export function createParamDecorator<T = string | object | number | any>(
+  factory: CustomRouteParamDecoratorFactory<T>,
+  enhancers?: ParameterDecorator[],
+): (data?: T) => ParameterDecorator {
+  return (data?: T): ParameterDecorator =>
+    (target, key, index) => {
+      const args =
+        Reflect.getMetadata(ROUTE_ARGS, target.constructor, key) || [];
+      args[index] = { data: data, factory };
+      Reflect.defineMetadata(ROUTE_ARGS, args, target.constructor, key);
 
-    Reflect.defineMetadata(ROUTE_ARGS, args, target.constructor, key);
-    console.log(Reflect.getMetadata(ROUTE_ARGS, target.constructor, key) || []);
-  };
+      if (Array.isArray(enhancers)) {
+        for (const enhancer of enhancers) enhancer(target, key, index);
+      }
+    };
 }
 
 export const Req: () => ParameterDecorator = createRouteParamDecorator(

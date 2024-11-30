@@ -13,6 +13,7 @@ import {
 } from '@intentjs/core';
 import { CustomGuard } from '../guards/custom';
 import { Request } from '@intentjs/hyper-express';
+import { CustomParam } from '../decorators/custom-param';
 
 @Controller('/icon')
 @UseGuard(CustomGuard)
@@ -67,6 +68,7 @@ export class IntentController {
 
   @Post('/json')
   async postJson(
+    @CustomParam() customParam: string,
     @Req() req: Request,
     @Query() query: Record<string, any>,
     @Query('b') bQuery: string,
@@ -77,7 +79,7 @@ export class IntentController {
     // @Accepts() accepts: string,
     @Body() body: any,
   ) {
-    console.log('inside post method');
+    console.log('inside post method ===> ', customParam);
     console.log(
       query,
       bQuery,
