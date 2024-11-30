@@ -4,6 +4,7 @@ import {
 } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { ServerConstructorOptions } from '@intentjs/hyper-express';
 import { GenericClass } from './utils';
+import { WatchOptions } from 'fs-extra';
 
 export interface SentryConfig {
   dsn: string;
@@ -37,4 +38,15 @@ export interface HttpConfig {
   parsers: RequestParsers[];
   cors?: CorsOptions | CorsOptionsDelegate<any>;
   server?: ServerConstructorOptions;
+  staticServe?: {
+    httpPath?: string;
+    filePath?: string;
+    keep?: {
+      extensions?: string[];
+    };
+    cache?: {
+      max_file_count?: number;
+      max_file_size?: number;
+    };
+  };
 }

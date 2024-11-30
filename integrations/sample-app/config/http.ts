@@ -1,4 +1,5 @@
-import { HttpConfig, registerNamespace } from '@intentjs/core';
+import { findProjectRoot, HttpConfig, registerNamespace } from '@intentjs/core';
+import { join } from 'path';
 
 export default registerNamespace(
   'http',
@@ -24,6 +25,18 @@ export default registerNamespace(
     server: {
       max_body_buffer: 100000000,
       max_body_length: 100000000,
+    },
+
+    staticServe: {
+      httpPath: 'assets',
+      filePath: join(findProjectRoot(), 'storage/uploads'),
+      keep: {
+        extensions: ['css', 'js', 'json', 'png', 'jpg', 'jpeg'],
+      },
+      cache: {
+        max_file_count: 1000,
+        max_file_size: 4 * 1024 * 1024,
+      },
     },
   }),
 );

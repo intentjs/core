@@ -7,3 +7,4 @@ export * from './invalid-value';
 export * from './invalid-value-type';
 export * from './http-exception';
 export * from './forbidden-exception';
+export * from './file-not-found-exception';

@@ -184,7 +184,7 @@ export class RouteExplorer {
 
     return {
       method: pathMethod,
-      path: join(controllerKey, methodPath),
+      path: join('/', controllerKey, methodPath),
       httpHandler: cb,
     };
   }

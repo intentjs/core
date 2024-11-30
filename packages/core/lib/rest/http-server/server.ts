@@ -2,6 +2,11 @@ import HyperExpress, { MiddlewareHandler } from '@intentjs/hyper-express';
 import { HttpMethods, HttpRoute } from './interfaces';
 import { IntentMiddleware } from '../foundation/middlewares/middleware';
 import { Validator } from '../../validator';
+import { ConfigService } from '../../config';
+import LiveDirectory from 'live-directory';
+import { join } from 'path';
+import { FileNotFoundException } from '../../exceptions/file-not-found-exception';
+import { Str } from '../../utils';
 
 export class HyperServer {
   protected hyper: HyperExpress.Server;
@@ -68,7 +73,50 @@ export class HyperServer {
       }
     }
 
+    this.configureStaticServer();
+
     return this.hyper;
+  }
+
+  configureStaticServer() {
+    const staticServeConfig = ConfigService.get('http.staticServe');
+    if (!staticServeConfig.filePath || !staticServeConfig.httpPath) return;
+
+    const liveAssets = new LiveDirectory(staticServeConfig.filePath, {
+      static: true,
+      ...staticServeConfig,
+    });
+
+    const httpPath = join(
+      '/',
+      staticServeConfig.httpPath.replace('*', ''),
+      '/*',
+    );
+
+    this.hyper.get(httpPath, (req, res) => {
+      const path = Str.replaceFirst(
+        req.path.replace(join('/', staticServeConfig.httpPath), ''),
+        '/',
+        '',
+      );
+
+      const file = liveAssets.get(path);
+
+      // Return a 404 if no asset/file exists on the derived path
+      if (file === undefined) {
+        throw new FileNotFoundException(`File at ${path} does not exist`);
+      }
+
+      const fileParts = file.path.split('.');
+      const extension = fileParts[fileParts.length - 1];
+
+      const content = file.content;
+      if (content instanceof Buffer) {
+        return res.type(extension).send(content);
+      } else {
+        return res.type(extension).stream(content);
+      }
+    });
   }
 
   composeMiddlewares(path: string, method: string): MiddlewareHandler[] {
