@@ -83,7 +83,7 @@ export class Reflector {
    */
   getFromMethod<T = any>(keyOrDecorator: string | Object, defaultValue?: T): T {
     const key =
-      typeof keyOrDecorator === 'function'
+      typeof keyOrDecorator === 'object'
         ? keyOrDecorator['KEY']
         : keyOrDecorator;
 

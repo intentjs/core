@@ -1094,9 +1094,14 @@ class Request {
 
     async validate(schema) {
         const payload = await this.all();
+        const dto = this._dto;
         const validator = this._validatorClass.compareWith(schema);
-        const dto = await validator.addMeta({ ...payload }).validate({ ...payload });
-        this.setDto(dto);
+        if (dto) {
+            await validator.validateDto(dto);
+        } else {
+            const dto = await validator.addMeta({}).validateRaw({ ...payload });
+            this.setDto(dto);
+        }
         return true;
     }
 

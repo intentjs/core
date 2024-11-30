@@ -118,7 +118,6 @@ export class RouteExplorer {
 
     if (!pathMethod) return;
 
-    const methodRef = instance[key].bind(instance);
     const controllerGuards = Reflect.getMetadata(
       GUARD_KEY,
       instance.constructor,
@@ -141,31 +140,46 @@ export class RouteExplorer {
     }
 
     const routeArgs =
-      Reflect.getMetadata(ROUTE_ARGS, instance.constructor, key) ||
-      ([] as RouteArgType[]);
+      (Reflect.getMetadata(
+        ROUTE_ARGS,
+        instance.constructor,
+        key,
+      ) as RouteArgType[]) || [];
 
     const handler = new HttpRouteHandler(
       composedGuards,
-      methodRef,
+      instance[key].bind(instance),
       errorHandler,
     );
 
     const replyHandler = new Reply();
+
     const cb = async (hReq: Request, hRes: HResponse, next: MiddlewareNext) => {
       const httpContext = new HttpExecutionContext(hReq, hRes, next);
-      const context = new ExecutionContext(httpContext, instance, methodRef);
+      const context = new ExecutionContext(
+        httpContext,
+        instance.constructor,
+        instance[key],
+      );
 
       const args = [];
-      for (const routeArg of routeArgs) {
+      for (const index in routeArgs) {
+        const routeArg = routeArgs[index];
         args.push(
           routeArg.factory
-            ? routeArg.factory(routeArg.data, context)
-            : httpContext.getInjectableValueFromArgType(routeArg),
+            ? await routeArg.factory(
+                routeArg.data,
+                context,
+                index as unknown as number,
+              )
+            : httpContext.getInjectableValueFromArgType(
+                routeArg,
+                index as unknown as number,
+              ),
         );
       }
 
       await handler.handle(context, args, replyHandler);
-      // res.reply(hReq, hRes);
     };
 
     return {

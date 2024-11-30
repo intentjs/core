@@ -12,8 +12,11 @@ export class IntentValidationGuard extends IntentGuard {
   async guard(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest() as Request;
     const reflector = context.getReflector();
+    /**
+     * Check if a DTO already exists
+     */
+    const dto = request.dto();
     const schema = reflector.getFromMethod('dtoSchema');
-    console.log(schema);
     await request.validate(schema);
     return true;
   }

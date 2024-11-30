@@ -43,6 +43,8 @@ export class Reply {
       return res.stream(dataFromHandler.getStream());
     }
 
+    if (!dataFromHandler) return res.send();
+
     /**
      * Default to JSON
      */

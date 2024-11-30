@@ -1,8 +1,8 @@
 import {
   Accepts,
-  Body,
   BufferBody,
   Controller,
+  Dto,
   File,
   findProjectRoot,
   Get,
@@ -18,12 +18,14 @@ import {
   StreamableFile,
   UseGuard,
   UserAgent,
+  Validate,
 } from '@intentjs/core';
 import { CustomGuard } from '../guards/custom';
 import { Request, UploadedFile } from '@intentjs/hyper-express';
 import { CustomParam } from '../decorators/custom-param';
 import { createReadStream, readFileSync } from 'fs';
 import { join } from 'path';
+import { LoginDto } from 'app/validators/auth';
 
 @Controller('/icon')
 @UseGuard(CustomGuard)
@@ -69,14 +71,13 @@ export class IntentController {
     //   'user agent ===> ',
     //   userAgent,
     // );
-
     // console.log('all headers ===> ', headers);
     // throw new Error('hello there');
-    const readStream = createReadStream(
-      join(findProjectRoot(), 'storage/uploads/sample-image.jpg'),
-    );
-
-    return new StreamableFile(readStream, { type: 'image/jpeg' });
+    // return { hello: 'world' };
+    // const readStream = createReadStream(
+    //   join(findProjectRoot(), 'storage/uploads/sample-image.jpg'),
+    // );
+    // return new StreamableFile(readStream, { type: 'image/jpeg' });
   }
 
   @Get('/plain-with-query-param')
@@ -94,8 +95,10 @@ export class IntentController {
   }
 
   @Post('/json')
+  @Validate(LoginDto)
   async postJson(
     @Req() req: Request,
+    @Dto() dto: LoginDto,
     @Param('name') name: string,
     @Query() query: Record<string, any>,
     @Query('b') bQuery: string,
@@ -109,28 +112,28 @@ export class IntentController {
     @File('file') file: UploadedFile,
     @Res() res: Response,
   ) {
-    console.log(
-      'query ==> ',
-      query,
-      'bQuyery ==> ',
-      bQuery,
-      'name ===> ',
-      name,
-      bufferBody,
-      pathParams,
-      'hostname===> ',
-      hostname,
-      'accepts ===> ',
-      accepts,
-      'ips ===> ',
-      ips,
-      'inside get method',
-      'user agent ===> ',
-      userAgent,
-    );
+    // console.log(
+    //   'query ==> ',
+    //   query,
+    //   'bQuyery ==> ',
+    //   bQuery,
+    //   'name ===> ',
+    //   name,
+    //   bufferBody,
+    //   pathParams,
+    //   'hostname===> ',
+    //   hostname,
+    //   'accepts ===> ',
+    //   accepts,
+    //   'ips ===> ',
+    //   ips,
+    //   'inside get method',
+    //   'user agent ===> ',
+    //   userAgent,
+    // );
 
-    console.log('all headers ===> ', headers);
-    console.log('uploaded files ==> ', file);
+    // console.log('all headers ===> ', headers);
+    console.log('uploaded files ==> ', req.dto(), dto);
 
     const readStream = createReadStream(
       join(findProjectRoot(), 'storage/uploads/sample-image.jpg'),

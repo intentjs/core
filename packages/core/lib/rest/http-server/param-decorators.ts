@@ -1,3 +1,4 @@
+import { plainToInstance } from 'class-transformer';
 import { ROUTE_ARGS } from './constants';
 import { ExecutionContext } from './contexts/execution-context';
 
@@ -16,6 +17,7 @@ export enum RouteParamtypes {
   USER_AGENT = 11,
   ACCEPTS = 12,
   BUFFER = 13,
+  DTO = 14,
 }
 
 export type RouteArgType = {
@@ -41,6 +43,7 @@ function createRouteParamDecorator(paramType: RouteParamtypes) {
 type CustomRouteParamDecoratorFactory<T = string | object | number | any> = (
   data: T,
   context: ExecutionContext,
+  argIndex?: number,
 ) => any;
 
 export function createParamDecorator<T = string | object | number | any>(
@@ -67,6 +70,10 @@ export const Req: () => ParameterDecorator = createRouteParamDecorator(
 export const Res: () => ParameterDecorator = createRouteParamDecorator(
   RouteParamtypes.RESPONSE,
 );
+
+// export const Dto: () => ParameterDecorator = createRouteParamDecorator(
+//   RouteParamtypes.DTO,
+// );
 
 export const BufferBody: () => ParameterDecorator = createRouteParamDecorator(
   RouteParamtypes.BUFFER,
@@ -102,3 +109,27 @@ export const Accepts: () => ParameterDecorator = createRouteParamDecorator(
 
 export const File: (key?: string) => ParameterDecorator =
   createRouteParamDecorator(RouteParamtypes.FILE);
+
+export const Dto = createParamDecorator(
+  async (data: any, ctx: ExecutionContext, argIndex: number) => {
+    const req = ctx.switchToHttp().getRequest();
+    if (req.dto()) return req.dto();
+
+    const types = Reflect.getMetadata(
+      'design:paramtypes',
+      ctx.getClass().prototype,
+      ctx.getHandler().name,
+    );
+
+    const paramType = types[argIndex];
+    const typeParamType = typeof paramType;
+
+    if (typeParamType === 'function') {
+      const dto = await plainToInstance(paramType, req.all());
+      req.setDto(dto);
+      return dto;
+    }
+
+    return req.all();
+  },
+);

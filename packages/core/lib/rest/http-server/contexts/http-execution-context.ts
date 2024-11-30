@@ -20,7 +20,7 @@ export class HttpExecutionContext {
     return this.next;
   }
 
-  getInjectableValueFromArgType(routeArg: RouteArgType): any {
+  getInjectableValueFromArgType(routeArg: RouteArgType, index: number): any {
     const { type, data } = routeArg;
     switch (type) {
       case RouteParamtypes.REQUEST:
@@ -53,6 +53,9 @@ export class HttpExecutionContext {
         }
 
         return { ...this.request.params };
+
+      case RouteParamtypes.DTO:
+        return this.request.dto();
 
       case RouteParamtypes.IP:
         return this.request.ip;
