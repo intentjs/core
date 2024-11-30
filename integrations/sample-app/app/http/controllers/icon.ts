@@ -4,6 +4,7 @@ import {
   BufferBody,
   Controller,
   File,
+  findProjectRoot,
   Get,
   Header,
   Host,
@@ -12,12 +13,17 @@ import {
   Post,
   Query,
   Req,
+  Res,
+  Response,
+  StreamableFile,
   UseGuard,
   UserAgent,
 } from '@intentjs/core';
 import { CustomGuard } from '../guards/custom';
 import { Request, UploadedFile } from '@intentjs/hyper-express';
 import { CustomParam } from '../decorators/custom-param';
+import { createReadStream, readFileSync } from 'fs';
+import { join } from 'path';
 
 @Controller('/icon')
 @UseGuard(CustomGuard)
@@ -31,41 +37,46 @@ export class IntentController {
   @Get('/:name')
   @UseGuard(CustomGuard)
   async getHello(
-    @Req() req: Request,
-    @Param('name') name: string,
-    @Query() query: Record<string, any>,
-    @Query('b') bQuery: string,
-    @Param() pathParams: string,
-    @Host() hostname: string,
-    @IP() ips: string,
-    @Accepts() accepts: string,
-    @BufferBody() bufferBody: Promise<Buffer>,
-    @UserAgent() userAgent: string,
-    @Header() headers: Record<string, any>,
+    // @Req() req: Request,
+    // @Param('name') name: string,
+    // @Query() query: Record<string, any>,
+    // @Query('b') bQuery: string,
+    // @Param() pathParams: string,
+    // @Host() hostname: string,
+    // @IP() ips: string,
+    // @Accepts() accepts: string,
+    // @BufferBody() bufferBody: Promise<Buffer>,
+    // @UserAgent() userAgent: string,
+    // @Header() headers: Record<string, any>,
+    @Res() res: Response,
   ) {
-    console.log(
-      'query ==> ',
-      query,
-      'bQuyery ==> ',
-      bQuery,
-      'name ===> ',
-      name,
-      bufferBody,
-      pathParams,
-      'hostname===> ',
-      hostname,
-      'accepts ===> ',
-      accepts,
-      'ips ===> ',
-      ips,
-      'inside get method',
-      'user agent ===> ',
-      userAgent,
+    // console.log(
+    //   'query ==> ',
+    //   query,
+    //   'bQuyery ==> ',
+    //   bQuery,
+    //   'name ===> ',
+    //   name,
+    //   bufferBody,
+    //   pathParams,
+    //   'hostname===> ',
+    //   hostname,
+    //   'accepts ===> ',
+    //   accepts,
+    //   'ips ===> ',
+    //   ips,
+    //   'inside get method',
+    //   'user agent ===> ',
+    //   userAgent,
+    // );
+
+    // console.log('all headers ===> ', headers);
+    // throw new Error('hello there');
+    const readStream = createReadStream(
+      join(findProjectRoot(), 'storage/uploads/sample-image.jpg'),
     );
 
-    console.log('all headers ===> ', headers);
-    // throw new Error('hello there');
-    return { hello: 'world' };
+    return new StreamableFile(readStream, { type: 'image/jpeg' });
   }
 
   @Get('/plain-with-query-param')
@@ -96,6 +107,7 @@ export class IntentController {
     @UserAgent() userAgent: string,
     @Header() headers: Record<string, any>,
     @File('file') file: UploadedFile,
+    @Res() res: Response,
   ) {
     console.log(
       'query ==> ',
@@ -119,6 +131,13 @@ export class IntentController {
 
     console.log('all headers ===> ', headers);
     console.log('uploaded files ==> ', file);
+
+    const readStream = createReadStream(
+      join(findProjectRoot(), 'storage/uploads/sample-image.jpg'),
+    );
+
+    return new StreamableFile(readStream, { type: 'image/jpeg' });
+    return res.stream(new StreamableFile(readStream, { type: 'image/jpeg' }));
 
     return { hello: 'world from POST /json' };
   }

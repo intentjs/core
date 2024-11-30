@@ -1,8 +1,11 @@
+import { Response } from '@intentjs/hyper-express';
 import { IntentExceptionFilter } from '../../exceptions/base-exception-handler';
 import { IntentGuard } from '../foundation/guards/base-guard';
 import { ExecutionContext } from './contexts/execution-context';
-import { Response } from './response';
+import { Reply } from './reply';
+import { HttpStatus } from './status-codes';
 import { StreamableFile } from './streamable-file';
+import { isUndefined } from '../../utils/helpers';
 
 export class HttpRouteHandler {
   constructor(
@@ -11,10 +14,11 @@ export class HttpRouteHandler {
     protected readonly exceptionFilter: IntentExceptionFilter,
   ) {}
 
-  async handle(context: ExecutionContext, args: any[]): Promise<Response> {
-    // for (const middleware of this.middlewares) {
-    //   await middleware.use({}, {});
-    // }
+  async handle(
+    context: ExecutionContext,
+    args: any[],
+    replyHandler: Reply,
+  ): Promise<Response> {
     try {
       /**
        * Handle the Guards
@@ -32,14 +36,9 @@ export class HttpRouteHandler {
         return responseFromHandler;
       }
 
+      const request = context.switchToHttp().getRequest();
       const response = context.switchToHttp().getResponse();
-      if (responseFromHandler instanceof StreamableFile) {
-        response.stream(responseFromHandler);
-        return;
-      }
-
-      response.body(responseFromHandler);
-      return response;
+      replyHandler.handle(request, response, responseFromHandler);
     } catch (e) {
       const res = this.exceptionFilter.catch(context, e);
       return res;

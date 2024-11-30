@@ -164,14 +164,15 @@ export class Obj {
   }
 
   static isObj(obj: any, throwError = false): boolean {
-    if (typeof obj === 'object' && !Array.isArray(obj) && obj !== null) {
-      return true;
-    }
+    let isObj =
+      obj !== null &&
+      typeof obj === 'object' &&
+      Object.getPrototypeOf(obj) === Object.prototype;
 
-    if (throwError) {
+    if (!isObj && throwError) {
       throw new InvalidValue('Passed value is not an object');
     }
 
-    return false;
+    return isObj;
   }
 }

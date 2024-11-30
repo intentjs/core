@@ -22,6 +22,7 @@ import { RouteArgType } from './param-decorators';
 import { IntentGuard } from '../foundation/guards/base-guard';
 import { IntentMiddleware } from '../foundation/middlewares/middleware';
 import { IntentExceptionFilter } from '../../exceptions/base-exception-handler';
+import { Reply } from './reply';
 
 export class RouteExplorer {
   globalGuards: Type<IntentGuard>[] = [];
@@ -149,8 +150,9 @@ export class RouteExplorer {
       errorHandler,
     );
 
+    const replyHandler = new Reply();
     const cb = async (hReq: Request, hRes: HResponse, next: MiddlewareNext) => {
-      const httpContext = new HttpExecutionContext(hReq, new Response(), next);
+      const httpContext = new HttpExecutionContext(hReq, hRes, next);
       const context = new ExecutionContext(httpContext, instance, methodRef);
 
       const args = [];
@@ -162,8 +164,8 @@ export class RouteExplorer {
         );
       }
 
-      const res = await handler.handle(context, args);
-      res.reply(hReq, hRes);
+      await handler.handle(context, args, replyHandler);
+      // res.reply(hReq, hRes);
     };
 
     return {

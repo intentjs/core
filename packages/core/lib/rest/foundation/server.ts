@@ -100,7 +100,7 @@ export class IntentHttpServer {
     await this.kernel.boot(server);
     server.set_error_handler((hReq: any, hRes: HyperResponse, error: Error) => {
       const res = new Response();
-      const httpContext = new HttpExecutionContext(hReq, new Response());
+      const httpContext = new HttpExecutionContext(hReq, hRes);
       const context = new ExecutionContext(httpContext, null, null);
       errorHandler.catch(context, error);
       res.reply(hReq, hRes);

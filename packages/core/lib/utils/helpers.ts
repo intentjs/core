@@ -138,3 +138,14 @@ export const getTime = () => {
 export const isUndefined = (val: any) => {
   return val === undefined;
 };
+
+export const isClass = (obj: any) => {
+  // First check if it's an object and not null
+  if (obj === null || typeof obj !== 'object') {
+    return false;
+  }
+
+  // Check if the constructor is not the Object constructor
+  // This tells us if it was created by a class or Object literal
+  return Object.getPrototypeOf(obj).constructor.name !== 'Object';
+};

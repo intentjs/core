@@ -1,6 +1,7 @@
 import HyperExpress, { MiddlewareHandler } from '@intentjs/hyper-express';
 import { HttpMethods, HttpRoute } from './interfaces';
 import { IntentMiddleware } from '../foundation/middlewares/middleware';
+import { Validator } from '../../validator';
 
 export class HyperServer {
   protected hyper: HyperExpress.Server;
@@ -20,6 +21,7 @@ export class HyperServer {
      * process the body by default, so that it's available in all of the middleware, guards and controllers
      */
     this.hyper.use(async (req, res) => {
+      req.setValidator(Validator);
       await req.processBody();
     });
 

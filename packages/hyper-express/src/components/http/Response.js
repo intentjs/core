@@ -125,8 +125,8 @@ class Response {
         // If position is not greater than last cursor then we likely have a double middleware execution
         this.throw(
             new Error(
-                'ERR_DOUBLE_MIDDLEWARE_EXEUCTION_DETECTED: Please ensure you are not calling the next() iterator inside of an ASYNC middleware. You must only call next() ONCE per middleware inside of SYNCHRONOUS middlewares only!'
-            )
+                'ERR_DOUBLE_MIDDLEWARE_EXEUCTION_DETECTED: Please ensure you are not calling the next() iterator inside of an ASYNC middleware. You must only call next() ONCE per middleware inside of SYNCHRONOUS middlewares only!',
+            ),
         );
     }
 
@@ -292,8 +292,8 @@ class Response {
         if (this._upgrade_socket == null)
             this.throw(
                 new Error(
-                    'HyperExpress: You cannot upgrade a request that does not come from an upgrade handler. No upgrade socket was found.'
-                )
+                    'HyperExpress: You cannot upgrade a request that does not come from an upgrade handler. No upgrade socket was found.',
+                ),
             );
 
         // Resume the request in case it was paused
@@ -314,7 +314,7 @@ class Response {
             headers['sec-websocket-key'],
             headers['sec-websocket-protocol'],
             headers['sec-websocket-extensions'],
-            this._upgrade_socket
+            this._upgrade_socket,
         );
 
         // Mark request as complete so no more operations can be performed
@@ -345,7 +345,7 @@ class Response {
         // Write the appropriate status code to the response along with mapped status code message
         if (this._status_code || this._status_message)
             this._raw_response.writeStatus(
-                this._status_code + ' ' + (this._status_message || status_codes[this._status_code])
+                this._status_code + ' ' + (this._status_message || status_codes[this._status_code]),
             );
 
         // Iterate through all headers and write them to uWS
@@ -403,8 +403,8 @@ class Response {
                 if (typeof output !== 'boolean')
                     this.throw(
                         new Error(
-                            'HyperExpress: Response.drain(handler) -> handler must return a boolean value stating if the write was successful or not.'
-                        )
+                            'HyperExpress: Response.drain(handler) -> handler must return a boolean value stating if the write was successful or not.',
+                        ),
                     );
 
                 // Return the boolean value to uWS as required by uWS documentation
@@ -516,7 +516,7 @@ class Response {
                 // Wait for the request to fully receive the whole request body before sending the response
                 return this._wrapped_request.once('received', () =>
                     // Because 'received' will be emitted asynchronously, we need to cork the response to ensure the response is sent in the correct order
-                    this.atomic(() => this.send(body, close_connection))
+                    this.atomic(() => this.send(body, close_connection)),
                 );
             }
 
@@ -635,7 +635,7 @@ class Response {
                         return flushed;
                     });
                 }
-            })
+            }),
         );
     }
 
@@ -652,7 +652,7 @@ class Response {
         // Ensure readable is an instance of a stream.Readable
         if (!(readable instanceof stream.Readable))
             this.throw(
-                new Error('HyperExpress: Response.stream(readable, total_size) -> readable must be a Readable stream.')
+                new Error('HyperExpress: Response.stream(readable, total_size) -> readable must be a Readable stream.'),
             );
 
         // Do not allow streaming if response has already been aborted or completed
@@ -760,7 +760,9 @@ class Response {
     jsonp(body, name) {
         let query_parameters = this._wrapped_request.query_parameters;
         let method_name = query_parameters['callback'] || name;
-        return this.header('content-type', 'application/javascript', true).send(`${method_name}(${JSON.stringify(body)})`);
+        return this.header('content-type', 'application/javascript', true).send(
+            `${method_name}(${JSON.stringify(body)})`,
+        );
     }
 
     /**
@@ -957,8 +959,19 @@ class Response {
      */
     _throw_unsupported(name) {
         throw new Error(
-            `ERR_INCOMPATIBLE_CALL: One of your middlewares or route logic tried to call Response.${name} which is unsupported with HyperExpress.`
+            `ERR_INCOMPATIBLE_CALL: One of your middlewares or route logic tried to call Response.${name} which is unsupported with HyperExpress.`,
         );
+    }
+
+    text(data) {
+        this.type('text');
+        this.send(data);
+        return this;
+    }
+
+    notFound() {
+        this.status(404);
+        return this;
     }
 }
 

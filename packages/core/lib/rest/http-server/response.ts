@@ -123,7 +123,6 @@ export class Response {
         res.setHeader('Content-Length', headers.length + '');
       }
 
-      //   this.bodyData.getStream().once('error')
       return res.stream(this.bodyData.getStream());
     }
 

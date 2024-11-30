@@ -1,6 +1,5 @@
-import { Response } from '../response';
 import { RouteArgType, RouteParamtypes } from '../param-decorators';
-import { MiddlewareNext, Request } from '@intentjs/hyper-express';
+import { MiddlewareNext, Request, Response } from '@intentjs/hyper-express';
 
 export class HttpExecutionContext {
   constructor(
