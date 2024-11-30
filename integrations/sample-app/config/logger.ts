@@ -2,12 +2,12 @@ import {
   Formats,
   IntentLoggerOptions,
   LogLevel,
-  registerNamespace,
+  configNamespace,
   toBoolean,
   Transports,
 } from '@intentjs/core';
 
-export default registerNamespace(
+export default configNamespace(
   'logger',
   (): IntentLoggerOptions => ({
     /**

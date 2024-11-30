@@ -7,7 +7,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
-export const registerNamespace = <N extends string, T>(
+export const configNamespace = <N extends string, T>(
   namespace: LiteralString<N>,
   factory: () => T | Promise<T>,
   options?: RegisterNamespaceOptions,

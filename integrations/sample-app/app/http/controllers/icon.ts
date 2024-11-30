@@ -139,6 +139,8 @@ export class IntentController {
     );
 
     return new StreamableFile(readStream, { type: 'image/jpeg' });
+
+    return { hello: 'world from POST /json' };
   }
 
   @Post('/multipart')

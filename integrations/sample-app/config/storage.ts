@@ -1,12 +1,12 @@
 import { fromIni } from '@aws-sdk/credential-providers';
 import {
   findProjectRoot,
-  registerNamespace,
+  configNamespace,
   StorageOptions,
 } from '@intentjs/core';
 import { join } from 'path';
 
-export default registerNamespace(
+export default configNamespace(
   'filesystem',
   (): StorageOptions =>
     ({

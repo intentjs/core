@@ -1,11 +1,13 @@
 {
     "name": "@intentjs/hyper-express",
-    "version": "6.17.2-beta-2",
+    "version": "0.0.1",
     "description": "A fork of hyper-express to suit IntentJS requirements. High performance Node.js webserver with a simple-to-use API powered by uWebsockets.js under the hood.",
     "main": "index.js",
     "types": "./types/index.d.ts",
     "scripts": {
-        "test": "node tests/index.js"
+        "test": "node tests/index.js",
+        "publish:npm": "npm publish --access public",
+        "publish:next": "npm publish --access public --tag next"
     },
     "repository": {
         "type": "git",

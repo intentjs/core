@@ -9,7 +9,7 @@ import { ConfigService } from '../../config/service';
 import { IntentExceptionFilter } from '../../exceptions';
 import { IntentAppContainer, ModuleBuilder } from '../../foundation';
 import { Type } from '../../interfaces';
-import { Obj, Package } from '../../utils';
+import { findProjectRoot, getPackageJson, Obj, Package } from '../../utils';
 import { Kernel } from '../foundation/kernel';
 import pc from 'picocolors';
 import { printBulletPoints } from '../../utils/console-helpers';
@@ -22,6 +22,8 @@ import { HttpExecutionContext } from '../http-server/contexts/http-execution-con
 import { ExecutionContext } from '../http-server/contexts/execution-context';
 import { Response } from '../http-server/response';
 import { RouteExplorer } from '../http-server/route-explorer';
+import { readSync } from 'fs-extra';
+import { join } from 'path';
 
 const signals = ['SIGTERM', 'SIGINT', 'SIGUSR2'];
 
@@ -124,21 +126,31 @@ export class IntentHttpServer {
     config: ConfigService<unknown>,
     extraInfo: [string, string, string][] = [],
   ) {
+    console.clear();
+    console.log();
     const port = config.get('app.port');
     const hostname = config.get('app.hostname');
     const environment = config.get('app.env');
     const debug = config.get('app.debug');
 
+    try {
+      const { dependencies } = getPackageJson();
+      console.log(
+        `  ${pc.bold(pc.green('Intent'))} ${pc.green(dependencies['@intentjs/core'])}`,
+      );
+      console.log();
+    } catch {}
+
     printBulletPoints([
       ['➜', 'environment', environment],
       ['➜', 'debug', debug],
-      ['➜', 'hostname', hostname],
+      ['➜', 'hostname', hostname ?? '127.0.0.1'],
       ['➜', 'port', port],
       ...extraInfo,
     ]);
 
     const url = new URL(
-      ['127.0.0.1', '0.0.0.0'].includes(hostname)
+      ['127.0.0.1', 'localhost', undefined].includes(hostname)
         ? 'http://localhost'
         : `http://${hostname}`,
     );

@@ -19,7 +19,6 @@ export interface AppConfig {
   url: string;
   hostname?: string;
   port: number;
-  cors: CorsOptions | CorsOptionsDelegate<any>;
   error?: {
     validationErrorSerializer?: GenericClass;
   };
@@ -35,7 +34,6 @@ export type RequestParsers =
   | 'binary';
 
 export interface HttpConfig {
-  parsers: RequestParsers[];
   cors?: CorsOptions | CorsOptionsDelegate<any>;
   server?: ServerConstructorOptions;
   staticServe?: {

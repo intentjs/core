@@ -1,20 +1,9 @@
-import { findProjectRoot, HttpConfig, registerNamespace } from '@intentjs/core';
+import { findProjectRoot, HttpConfig, configNamespace } from '@intentjs/core';
 import { join } from 'path';
 
-export default registerNamespace(
+export default configNamespace(
   'http',
   (): HttpConfig => ({
-    /**
-     * -----------------------------------------------------
-     * Parser
-     * -----------------------------------------------------
-     *
-     * This value is the name of your application. This value is
-     * used when the framework needs to place the application's
-     * name in a notification or any other location as required.
-     */
-    parsers: ['json', 'formdata', 'plain', 'urlencoded'],
-
     cors: {
       origin: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

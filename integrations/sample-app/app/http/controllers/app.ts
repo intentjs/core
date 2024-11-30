@@ -7,7 +7,11 @@ export class UserController {
 
   @Get()
   async getHello(@Req() req: Request) {
-    console.log(req.body);
-    return this.service.getHello();
+    return { hello: 'Intent' };
+  }
+
+  @Get('hello')
+  async getHello2(@Req() req: Request) {
+    return { hello: 'Intent' };
   }
 }

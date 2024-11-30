@@ -7,6 +7,9 @@ import { Arr } from './array';
 import { InternalLogger } from './logger';
 import { Obj } from './object';
 import { Str } from './string';
+import { readFileSync } from 'fs-extra';
+import { join } from 'path';
+import { findProjectRoot } from './path';
 
 export const isEmpty = (value: any) => {
   if (Str.isString(value)) {
@@ -148,4 +151,10 @@ export const isClass = (obj: any) => {
   // Check if the constructor is not the Object constructor
   // This tells us if it was created by a class or Object literal
   return Object.getPrototypeOf(obj).constructor.name !== 'Object';
+};
+
+export const getPackageJson = () => {
+  return JSON.parse(
+    readFileSync(join(findProjectRoot(), 'package.json')).toString(),
+  );
 };
