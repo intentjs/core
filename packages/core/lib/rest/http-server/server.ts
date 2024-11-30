@@ -16,6 +16,9 @@ export class HyperServer {
   ): Promise<HyperExpress.Server> {
     this.hyper = new HyperExpress.Server(config || {});
 
+    /**
+     * process the body by default, so that it's available in all of the middleware, guards and controllers
+     */
     this.hyper.use(async (req, res) => {
       await req.processBody();
     });

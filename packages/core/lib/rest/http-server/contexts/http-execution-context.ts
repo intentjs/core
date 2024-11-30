@@ -1,11 +1,12 @@
 import { Response } from '../response';
 import { RouteArgType, RouteParamtypes } from '../param-decorators';
-import { Request } from '@intentjs/hyper-express';
+import { MiddlewareNext, Request } from '@intentjs/hyper-express';
 
 export class HttpExecutionContext {
   constructor(
     private readonly request: Request,
     private readonly response: Response,
+    private readonly next?: MiddlewareNext,
   ) {}
 
   getRequest(): Request {
@@ -14,6 +15,10 @@ export class HttpExecutionContext {
 
   getResponse(): Response {
     return this.response;
+  }
+
+  getNext(): MiddlewareNext {
+    return this.next;
   }
 
   getInjectableValueFromArgType(routeArg: RouteArgType): any {
@@ -32,9 +37,10 @@ export class HttpExecutionContext {
         return { ...this.request.query_parameters };
 
       case RouteParamtypes.ACCEPTS:
-        return this.request.accepts();
+        return this.request.headers['accept'];
 
       case RouteParamtypes.NEXT:
+        return this.getNext();
 
       case RouteParamtypes.BODY:
         if (data) {
@@ -52,14 +58,19 @@ export class HttpExecutionContext {
       case RouteParamtypes.IP:
         return this.request.ip;
 
-      case RouteParamtypes.RAW_BODY:
-        return this.request.raw;
-
       case RouteParamtypes.USER_AGENT:
         return this.request.headers['user-agent'];
 
       case RouteParamtypes.HOST:
-        return this.request.url;
+        return this.request.hostname;
+
+      case RouteParamtypes.BUFFER:
+        return this.request.buffer();
+
+      case RouteParamtypes.FILE:
+        if (data) {
+          return this.request.file(data as string);
+        }
 
       case RouteParamtypes.HEADERS:
         if (data) {

@@ -150,7 +150,7 @@ export class RouteExplorer {
     );
 
     const cb = async (hReq: Request, hRes: HResponse, next: MiddlewareNext) => {
-      const httpContext = new HttpExecutionContext(hReq, new Response());
+      const httpContext = new HttpExecutionContext(hReq, new Response(), next);
       const context = new ExecutionContext(httpContext, instance, methodRef);
 
       const args = [];

@@ -2,6 +2,7 @@ import { IntentExceptionFilter } from '../../exceptions/base-exception-handler';
 import { IntentGuard } from '../foundation/guards/base-guard';
 import { ExecutionContext } from './contexts/execution-context';
 import { Response } from './response';
+import { StreamableFile } from './streamable-file';
 
 export class HttpRouteHandler {
   constructor(
@@ -29,11 +30,16 @@ export class HttpRouteHandler {
 
       if (responseFromHandler instanceof Response) {
         return responseFromHandler;
-      } else {
-        const response = context.switchToHttp().getResponse();
-        response.body(responseFromHandler);
-        return response;
       }
+
+      const response = context.switchToHttp().getResponse();
+      if (responseFromHandler instanceof StreamableFile) {
+        response.stream(responseFromHandler);
+        return;
+      }
+
+      response.body(responseFromHandler);
+      return response;
     } catch (e) {
       const res = this.exceptionFilter.catch(context, e);
       return res;

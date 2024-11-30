@@ -11,12 +11,11 @@ export enum RouteParamtypes {
   HEADERS = 6,
   SESSION = 7,
   FILE = 8,
-  FILES = 9,
-  HOST = 10,
-  IP = 11,
-  RAW_BODY = 12,
-  USER_AGENT = 13,
-  ACCEPTS = 14,
+  HOST = 9,
+  IP = 10,
+  USER_AGENT = 11,
+  ACCEPTS = 12,
+  BUFFER = 13,
 }
 
 export type RouteArgType = {
@@ -69,6 +68,10 @@ export const Res: () => ParameterDecorator = createRouteParamDecorator(
   RouteParamtypes.RESPONSE,
 );
 
+export const BufferBody: () => ParameterDecorator = createRouteParamDecorator(
+  RouteParamtypes.BUFFER,
+);
+
 export const Query: (key?: string) => ParameterDecorator =
   createRouteParamDecorator(RouteParamtypes.QUERY);
 
@@ -90,9 +93,12 @@ export const UserAgent: () => ParameterDecorator = createRouteParamDecorator(
 );
 
 export const Host: () => ParameterDecorator = createRouteParamDecorator(
-  RouteParamtypes.USER_AGENT,
+  RouteParamtypes.HOST,
 );
 
 export const Accepts: () => ParameterDecorator = createRouteParamDecorator(
   RouteParamtypes.ACCEPTS,
 );
+
+export const File: (key?: string) => ParameterDecorator =
+  createRouteParamDecorator(RouteParamtypes.FILE);

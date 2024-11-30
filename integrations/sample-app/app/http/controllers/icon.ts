@@ -1,8 +1,11 @@
 import {
   Accepts,
   Body,
+  BufferBody,
   Controller,
+  File,
   Get,
+  Header,
   Host,
   IP,
   Param,
@@ -10,9 +13,10 @@ import {
   Query,
   Req,
   UseGuard,
+  UserAgent,
 } from '@intentjs/core';
 import { CustomGuard } from '../guards/custom';
-import { Request } from '@intentjs/hyper-express';
+import { Request, UploadedFile } from '@intentjs/hyper-express';
 import { CustomParam } from '../decorators/custom-param';
 
 @Controller('/icon')
@@ -28,26 +32,38 @@ export class IntentController {
   @UseGuard(CustomGuard)
   async getHello(
     @Req() req: Request,
-    // @Query() query: Record<string, any>,
-    // @Query('b') bQuery: string,
-    // @Param('name') name: string,
-    // @Param() pathParams: string,
-    // @Host() hostname: string,
-    // @IP() ips: string,
-    // @Accepts() accepts: string,
+    @Param('name') name: string,
+    @Query() query: Record<string, any>,
+    @Query('b') bQuery: string,
+    @Param() pathParams: string,
+    @Host() hostname: string,
+    @IP() ips: string,
+    @Accepts() accepts: string,
+    @BufferBody() bufferBody: Promise<Buffer>,
+    @UserAgent() userAgent: string,
+    @Header() headers: Record<string, any>,
   ) {
-    // console.log(
-    //   await req.file('file1'),
-    //   await req.file('file2'),
-    //   query,
-    //   bQuery,
-    //   name,
-    //   pathParams,
-    //   hostname,
-    //   accepts,
-    //   ips,
-    //   'inside post method',
-    // );
+    console.log(
+      'query ==> ',
+      query,
+      'bQuyery ==> ',
+      bQuery,
+      'name ===> ',
+      name,
+      bufferBody,
+      pathParams,
+      'hostname===> ',
+      hostname,
+      'accepts ===> ',
+      accepts,
+      'ips ===> ',
+      ips,
+      'inside get method',
+      'user agent ===> ',
+      userAgent,
+    );
+
+    console.log('all headers ===> ', headers);
     // throw new Error('hello there');
     return { hello: 'world' };
   }
@@ -68,29 +84,42 @@ export class IntentController {
 
   @Post('/json')
   async postJson(
-    @CustomParam() customParam: string,
     @Req() req: Request,
+    @Param('name') name: string,
     @Query() query: Record<string, any>,
     @Query('b') bQuery: string,
-    @Param('name') name: string,
     @Param() pathParams: string,
     @Host() hostname: string,
     @IP() ips: string,
-    // @Accepts() accepts: string,
-    @Body() body: any,
+    @Accepts() accepts: string,
+    @BufferBody() bufferBody: Promise<Buffer>,
+    @UserAgent() userAgent: string,
+    @Header() headers: Record<string, any>,
+    @File('file') file: UploadedFile,
   ) {
-    console.log('inside post method ===> ', customParam);
     console.log(
+      'query ==> ',
       query,
+      'bQuyery ==> ',
       bQuery,
+      'name ===> ',
       name,
+      bufferBody,
       pathParams,
+      'hostname===> ',
       hostname,
-      // accepts,
+      'accepts ===> ',
+      accepts,
+      'ips ===> ',
       ips,
-      'inside post method',
-      body,
+      'inside get method',
+      'user agent ===> ',
+      userAgent,
     );
+
+    console.log('all headers ===> ', headers);
+    console.log('uploaded files ==> ', file);
+
     return { hello: 'world from POST /json' };
   }
 
