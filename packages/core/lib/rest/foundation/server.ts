@@ -14,7 +14,7 @@ import { Kernel } from '../foundation/kernel';
 import pc from 'picocolors';
 import { printBulletPoints } from '../../utils/console-helpers';
 import 'console.mute';
-import { Response as HyperResponse, Server } from 'hyper-express';
+import { Response as HyperResponse, Server } from '@intentjs/hyper-express';
 import { MiddlewareConfigurator } from './middlewares/configurator';
 import { MiddlewareComposer } from './middlewares/middleware-composer';
 import { HyperServer } from '../http-server/server';
@@ -86,9 +86,6 @@ export class IntentHttpServer {
     const routeExplorer = new RouteExplorer(ds, ms, mr);
     const routes = await routeExplorer
       .useGlobalGuards(globalGuards)
-      .useGlobalMiddlewares(globalMiddlewares)
-      .useRouteMiddlewares(routeMiddlewares)
-      .useExcludeMiddlewareRoutes(excludedMiddlewares)
       .exploreFullRoutes(errorHandler);
 
     const serverOptions = config.get('http.server');
@@ -96,8 +93,11 @@ export class IntentHttpServer {
     const customServer = new HyperServer();
     const server = await customServer
       .useGlobalMiddlewares(globalMiddlewares)
+      .useRouteMiddlewares(routeMiddlewares)
       .build(routes, serverOptions);
 
+    await this.container.boot(app);
+    await this.kernel.boot(server);
     server.set_error_handler((hReq: any, hRes: HyperResponse, error: Error) => {
       const res = new Response();
       const httpContext = new HttpExecutionContext(hReq, new Response());
@@ -110,8 +110,6 @@ export class IntentHttpServer {
 
     const port = config.get('app.port');
     const hostname = config.get('app.hostname');
-
-    await this.container.boot(app);
 
     await server.listen(port, hostname || '0.0.0.0');
 

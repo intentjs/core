@@ -14,6 +14,13 @@ export default registerNamespace(
      */
     parsers: ['json', 'formdata', 'plain', 'urlencoded'],
 
+    cors: {
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      credentials: true,
+    },
+
     server: {
       max_body_buffer: 100000000,
       max_body_length: 100000000,

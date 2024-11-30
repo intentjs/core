@@ -1,12 +1,7 @@
-import {
-  ExecutionContext,
-  SetMetadata,
-  UseGuards,
-  applyDecorators,
-  createParamDecorator,
-} from '@nestjs/common';
-import { IntentValidationGuard } from './validationGuard';
-import { Request } from '../rest';
+import { applyDecorators } from '../reflections/apply-decorators';
+import { SetMetadata } from '../reflections/set-metadata';
+import { UseGuard } from '../rest';
+import { IntentValidationGuard } from './validation-guard';
 
 export * from './validator';
 export * from './decorators';
@@ -14,17 +9,6 @@ export * from './decorators';
 export function Validate(DTO: any) {
   return applyDecorators(
     SetMetadata('dtoSchema', DTO),
-    UseGuards(IntentValidationGuard),
+    UseGuard(IntentValidationGuard),
   );
 }
-
-export const Dto = createParamDecorator(
-  (data: string, ctx: ExecutionContext) => {
-    const contextType = ctx['contextType'];
-    if (contextType === 'ws') {
-      return ctx.switchToWs().getClient()._dto;
-    }
-    const request = ctx.switchToHttp().getRequest() as Request;
-    return request.dto();
-  },
-);

@@ -1,6 +1,6 @@
 import { Response } from '../response';
 import { RouteArgType, RouteParamtypes } from '../param-decorators';
-import { Request } from '../request/interfaces';
+import { Request } from '@intentjs/hyper-express';
 
 export class HttpExecutionContext {
   constructor(
@@ -48,12 +48,6 @@ export class HttpExecutionContext {
         }
 
         return { ...this.request.params };
-
-      case RouteParamtypes.SESSION:
-
-      case RouteParamtypes.FILE:
-
-      case RouteParamtypes.FILES:
 
       case RouteParamtypes.IP:
         return this.request.ip;

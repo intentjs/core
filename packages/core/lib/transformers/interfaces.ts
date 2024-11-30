@@ -1,4 +1,4 @@
-import { Request } from '../rest/http-server/request';
+import { Request } from '@intentjs/hyper-express';
 
 export interface TransformableContextOptions {
   req?: Request;

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Server } from '@intentjs/hyper-express';
 import { Type } from '../../interfaces';
 import { IntentGuard } from './guards/base-guard';
 import { MiddlewareConfigurator } from './middlewares/configurator';
@@ -19,5 +19,5 @@ export abstract class Kernel {
     return [];
   }
 
-  public abstract boot(app: any): Promise<void>;
+  public abstract boot(app: Server): Promise<void>;
 }

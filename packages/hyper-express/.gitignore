@@ -1,0 +1,4 @@
+.npmrc
+.vscode/
+node_modules/
+tests/content/large-files/

@@ -33,5 +33,5 @@ export class AppServiceProvider extends ServiceProvider {
   /**
    * Bootstrap any application service here.
    */
-  boot(app: IntentApplication | IntentApplicationContext) {}
+  boot(app: IntentApplicationContext) {}
 }

@@ -1,7 +1,11 @@
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
 import { join } from 'path';
 import { HttpRoute } from './interfaces';
-import { Response as HResponse, MiddlewareNext } from 'hyper-express';
+import {
+  Request,
+  Response as HResponse,
+  MiddlewareNext,
+} from '@intentjs/hyper-express';
 import { HttpExecutionContext } from './contexts/http-execution-context';
 import { HttpRouteHandler } from './http-handler';
 import { Response } from './response';
@@ -15,17 +19,12 @@ import {
   ROUTE_ARGS,
 } from './constants';
 import { RouteArgType } from './param-decorators';
-import { Request } from './request/interfaces';
 import { IntentGuard } from '../foundation/guards/base-guard';
 import { IntentMiddleware } from '../foundation/middlewares/middleware';
 import { IntentExceptionFilter } from '../../exceptions/base-exception-handler';
 
 export class RouteExplorer {
-  guards: Type<IntentGuard>[] = [];
-
-  globalMiddlewares: IntentMiddleware[] = [];
-  routeMiddlewares: Map<string, IntentMiddleware[]>;
-  excludedRouteMiddlewares: Map<string, string[]>;
+  globalGuards: Type<IntentGuard>[] = [];
 
   constructor(
     private discoveryService: DiscoveryService,
@@ -132,15 +131,13 @@ export class RouteExplorer {
     ] as Type<IntentGuard>[];
 
     const composedGuards = [];
-    for (const globalGuard of this.guards) {
+    for (const globalGuard of this.globalGuards) {
       composedGuards.push(await this.moduleRef.create(globalGuard));
     }
 
     for (const guardType of composedGuardTypes) {
       composedGuards.push(await this.moduleRef.create(guardType));
     }
-
-    const middlewares = [];
 
     const routeArgs =
       Reflect.getMetadata(ROUTE_ARGS, instance.constructor, key) ||
@@ -177,26 +174,7 @@ export class RouteExplorer {
   }
 
   useGlobalGuards(guards: Type<IntentGuard>[]): RouteExplorer {
-    this.guards.push(...guards);
-    return this;
-  }
-
-  useGlobalMiddlewares(globalMiddlewares: IntentMiddleware[]): RouteExplorer {
-    this.globalMiddlewares = globalMiddlewares;
-    return this;
-  }
-
-  useExcludeMiddlewareRoutes(
-    routeMiddlewares: Map<string, string[]>,
-  ): RouteExplorer {
-    this.excludedRouteMiddlewares = routeMiddlewares;
-    return this;
-  }
-
-  useRouteMiddlewares(
-    routeMiddlewares: Map<string, IntentMiddleware[]>,
-  ): RouteExplorer {
-    this.routeMiddlewares = routeMiddlewares;
+    this.globalGuards.push(...guards);
     return this;
   }
 }

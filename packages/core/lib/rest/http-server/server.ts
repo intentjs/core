@@ -1,6 +1,5 @@
-import HyperExpress from 'hyper-express';
+import HyperExpress, { MiddlewareHandler } from '@intentjs/hyper-express';
 import { HttpMethods, HttpRoute } from './interfaces';
-import { requestMiddleware } from './request/middleware';
 import { IntentMiddleware } from '../foundation/middlewares/middleware';
 
 export class HyperServer {
@@ -16,7 +15,10 @@ export class HyperServer {
     config: HyperExpress.ServerConstructorOptions,
   ): Promise<HyperExpress.Server> {
     this.hyper = new HyperExpress.Server(config || {});
-    this.hyper.use(requestMiddleware);
+
+    this.hyper.use(async (req, res) => {
+      await req.processBody();
+    });
 
     for (const middleware of this.globalMiddlewares) {
       this.hyper.use(middleware.use.bind(middleware));
@@ -24,45 +26,61 @@ export class HyperServer {
 
     for (const route of routes) {
       const { path, httpHandler } = route;
+
+      const middlewares = this.composeMiddlewares(path, route.method);
       switch (route.method) {
         case HttpMethods.GET:
-          this.hyper.get(path, httpHandler);
+          this.hyper.get(path, ...middlewares, httpHandler);
           break;
 
         case HttpMethods.POST:
-          this.hyper.post(path, httpHandler);
+          this.hyper.post(path, ...middlewares, httpHandler);
           break;
 
         case HttpMethods.DELETE:
-          this.hyper.delete(path, httpHandler);
+          this.hyper.delete(path, ...middlewares, httpHandler);
           break;
 
         case HttpMethods.HEAD:
-          this.hyper.head(path, httpHandler);
+          this.hyper.head(path, ...middlewares, httpHandler);
           break;
 
         case HttpMethods.PUT:
-          this.hyper.put(path, httpHandler);
+          this.hyper.put(path, ...middlewares, httpHandler);
           break;
 
         case HttpMethods.PATCH:
-          this.hyper.patch(path, httpHandler);
+          this.hyper.patch(path, ...middlewares, httpHandler);
           break;
 
         case HttpMethods.OPTIONS:
-          this.hyper.options(path, httpHandler);
+          this.hyper.options(path, ...middlewares, httpHandler);
           break;
 
         case HttpMethods.ANY:
-          this.hyper.any(path, httpHandler);
+          this.hyper.any(path, ...middlewares, httpHandler);
           break;
       }
     }
 
-    // this.hyper.set_not_found_handler((req: HyperExpress.Request, res: HyperExpress.Response) => {
-    //   return res.status(HttpStatus.NOT_FOUND).type('text').send()
-    // })
     return this.hyper;
+  }
+
+  composeMiddlewares(path: string, method: string): MiddlewareHandler[] {
+    const methodBasedRouteKey = `${method}:${path}`;
+    const routeKey = `*:${path}`;
+
+    const middlewareInstances = [
+      ...(this.routeMiddlewares.get(methodBasedRouteKey) || []),
+      ...(this.routeMiddlewares.get(routeKey) || []),
+    ];
+
+    const middlewares = [];
+    for (const middlewareInstance of middlewareInstances) {
+      middlewares.push(middlewareInstance.use.bind(middlewareInstance));
+    }
+
+    return middlewares;
   }
 
   useGlobalMiddlewares(globalMiddlewares: IntentMiddleware[]): HyperServer {

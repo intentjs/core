@@ -1,5 +1,5 @@
 import { ConfigService, Injectable, IntentMiddleware } from '@intentjs/core';
-import { MiddlewareNext, Request, Response } from 'hyper-express';
+import { MiddlewareNext, Request, Response } from '@intentjs/hyper-express';
 
 @Injectable()
 export class GlobalMiddleware extends IntentMiddleware {

@@ -2,7 +2,7 @@ import {
   CorsOptions,
   CorsOptionsDelegate,
 } from '@nestjs/common/interfaces/external/cors-options.interface';
-import { ServerConstructorOptions } from 'hyper-express';
+import { ServerConstructorOptions } from '@intentjs/hyper-express';
 import { GenericClass } from './utils';
 
 export interface SentryConfig {
@@ -35,5 +35,6 @@ export type RequestParsers =
 
 export interface HttpConfig {
   parsers: RequestParsers[];
+  cors?: CorsOptions | CorsOptionsDelegate<any>;
   server?: ServerConstructorOptions;
 }

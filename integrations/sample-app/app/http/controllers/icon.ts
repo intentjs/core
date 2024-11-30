@@ -12,7 +12,7 @@ import {
   UseGuard,
 } from '@intentjs/core';
 import { CustomGuard } from '../guards/custom';
-import { Request } from '@intentjs/core/dist/lib/rest/http-server/request';
+import { Request } from '@intentjs/hyper-express';
 
 @Controller('/icon')
 @UseGuard(CustomGuard)
@@ -74,22 +74,20 @@ export class IntentController {
     @Param() pathParams: string,
     @Host() hostname: string,
     @IP() ips: string,
-    @Accepts() accepts: string,
+    // @Accepts() accepts: string,
     @Body() body: any,
   ) {
     console.log('inside post method');
     console.log(
-      await req.file('file1'),
-      await req.file('file2'),
-      // query,
-      // bQuery,
-      // name,
-      // pathParams,
-      // hostname,
+      query,
+      bQuery,
+      name,
+      pathParams,
+      hostname,
       // accepts,
-      // ips,
-      // 'inside post method',
-      // body,
+      ips,
+      'inside post method',
+      body,
     );
     return { hello: 'world from POST /json' };
   }

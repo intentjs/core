@@ -12,6 +12,8 @@ import { AuthController } from './controllers/auth';
 import { SampleMiddleware } from './middlewares/sample';
 import { IntentController } from './controllers/icon';
 import { GlobalMiddleware } from './middlewares/global';
+import { Server } from '@intentjs/hyper-express';
+import { GlobalGuard } from './guards/global';
 
 export class HttpKernel extends Kernel {
   /**
@@ -44,8 +46,8 @@ export class HttpKernel extends Kernel {
     configurator
       .use(SampleMiddleware)
       .for({ path: '/icon/sample', method: HttpMethods.POST })
-      .for(IntentController)
-      .exclude('/icon/:name');
+      .for(IntentController);
+    // .exclude('/icon/:name');
 
     configurator.use(GlobalMiddleware).exclude('/icon/:name');
 
@@ -60,13 +62,12 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/guards
    */
   public guards(): Type<IntentGuard>[] {
-    return [];
+    return [GlobalGuard];
   }
 
   /**
    * @param app
    */
-  public async boot(app: IntentApplication): Promise<void> {
-    app.disable('x-powered-by');
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async boot(app: Server): Promise<void> {}
 }

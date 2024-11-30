@@ -1,4 +1,7 @@
-import { Response as HResponse, Request as HRequest } from 'hyper-express';
+import {
+  Response as HResponse,
+  Request as HRequest,
+} from '@intentjs/hyper-express';
 import { StreamableFile } from './streamable-file';
 import { HttpStatus } from './status-codes';
 import {
@@ -71,9 +74,9 @@ export class Response {
     return this;
   }
 
-  redirect(): Response {
+  redirect(url: string): Response {
     this.statusCode = HttpStatus.FOUND;
-    this.responseHeaders[''];
+    this.responseHeaders.set('location', url);
     return this;
   }
 
