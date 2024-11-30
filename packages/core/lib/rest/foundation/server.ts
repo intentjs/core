@@ -117,10 +117,13 @@ export class IntentHttpServer {
       process.on(signal, () => this.shutdown(server, signal));
     }
 
-    this.printToConsole(config);
+    this.printToConsole(config, [['➜', 'routes scanned', routes.length + '']]);
   }
 
-  printToConsole(config: ConfigService<unknown>) {
+  printToConsole(
+    config: ConfigService<unknown>,
+    extraInfo: [string, string, string][] = [],
+  ) {
     const port = config.get('app.port');
     const hostname = config.get('app.hostname');
     const environment = config.get('app.env');
@@ -131,6 +134,7 @@ export class IntentHttpServer {
       ['➜', 'debug', debug],
       ['➜', 'hostname', hostname],
       ['➜', 'port', port],
+      ...extraInfo,
     ]);
 
     const url = new URL(

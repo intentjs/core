@@ -33,7 +33,7 @@ function createRouteDecorators(
 ): MethodDecorator {
   return function (target: object, key?: string | symbol, descriptor?: any) {
     Reflect.defineMetadata(METHOD_KEY, method, target, key);
-    Reflect.defineMetadata(METHOD_PATH, path, target, key);
+    Reflect.defineMetadata(METHOD_PATH, path || '', target, key);
     return descriptor;
   };
 }

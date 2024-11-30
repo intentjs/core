@@ -40,13 +40,13 @@ export class RouteExplorer {
     const providers = this.discoveryService.getProviders();
     for (const provider of providers) {
       const { instance } = provider;
-      //   if (
-      //     !instance ||
-      //     typeof instance === 'string' ||
-      //     !Object.getPrototypeOf(instance)
-      //   ) {
-      //     return;
-      //   }
+      // if (
+      //   !instance ||
+      //   typeof instance === 'string' ||
+      //   !Object.getPrototypeOf(instance)
+      // ) {
+      //   return;
+      // }
 
       const methodNames = this.metadataScanner.getAllMethodNames(instance);
       for (const methodName of methodNames) {
@@ -99,6 +99,11 @@ export class RouteExplorer {
     const pathMethod = Reflect.getMetadata(METHOD_KEY, instance, key);
     const methodPath = Reflect.getMetadata(METHOD_PATH, instance, key);
 
+    if (!pathMethod) return;
+
+    console.log(instance.constructor);
+    console.log(controllerKey, methodPath, pathMethod, key);
+
     const fullHttpPath = join(controllerKey, methodPath);
     return { method: pathMethod, path: fullHttpPath };
   }
@@ -112,12 +117,12 @@ export class RouteExplorer {
       CONTROLLER_KEY,
       instance.constructor,
     );
-    if (!controllerKey) return;
+    if (controllerKey === undefined) return;
+
     const pathMethod = Reflect.getMetadata(METHOD_KEY, instance, key);
     const methodPath = Reflect.getMetadata(METHOD_PATH, instance, key);
 
     if (!pathMethod) return;
-
     const controllerGuards = Reflect.getMetadata(
       GUARD_KEY,
       instance.constructor,

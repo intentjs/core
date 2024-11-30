@@ -14,7 +14,6 @@ export class ListRouteCommand {
     const routes = routeExplorer.explorePlainRoutes(ds, ms);
 
     const formattedRows = columnify(routes, { padStart: 2 });
-    console.log(formattedRows);
 
     return 1;
   }

@@ -21,7 +21,7 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/controllers
    */
   public controllers(): Type<any>[] {
-    return [UserController, AuthController];
+    return [UserController, AuthController, IntentController];
   }
 
   /**
@@ -66,8 +66,8 @@ export class HttpKernel extends Kernel {
   }
 
   /**
-   * @param app
+   * @param server
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async boot(app: Server): Promise<void> {}
+  public async boot(server: Server): Promise<void> {}
 }
