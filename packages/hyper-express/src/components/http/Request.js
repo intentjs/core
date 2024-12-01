@@ -1115,7 +1115,7 @@ class Request {
     }
 
     expectsJson() {
-        return this.accepts().includes(EXTENSTION_TO_MIME['json']);
+        return this.accepts().includes('application/json');
     }
 
     setUser(user) {
