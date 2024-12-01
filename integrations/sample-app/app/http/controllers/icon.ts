@@ -16,7 +16,7 @@ import {
   Res,
   Response,
   StreamableFile,
-  UseGuard,
+  UseGuards,
   UserAgent,
   Validate,
 } from '@intentjs/core';
@@ -27,7 +27,7 @@ import { join } from 'path';
 import { LoginDto } from 'app/validators/auth';
 
 @Controller('/icon')
-@UseGuard(CustomGuard)
+@UseGuards(CustomGuard)
 export class IntentController {
   public service: any;
 
@@ -36,7 +36,7 @@ export class IntentController {
   }
 
   @Get('/:name')
-  @UseGuard(CustomGuard)
+  @UseGuards(CustomGuard)
   async getHello(
     // @Req() req: Request,
     // @Param('name') name: string,
@@ -80,14 +80,14 @@ export class IntentController {
   }
 
   @Get('/plain-with-query-param')
-  @UseGuard(CustomGuard)
+  @UseGuards(CustomGuard)
   async plainWithQueryParam(@Req() req: Request) {
     console.log(req);
     return { hello: 'world' };
   }
 
   @Get('/:id')
-  @UseGuard(CustomGuard)
+  @UseGuards(CustomGuard)
   async plainWithPathParam(@Req() req: Request) {
     console.log(req);
     return { hello: 'world' };
@@ -144,19 +144,19 @@ export class IntentController {
   }
 
   @Post('/multipart')
-  @UseGuard(CustomGuard)
+  @UseGuards(CustomGuard)
   async postHello(@Req() req: Request) {
     return { hello: 'world' };
   }
 
   @Post('/form-data')
-  @UseGuard(CustomGuard)
+  @UseGuards(CustomGuard)
   async postFormData(@Req() req: Request) {
     return { hello: 'world' };
   }
 
   @Post('/binary')
-  @UseGuard(CustomGuard)
+  @UseGuards(CustomGuard)
   async postBinary(@Req() req: Request) {
     return { hello: 'world' };
   }

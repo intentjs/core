@@ -81,7 +81,7 @@ export const ANY: RouteDecoratorType = (
   options?: ControllerOptions,
 ) => createRouteDecorators(HttpMethods.ANY, path, options);
 
-export const UseGuard = (...guards: Type<IntentGuard>[]) => {
+export const UseGuards = (...guards: Type<IntentGuard>[]) => {
   return function (target: object, key?: string | symbol, descriptor?: any) {
     if (key) {
       Reflect.defineMetadata(GUARD_KEY, guards, target, key);
