@@ -226,6 +226,12 @@ export class Request<Locals = DefaultRequestLocals> extends Readable {
 
     processBody(): Promise<any>;
     all(): Promise<Record<string, any>>;
+    input: <T = string>(name: string, defaultValue?: T) => T;
+    string: (name: string) => string;
+    number: (name: string) => number;
+    boolean: (name: string) => boolean;
+    has: (...keys: string[]) => boolean;
+    hasAny: (...keys: string[]) => boolean;
     hasHeader(name: string): boolean;
     bearerToken(): string;
     httpHost(): string;

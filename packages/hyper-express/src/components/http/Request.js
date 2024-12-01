@@ -1012,7 +1012,7 @@ class Request {
     }
 
     _all_input;
-    async all() {
+    all() {
         if (this._all_input) return this._all_input;
 
         this._all_input = {
@@ -1022,6 +1022,53 @@ class Request {
         };
 
         return this._all_input;
+    }
+
+    input(key, defaultValue) {
+        const all = this.all();
+        return all[key] ?? defaultValue;
+    }
+
+    string(key, defaultValue) {
+        const all = this.all();
+        return String(all[key] ?? defaultValue);
+    }
+
+    number(key, defaultValue) {
+        const all = this.all();
+        return Number(all[key] ?? defaultValue);
+    }
+
+    boolean(key) {
+        const all = this.all();
+        return [1, '1', true, 'true', 'yes', 'on'].includes(all[key]);
+    }
+
+    has(...keys) {
+        const payload = this.all();
+        for (const key of keys) {
+            if (!(key in payload)) return false;
+        }
+
+        return true;
+    }
+
+    hasAny(...keys) {
+        const payload = this.all();
+        for (const key of keys) {
+            if (key in payload) return true;
+        }
+
+        return false;
+    }
+
+    missing(...keys) {
+        const payload = this.all();
+        for (const key of keys) {
+            if (key in payload) return false;
+        }
+
+        return true;
     }
 
     hasHeader(name) {
