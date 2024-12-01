@@ -1,11 +1,11 @@
 import {
   AppConfig,
-  registerNamespace,
+  configNamespace,
   toBoolean,
   ValidationErrorSerializer,
 } from '@intentjs/core';
 
-export default registerNamespace(
+export default configNamespace(
   'app',
   (): AppConfig => ({
     /**
@@ -68,16 +68,6 @@ export default registerNamespace(
      * ".env" file.
      */
     port: +process.env.APP_PORT || 5000,
-
-    /**
-     * -----------------------------------------------------
-     * Cross Origin Resource Sharing
-     * -----------------------------------------------------
-     *
-     * You can use this setting to define the CORS rule of
-     * your application.
-     */
-    cors: { origin: true },
 
     error: {
       /**

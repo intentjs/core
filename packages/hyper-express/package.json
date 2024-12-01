@@ -1,0 +1,62 @@
+{
+    "name": "@intentjs/hyper-express",
+    "version": "0.0.4",
+    "description": "A fork of hyper-express to suit IntentJS requirements. High performance Node.js webserver with a simple-to-use API powered by uWebsockets.js under the hood.",
+    "main": "index.js",
+    "types": "./types/index.d.ts",
+    "scripts": {
+        "test": "node tests/index.js",
+        "publish:npm": "npm publish --access public",
+        "publish:next": "npm publish --access public --tag next"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/intentjs/hyper-express.git"
+    },
+    "keywords": [
+        "uws",
+        "websockets",
+        "uwebsocketsjs",
+        "express",
+        "expressjs",
+        "fast",
+        "http-server",
+        "https-server",
+        "http",
+        "https",
+        "sse",
+        "events",
+        "streaming",
+        "stream",
+        "upload",
+        "file",
+        "multipart",
+        "ws",
+        "websocket",
+        "performance",
+        "router"
+    ],
+    "author": "Vinayak Sarawagi",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/intentjs/hyper-express/issues"
+    },
+    "homepage": "https://github.com/intentjs/hyper-express#readme",
+    "dependencies": {
+        "busboy": "^1.6.0",
+        "cookie": "^1.0.1",
+        "cookie-signature": "^1.2.1",
+        "mime-types": "^2.1.35",
+        "negotiator": "^0.6.3",
+        "range-parser": "^1.2.1",
+        "type-is": "^1.6.18",
+        "typed-emitter": "^2.1.0",
+        "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.49.0"
+    },
+    "devDependencies": {
+        "@types/busboy": "^1.5.4",
+        "@types/express": "^5.0.0",
+        "@types/node": "^22.7.5",
+        "typescript": "^5.6.3"
+    }
+}

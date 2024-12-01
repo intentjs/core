@@ -28,6 +28,9 @@ storage/**/*.log
 packages/**/*.d.ts
 packages/**/*.js
 
+!packages/hyper-express/**/*.js
+!packages/hyper-express/**/*.d.ts
+
 #yarn
 .pnp.*
 .yarn/*

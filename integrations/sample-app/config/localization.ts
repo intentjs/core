@@ -1,11 +1,11 @@
 import {
   findProjectRoot,
   LocalizationOptions,
-  registerNamespace,
+  configNamespace,
 } from '@intentjs/core';
 import { join } from 'path';
 
-export default registerNamespace(
+export default configNamespace(
   'localization',
   (): LocalizationOptions => ({
     /**

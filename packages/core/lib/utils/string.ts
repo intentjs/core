@@ -416,7 +416,7 @@ export class Str {
     if (str === pattern) return true;
     let regex = '^';
     for (const p of pattern) {
-      regex += p === '*' ? '.*' : p;
+      regex += p === '*' ? '.*' : p === '[' || p === ']' ? `\\${p}` : p;
     }
     const regexp = new RegExp(regex + '$', 'g');
     return regexp.test(str);

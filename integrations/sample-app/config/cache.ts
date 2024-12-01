@@ -1,6 +1,6 @@
-import { CacheOptions, registerNamespace } from '@intentjs/core';
+import { CacheOptions, configNamespace } from '@intentjs/core';
 
-export default registerNamespace(
+export default configNamespace(
   'cache',
   (): CacheOptions => ({
     /**

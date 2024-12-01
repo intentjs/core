@@ -3,8 +3,12 @@ import { ApplicationContainer } from './boot/container';
 import { ApplicationExceptionFilter } from './errors/filter';
 import { IntentHttpServer } from '@intentjs/core';
 
-IntentHttpServer.init()
-  .useContainer(ApplicationContainer)
-  .useKernel(HttpKernel)
-  .handleErrorsWith(ApplicationExceptionFilter)
-  .start();
+const server = IntentHttpServer.init();
+
+server.useContainer(ApplicationContainer);
+
+server.useKernel(HttpKernel);
+
+server.handleErrorsWith(ApplicationExceptionFilter);
+
+server.start();

@@ -1,8 +1,8 @@
 import cors, { CorsOptions } from 'cors';
-import { NextFunction } from 'express';
-import { ConfigService } from '../../config/service';
-import { Injectable } from '../../foundation';
-import { IntentMiddleware, Request, Response } from '../foundation';
+import { IntentMiddleware, MiddlewareNext } from '../foundation';
+import { ConfigService } from '../../config';
+import { Injectable } from '@nestjs/common';
+import { Request, Response } from '@intentjs/hyper-express';
 
 @Injectable()
 export class CorsMiddleware extends IntentMiddleware {
@@ -10,8 +10,13 @@ export class CorsMiddleware extends IntentMiddleware {
     super();
   }
 
-  boot(req: Request, res: Response, next: NextFunction): void | Promise<void> {
-    cors(this.config.get('app.cors') as CorsOptions);
-    next();
+  async use(req: Request, res: Response): Promise<void> {
+    const corsOptions = this.config.get('http.cors') || ({} as CorsOptions);
+    const corsMiddleware = cors(corsOptions);
+    await new Promise(resolve => {
+      corsMiddleware(req, res, () => {
+        resolve(1);
+      });
+    });
   }
 }

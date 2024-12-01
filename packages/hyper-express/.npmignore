@@ -1,0 +1,5 @@
+tests/
+benchmarks/
+middlewares/
+docs/
+.npmrc

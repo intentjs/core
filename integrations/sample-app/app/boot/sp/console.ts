@@ -1,8 +1,4 @@
-import {
-  IntentApplication,
-  IntentApplicationContext,
-  ServiceProvider,
-} from '@intentjs/core';
+import { IntentApplicationContext, ServiceProvider } from '@intentjs/core';
 import { TestCacheConsoleCommand } from 'app/console/cache';
 import { GreetingCommand } from 'app/console/greeting';
 import { TestLogConsoleCommand } from 'app/console/log';
@@ -27,5 +23,5 @@ export class ConsoleServiceProvider extends ServiceProvider {
    *
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  boot(app: IntentApplication | IntentApplicationContext) {}
+  boot(app: IntentApplicationContext) {}
 }

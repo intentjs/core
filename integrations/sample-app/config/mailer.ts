@@ -1,6 +1,6 @@
-import { MailerOptions, registerNamespace } from '@intentjs/core';
+import { MailerOptions, configNamespace } from '@intentjs/core';
 
-export default registerNamespace(
+export default configNamespace(
   'mailers',
   (): MailerOptions => ({
     /**

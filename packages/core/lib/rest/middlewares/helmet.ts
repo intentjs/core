@@ -1,8 +1,8 @@
-import { NextFunction } from 'express';
 import helmet from 'helmet';
 import { Injectable } from '../../foundation';
-import { IntentMiddleware, Request, Response } from '../foundation';
+import { IntentMiddleware, MiddlewareNext } from '../foundation';
 import { ConfigService } from '../../config';
+import { Request, Response } from '@intentjs/hyper-express';
 
 @Injectable()
 export class HelmetMiddleware extends IntentMiddleware {
@@ -10,7 +10,7 @@ export class HelmetMiddleware extends IntentMiddleware {
     super();
   }
 
-  boot(req: Request, res: Response, next: NextFunction): void | Promise<void> {
+  use(req: Request, res: Response, next: MiddlewareNext): void | Promise<void> {
     helmet(this.config.get('app.helmet') as any);
     next();
   }

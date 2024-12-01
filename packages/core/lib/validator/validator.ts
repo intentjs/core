@@ -1,9 +1,9 @@
-import { Type } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { ValidationError, validate } from 'class-validator';
 import { ConfigService } from '../config/service';
-import { ValidationFailed } from '../exceptions/validationfailed';
+import { ValidationFailed } from '../exceptions/validation-failed';
 import { Obj } from '../utils';
+import { Type } from '../interfaces/utils';
 
 export class Validator<T> {
   private meta: Record<string, any>;
@@ -25,14 +25,8 @@ export class Validator<T> {
     return this;
   }
 
-  async validate(inputs: Record<string, any>): Promise<T> {
+  async validateRaw(inputs: Record<string, any>): Promise<T> {
     const schema: T = plainToInstance(this.dto, inputs);
-
-    if (Obj.isNotEmpty(this.meta)) {
-      this.injectMeta(schema);
-    }
-
-    schema['$'] = this.meta;
 
     const errors = await validate(schema as Record<string, any>, {
       stopAtFirstError: true,
@@ -43,6 +37,18 @@ export class Validator<T> {
     }
 
     return schema;
+  }
+
+  async validateDto(dto: T): Promise<T> {
+    const errors = await validate(dto as Record<string, any>, {
+      stopAtFirstError: true,
+    });
+
+    if (errors.length > 0) {
+      await this.processErrorsFromValidation(errors);
+    }
+
+    return dto;
   }
 
   /**

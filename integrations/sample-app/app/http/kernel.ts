@@ -1,7 +1,6 @@
 import {
   CorsMiddleware,
-  HelmetMiddleware,
-  IntentApplication,
+  HttpMethods,
   IntentGuard,
   IntentMiddleware,
   Kernel,
@@ -10,6 +9,11 @@ import {
 } from '@intentjs/core';
 import { UserController } from './controllers/app';
 import { AuthController } from './controllers/auth';
+import { SampleMiddleware } from './middlewares/sample';
+import { IntentController } from './controllers/icon';
+import { GlobalMiddleware } from './middlewares/global';
+import { Server } from '@intentjs/hyper-express';
+import { GlobalGuard } from './guards/global';
 
 export class HttpKernel extends Kernel {
   /**
@@ -17,7 +21,7 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/controllers
    */
   public controllers(): Type<any>[] {
-    return [UserController, AuthController];
+    return [UserController, AuthController, IntentController];
   }
 
   /**
@@ -28,7 +32,7 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/middlewares
    */
   public middlewares(): Type<IntentMiddleware>[] {
-    return [CorsMiddleware, HelmetMiddleware];
+    return [GlobalMiddleware, CorsMiddleware];
   }
 
   /**
@@ -39,7 +43,15 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/middlewares
    */
   public routeMiddlewares(configurator: MiddlewareConfigurator) {
-    return;
+    configurator
+      .use(SampleMiddleware)
+      .for({ path: '/icon/sample', method: HttpMethods.POST })
+      .for(IntentController);
+    // .exclude('/icon/:name');
+
+    configurator.use(GlobalMiddleware).exclude('/icon/:name');
+
+    configurator.use(SampleMiddleware).for('/icon/plain');
   }
 
   /**
@@ -50,13 +62,12 @@ export class HttpKernel extends Kernel {
    * Read more - https://tryintent.com/docs/guards
    */
   public guards(): Type<IntentGuard>[] {
-    return [];
+    return [GlobalGuard];
   }
 
   /**
-   * @param app
+   * @param server
    */
-  public async boot(app: IntentApplication): Promise<void> {
-    app.disable('x-powered-by');
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async boot(server: Server): Promise<void> {}
 }

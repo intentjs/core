@@ -1,10 +1,5 @@
 import { Provider } from '@nestjs/common';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import {
-  IntentApplication,
-  IntentApplicationContext,
-  Type,
-} from '../interfaces';
+import { IntentApplicationContext, Type } from '../interfaces';
 import { ImportType, ServiceProvider } from './service-provider';
 
 export abstract class IntentAppContainer {
@@ -36,7 +31,7 @@ export abstract class IntentAppContainer {
     return providers;
   }
 
-  async boot(app: IntentApplication | IntentApplicationContext): Promise<void> {
+  async boot(app: IntentApplicationContext): Promise<void> {
     for (const serviceProvider of IntentAppContainer.serviceProviders) {
       serviceProvider.boot(app);
     }
