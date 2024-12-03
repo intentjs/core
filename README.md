@@ -10,7 +10,7 @@ Intent aims to provide a good developer experience while providing powerful feat
 
 Intent provides necessary feature-integrations out of the box.
 
-- [RDBMS](https://tryintent.com/docs/db-getting-started)
+- [RDBMS](https://tryintent.com/docs/databases/getting-started)
 - [Storage](https://tryintent.com/docs/file-storage)
 - [Message Queues](https://tryintent.com/docs/queues)
 - [Mailers](https://tryintent.com/docs/mailers)
