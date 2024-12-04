@@ -2,11 +2,11 @@
 
 ## Introduction
 
-Intent is a web application framework built on top of NestJS. It _intends_ to provide declarative APIs to develop and ship sophisticated solutions. While NestJS provides great syntax and structure to your application, but it lacks many things which are needed to develop a good solution.
+Intent is a web application framework built on top of NestJS. It _intends_ to provide declarative APIs to develop and ship sophisticated solutions. While NestJS provides great syntax and structure to your application, it lacks many things that are needed to develop a good solution.
 
-In a real world scenario, it is likely that you will need many things like authentication, database integration, web views and what not. This is exactly what Intent wants to solve for you.
+In a real-world scenario, it is likely that you will need many things like authentication, database integration, web views, and whatnot. This is exactly what Intent aims to solve for you.
 
-Intent aims to provide a good developer experience while providing powerful features like database integration, queue integration, event listeners, task scheduling etc.
+Intent aims to provide a good developer experience while offering powerful features like database integration, queue integration, event listeners, task scheduling, etc.
 
 Intent provides necessary feature-integrations out of the box.
 
