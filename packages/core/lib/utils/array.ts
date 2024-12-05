@@ -147,14 +147,11 @@ export class Arr {
   }
 
   static exists<T = any>(arr: T[], key: string | number): boolean {
-    // Check if the key is a valid index for the array
     if (typeof key === 'number' && key >= 0 && key < arr.length) {
       return true;
     }
 
-    // If key is not a number, convert to string for dot notation check
     if (typeof key === 'string') {
-      // Handle dot notation
       const splitKeys = key.split('.');
       if (!splitKeys.length) return false;
 
@@ -168,5 +165,26 @@ export class Arr {
     }
 
     return false;
+  }
+
+  static last<T = any>(
+    arr: T[],
+    predicate?: ((item: T, index: number, array: T[]) => boolean) | null
+  ): T | undefined {
+    if (!arr || arr.length === 0) {
+      return undefined;
+    }
+
+    if (!predicate) {
+      return arr[arr.length - 1];
+    }
+
+    for (let i = arr.length - 1; i >= 0; i--) {
+      if (predicate(arr[i], i, arr)) {
+        return arr[i];
+      }
+    }
+
+    return undefined;
   }
 }
