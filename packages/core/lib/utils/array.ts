@@ -145,4 +145,28 @@ export class Arr {
 
     return undefined;
   }
+
+  static exists<T = any>(arr: T[], key: string | number): boolean {
+    // Check if the key is a valid index for the array
+    if (typeof key === 'number' && key >= 0 && key < arr.length) {
+      return true;
+    }
+
+    // If key is not a number, convert to string for dot notation check
+    if (typeof key === 'string') {
+      // Handle dot notation
+      const splitKeys = key.split('.');
+      if (!splitKeys.length) return false;
+
+      if (Arr.isArray(arr[splitKeys[0]])) {
+        return Arr.exists(arr[splitKeys[0]], splitKeys.slice(1).join('.'));
+      }
+
+      if (Obj.isObj(arr[splitKeys[0]])) {
+        return Obj.get(arr[splitKeys[0]], splitKeys.slice(1).join('.')) !== undefined;
+      }
+    }
+
+    return false;
+  }
 }
