@@ -1,6 +1,6 @@
 {
   "name": "@intentjs/cli",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Helper commands for building Intent application.",
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "prepublish:npm": "npm run build",
-    "publish:npm": "npm publish --access public"
+    "publish:npm": "npm publish --access public",
+    "postinstall": "npm link"
   },
   "dependencies": {
     "commander": "^12.1.0",
