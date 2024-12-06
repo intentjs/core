@@ -9,7 +9,7 @@ import { treeKillSync } from "../utils/tree-kill";
 import { TsConfigLoader } from "../typescript/tsconfig-loader";
 import { debounce } from "radash";
 import { TypeCheckerHost } from "../type-checker/type-checker";
-import ts = require("typescript");
+import ts from "typescript";
 import { SWC_DEBUG_LOG_PREFIX } from "../utils/log-helpers";
 
 export class SwcFileTransformer {
@@ -85,34 +85,48 @@ export class SwcFileTransformer {
     const tsConfig = this.tsConfigLoader.load(tsConfigPath);
     const { include = [] } = tsConfig;
     const fileTransformationPromises = [];
+    const isWindows = process.platform === "win32";
 
     for (const filePath of include) {
-      const newP = (resolve: Function) =>
+      const fileTransformerPromise = (resolve: Function) =>
         transformFile(filePath, { ...options, filename: filePath })
           .then(({ code, map }) => {
-            const distFilePath = join(
+            const distFilePath = this.getDistPath(
+              isWindows,
+              filePath,
               tsConfig.compilerOptions.outDir,
-              filePath.replace(join(tsConfig.compilerOptions.baseUrl, "/"), "")
-            ).replace(join(tsConfig.compilerOptions.baseUrl, "/"), "");
+              tsConfig.compilerOptions.baseUrl
+            );
 
             const codeFilePath = join(
               process.cwd(),
               distFilePath.replace(/\.ts$/, ".js").replace(/\.tsx$/, ".js")
             );
-            mkdirSync(dirname(codeFilePath), { recursive: true });
-            writeFileSync(codeFilePath, code);
+
+            const osSpecificdistDirectory = dirname(
+              isWindows ? this.convertToWindowsPath(codeFilePath) : codeFilePath
+            );
+            mkdirSync(osSpecificdistDirectory, { recursive: true });
+
+            const osSpecificFilePath = isWindows
+              ? this.convertToWindowsPath(codeFilePath)
+              : codeFilePath;
+            writeFileSync(osSpecificFilePath, code);
 
             if (options.sourceMaps) {
               const mapFilePath = distFilePath
                 .replace(/\.ts$/, ".js.map")
                 .replace(/\.tsx$/, ".js.map");
-              writeFileSync(mapFilePath, map as string);
+              const osSpecificMapFilePath = isWindows
+                ? this.convertToWindowsPath(mapFilePath)
+                : mapFilePath;
+              writeFileSync(osSpecificMapFilePath, map as string);
             }
             resolve(1);
           })
-          .catch((err) => {});
+          .catch((err) => console.error(err));
 
-      fileTransformationPromises.push(new Promise(newP));
+      fileTransformationPromises.push(new Promise(fileTransformerPromise));
     }
 
     await Promise.allSettled(fileTransformationPromises);
@@ -123,9 +137,25 @@ export class SwcFileTransformer {
     );
   }
 
+  getDistPath(
+    isWindows: boolean,
+    filePath: string,
+    outDir: string,
+    baseUrl: string
+  ): string {
+    return join(outDir, join(filePath).replace(join(baseUrl), ""))
+      .replace(join(baseUrl), "")
+      .replace(isWindows ? /^\\/ : /^\//, "");
+  }
+
+  writeToFile(resolve: Function) {}
+
+  convertToWindowsPath(filePath: string): string {
+    return filePath.replace(/\//g, "\\");
+  }
+
   watchIncludedFiles(tsConfigPath: string, onChange: () => void) {
     const tsConfig = this.tsConfigLoader.load(tsConfigPath);
-    console.log(tsConfig.includeDirs);
     const { includeDirs } = tsConfig;
 
     const watcher = chokidar.watch(
@@ -138,7 +168,6 @@ export class SwcFileTransformer {
         awaitWriteFinish: { stabilityThreshold: 50, pollInterval: 10 },
       }
     );
-    console.log("running chokidar");
 
     watcher
       .on("add", () => onChange())
