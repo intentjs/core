@@ -1,6 +1,5 @@
 import { dirname, join } from "path";
 import { defaultSwcOptionsFactory } from "./default-options";
-import { transformFile, transformFileSync } from "@swc/core";
 import { mkdirSync, writeFileSync } from "fs-extra";
 import chokidar from "chokidar";
 import { fork } from "child_process";
@@ -9,8 +8,8 @@ import { treeKillSync } from "../utils/tree-kill";
 import { TsConfigLoader } from "../typescript/tsconfig-loader";
 import { debounce } from "radash";
 import { TypeCheckerHost } from "../type-checker/type-checker";
-import ts from "typescript";
 import { SWC_DEBUG_LOG_PREFIX } from "../utils/log-helpers";
+import { Output, transformFile } from "@swc/core";
 
 export class SwcFileTransformer {
   tsConfigLoader = new TsConfigLoader();
@@ -68,7 +67,7 @@ export class SwcFileTransformer {
       const cb = (resolve: Function) =>
         this.typeCheckerHost.runOnce(tsConfigPath, {
           watch: false,
-          onTypeCheck: (program: ts.Program) => {
+          onTypeCheck: (program: any) => {
             resolve(true);
           },
         });
@@ -90,7 +89,7 @@ export class SwcFileTransformer {
     for (const filePath of include) {
       const fileTransformerPromise = (resolve: Function) =>
         transformFile(filePath, { ...options, filename: filePath })
-          .then(({ code, map }) => {
+          .then(({ code, map }: Output) => {
             const distFilePath = this.getDistPath(
               isWindows,
               filePath,
@@ -113,18 +112,12 @@ export class SwcFileTransformer {
               : codeFilePath;
             writeFileSync(osSpecificFilePath, code);
 
-            if (options.sourceMaps) {
-              const mapFilePath = distFilePath
-                .replace(/\.ts$/, ".js.map")
-                .replace(/\.tsx$/, ".js.map");
-              const osSpecificMapFilePath = isWindows
-                ? this.convertToWindowsPath(mapFilePath)
-                : mapFilePath;
-              writeFileSync(osSpecificMapFilePath, map as string);
-            }
+            options.sourceMaps &&
+              this.writeSourceMap(isWindows, distFilePath, map);
+
             resolve(1);
           })
-          .catch((err) => console.error(err));
+          .catch((err: any) => console.error(err));
 
       fileTransformationPromises.push(new Promise(fileTransformerPromise));
     }
@@ -135,6 +128,21 @@ export class SwcFileTransformer {
       SWC_DEBUG_LOG_PREFIX,
       `Successfully transpiled ${include.length} files in ${Date.now() - now}ms`
     );
+  }
+
+  writeSourceMap(
+    isWindows: boolean,
+    distFilePath: string,
+    map: string | undefined
+  ): void {
+    if (!map) return;
+    const mapFilePath = distFilePath
+      .replace(/\.ts$/, ".js.map")
+      .replace(/\.tsx$/, ".js.map");
+    const osSpecificMapFilePath = isWindows
+      ? this.convertToWindowsPath(mapFilePath)
+      : mapFilePath;
+    writeFileSync(osSpecificMapFilePath, map);
   }
 
   getDistPath(
