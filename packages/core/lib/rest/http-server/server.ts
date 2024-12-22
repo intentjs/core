@@ -4,9 +4,9 @@ import { IntentMiddleware } from '../foundation/middlewares/middleware';
 import { Validator } from '../../validator';
 import { ConfigService } from '../../config';
 import LiveDirectory from 'live-directory';
-import { join } from 'path';
 import { FileNotFoundException } from '../../exceptions/file-not-found-exception';
 import { Str } from '../../utils';
+import { joinRoute } from '../helpers';
 
 export class HyperServer {
   protected hyper: HyperExpress.Server;
@@ -87,7 +87,7 @@ export class HyperServer {
       ...staticServeConfig,
     });
 
-    const httpPath = join(
+    const httpPath = joinRoute(
       '/',
       staticServeConfig.httpPath.replace('*', ''),
       '/*',
@@ -95,7 +95,7 @@ export class HyperServer {
 
     this.hyper.get(httpPath, (req, res) => {
       const path = Str.replaceFirst(
-        req.path.replace(join('/', staticServeConfig.httpPath), ''),
+        req.path.replace(joinRoute('/', staticServeConfig.httpPath), ''),
         '/',
         '',
       );
