@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { IntentApplicationContext, ServiceProvider } from '@intentjs/core';
+import { OrderPlacedListener } from 'app/events/listeners/sample-listener';
 import { IntentController } from 'app/http/controllers/icon';
 import { QueueJobs } from 'app/jobs/job';
 import { UserDbRepository } from 'app/repositories/userDbRepository';
@@ -27,6 +28,8 @@ export class AppServiceProvider extends ServiceProvider {
     this.bindWithClass('USER_DB_REPO', UserDbRepository);
 
     this.bind(QueueJobs);
+
+    this.bind(OrderPlacedListener);
   }
 
   /**
