@@ -22,8 +22,6 @@ import { HttpExecutionContext } from '../http-server/contexts/http-execution-con
 import { ExecutionContext } from '../http-server/contexts/execution-context';
 import { Response } from '../http-server/response';
 import { RouteExplorer } from '../http-server/route-explorer';
-import { readSync } from 'fs-extra';
-import { join } from 'path';
 
 const signals = ['SIGTERM', 'SIGINT', 'SIGUSR2'];
 

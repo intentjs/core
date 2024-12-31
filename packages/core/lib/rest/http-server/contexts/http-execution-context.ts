@@ -42,10 +42,11 @@ export class HttpExecutionContext {
         return this.getNext();
 
       case RouteParamtypes.BODY:
+        const body = this.request.body();
         if (data) {
-          return this.request.body[data as string];
+          return body[data as string];
         }
-        return { ...this.request.body };
+        return { ...body };
 
       case RouteParamtypes.PARAM:
         if (data) {

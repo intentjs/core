@@ -1,5 +1,4 @@
 import { DiscoveryService, MetadataScanner, ModuleRef } from '@nestjs/core';
-import { join } from 'path';
 import { HttpRoute } from './interfaces';
 import {
   Request,
@@ -23,6 +22,7 @@ import { IntentGuard } from '../foundation/guards/base-guard';
 import { IntentMiddleware } from '../foundation/middlewares/middleware';
 import { IntentExceptionFilter } from '../../exceptions/base-exception-handler';
 import { Reply } from './reply';
+import { joinRoute } from '../helpers';
 
 export class RouteExplorer {
   globalGuards: Type<IntentGuard>[] = [];
@@ -104,7 +104,7 @@ export class RouteExplorer {
     console.log(instance.constructor);
     console.log(controllerKey, methodPath, pathMethod, key);
 
-    const fullHttpPath = join(controllerKey, methodPath);
+    const fullHttpPath = joinRoute(controllerKey, methodPath);
     return { method: pathMethod, path: fullHttpPath };
   }
 
@@ -189,7 +189,7 @@ export class RouteExplorer {
 
     return {
       method: pathMethod,
-      path: join('/', controllerKey, methodPath),
+      path: joinRoute('/', controllerKey, methodPath),
       httpHandler: cb,
     };
   }
