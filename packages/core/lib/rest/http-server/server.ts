@@ -80,7 +80,14 @@ export class HyperServer {
 
   configureStaticServer() {
     const staticServeConfig = ConfigService.get('http.staticServe');
-    if (!staticServeConfig.filePath || !staticServeConfig.httpPath) return;
+
+    if (!staticServeConfig || typeof staticServeConfig !== "object") {
+      return;
+    }
+
+    if (!staticServeConfig.filePath || !staticServeConfig.httpPath) {
+      return;
+    }
 
     const liveAssets = new LiveDirectory(staticServeConfig.filePath, {
       static: true,
