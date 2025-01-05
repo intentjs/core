@@ -6,7 +6,7 @@ import { UserService } from 'app/services';
 export class UserController {
   constructor(private readonly service: UserService) {}
 
-  @Get()
+  @Get('/')
   async getHello(@Req() req: Request) {
     return { hello: 'Intent' };
   }
