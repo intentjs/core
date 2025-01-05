@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
-import { program } from "commander";
+import { Option, program } from "commander";
 import { StartServerCommand } from "../commands/start-server";
 import { BuildCommand } from "../commands/build";
+import { NEW_PROJECT_OPTIONS } from "../lib/configuration/new-project-config";
+import { NewProjectCommand } from "../commands/new-project";
 
 program
   .command("start")
@@ -40,4 +42,21 @@ program
     const buildCommand = new BuildCommand();
     buildCommand.handle(str);
   });
+
+const newProjectProgram = program
+  .command("new")
+  .description("Command to initiailize a new project")
+  .argument("name", "Name of the project")
+  .option("--default", "Uses default configuration");
+
+Object.values(NEW_PROJECT_OPTIONS).map((n) =>
+  newProjectProgram.addOption(
+    new Option(n.option, n.description).choices(n.choices)
+  )
+);
+
+newProjectProgram.action(async (name, options) => {
+  const command = new NewProjectCommand();
+  await command.handle(name, options);
+});
 program.parseAsync();
