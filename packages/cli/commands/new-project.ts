@@ -1,9 +1,26 @@
 import { join } from "path";
 import { INTENT_LOG_PREFIX } from "../lib/utils/log-helpers";
 import pc from "picocolors";
-import { existsSync } from "fs-extra";
+import {
+  emptyDir,
+  emptyDirSync,
+  existsSync,
+  remove,
+  removeSync,
+} from "fs-extra";
 import * as p from "@clack/prompts";
 import { NEW_PROJECT_OPTIONS } from "../lib/configuration/new-project-config";
+import { downloadRepository } from "../lib/new-project/download-helper";
+import {
+  NEW_PROJECT_CONFIG,
+  SAFE_DELETE_FILES,
+} from "../lib/new-project/config";
+import { downloadDependenciesUsingNpm } from "../lib/new-project/actions/download-depedencies";
+import { runCommandInsideProject } from "../lib/new-project/actions/run-command";
+import { execSync } from "child_process";
+import { checkIfGitIsInstalled } from "../lib/new-project/actions/download-helper";
+import { DownloadFromRegistry } from "../lib/new-project/actions/download-from-registry";
+import { injectKeyValue } from "../lib/codegen/inject-config";
 
 export class NewProjectCommand {
   constructor() {}
@@ -29,6 +46,56 @@ export class NewProjectCommand {
       }
     );
 
+    const config = NEW_PROJECT_CONFIG;
+    const starterTemplateName = `${config.gitOrg}/${config.repoName}`;
+
+    // await p.tasks([
+    //   {
+    //     title: "Downloading the starter template",
+    //     task: async (message) => {
+    //       const success = await downloadRepository(starterTemplateName, name);
+    //       !success && process.exit(0);
+    //       return "Starter template cloned! 🎉";
+    //     },
+    //   },
+    //   {
+    //     title: "Cleaning up files",
+    //     task: async (message) => {
+    //       const deleteFilesPromise = [];
+    //       for (const dirOrFileName of SAFE_DELETE_FILES) {
+    //         deleteFilesPromise.push(remove(join(name, dirOrFileName)));
+    //       }
+
+    //       await Promise.allSettled(deleteFilesPromise);
+    //       return "Files cleaned up 🗑️";
+    //     },
+    //   },
+    //   {
+    //     title: "Installing via npm",
+    //     task: async (message) => {
+    //       downloadDependenciesUsingNpm(name);
+    //       return "Installed dependencies using npm";
+    //     },
+    //   },
+    //   {
+    //     title: "Setting up the selected configuration",
+    //     task: (message) => {},
+    //   },
+    // ]);
+
+    const finalOptions = { ...options, ...missingOptions };
+
+    console.log(finalOptions);
+
+    const { queue } = finalOptions;
+
+    if (queue) {
+      const downloadFromRegistry = new DownloadFromRegistry();
+      const configToApply = await downloadFromRegistry.handle("");
+      console.log("config to apply  ===> ", configToApply);
+      const filePath = join("config", "queue.ts");
+      injectKeyValue(filePath, configToApply);
+    }
     console.log({ ...options, ...missingOptions });
   }
 
