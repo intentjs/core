@@ -22,6 +22,11 @@ Intent provides necessary feature-integrations out of the box.
 - [Localization](https://tryintent.com/docs/localization)
 - [Console Commands](https://tryintent.com/docs/console)
 
+## Contributors
+<a href="https://github.com/intentjs/intent/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=intentjs/intent" />
+</a>
+
 ## Contact Us
 
 If you would like to support our work or just a few words of feedback, we are all ears at hi@tryintent.com.
