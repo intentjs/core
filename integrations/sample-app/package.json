@@ -14,8 +14,8 @@
   },
   "homepage": "https://github.com/intentjs/new-app-starter",
   "scripts": {
-    "dev": "intent start --watch",
-    "build": "intent build",
+    "dev": "node intent dev",
+    "build": "node intent build",
     "format": "prettier --write \"app/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{app,libs,test}/**/*.ts\" --fix",
     "format:check": "prettier --check \"app/**/*.ts\" \"test/**/*.ts\"",
