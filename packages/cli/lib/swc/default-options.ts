@@ -1,4 +1,3 @@
-import { Options } from "@swc/core";
 import { ConfigurationInterface } from "../configuration/interface";
 import { ExtraOptions } from "../interfaces";
 
@@ -6,7 +5,7 @@ export const defaultSwcOptionsFactory = (
   tsOptions: Record<string, any>,
   configuration: ConfigurationInterface,
   extras: ExtraOptions
-): Options => {
+): Record<string, any> => {
   return {
     sourceMaps:
       tsOptions?.compilerOptions?.sourceMap ||
@@ -36,14 +35,3 @@ export const defaultSwcOptionsFactory = (
     swcrc: true,
   };
 };
-
-/**
- * Converts Windows specific file paths to posix
- * @param windowsPath
- */
-function convertPath(windowsPath: string) {
-  return windowsPath
-    .replace(/^\\\\\?\\/, "")
-    .replace(/\\/g, "/")
-    .replace(/\/\/+/g, "/");
-}
