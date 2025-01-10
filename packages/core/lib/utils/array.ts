@@ -160,7 +160,9 @@ export class Arr {
       }
 
       if (Obj.isObj(arr[splitKeys[0]])) {
-        return Obj.get(arr[splitKeys[0]], splitKeys.slice(1).join('.')) !== undefined;
+        return (
+          Obj.get(arr[splitKeys[0]], splitKeys.slice(1).join('.')) !== undefined
+        );
       }
     }
 
@@ -169,7 +171,7 @@ export class Arr {
 
   static last<T = any>(
     arr: T[],
-    predicate?: ((item: T, index: number, array: T[]) => boolean) | null
+    predicate?: ((item: T, index: number, array: T[]) => boolean) | null,
   ): T | undefined {
     if (!arr || arr.length === 0) {
       return undefined;

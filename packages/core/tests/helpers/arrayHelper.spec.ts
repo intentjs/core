@@ -1,7 +1,7 @@
 import { Arr } from '../../lib/utils/array';
 
 describe('Array Helper', () => {
-  beforeEach(async () => { });
+  beforeEach(async () => {});
 
   it('check key exists', () => {
     const arr = [1, 2, 3, 4, 5];
@@ -24,7 +24,7 @@ describe('Array Helper', () => {
       { name: 'Alice', age: 25 },
       { name: 'Bob', age: 30 },
       { name: 'Charlie', age: 35 },
-      { name: 'David', age: 30 }
+      { name: 'David', age: 30 },
     ];
     const lastUserUnder35 = Arr.last(users, user => user.age < 35);
     expect(lastUserUnder35).toEqual({ name: 'David', age: 30 });
