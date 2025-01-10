@@ -1,4 +1,3 @@
-import { join } from 'path';
 import { Type } from '../../interfaces';
 import {
   CONTROLLER_KEY,
@@ -6,6 +5,7 @@ import {
   METHOD_PATH,
 } from '../http-server/constants';
 import { HttpRoute } from '../http-server/interfaces';
+import { joinRoute } from '../helpers';
 
 export class ControllerScanner {
   handle(cls: Type<any>): HttpRoute[] {
@@ -26,7 +26,7 @@ export class ControllerScanner {
 
       if (!pathMethod) continue;
 
-      const fullHttpPath = join(controllerKey, methodPath);
+      const fullHttpPath = joinRoute(controllerKey, methodPath);
       routes.push({ method: pathMethod, path: fullHttpPath });
     }
 
