@@ -1,32 +1,22 @@
 import { join } from "path";
 import { INTENT_LOG_PREFIX } from "../lib/utils/log-helpers";
 import pc from "picocolors";
-import {
-  emptyDir,
-  emptyDirSync,
-  existsSync,
-  remove,
-  removeSync,
-} from "fs-extra";
+import { copyFile, existsSync, remove } from "fs-extra";
 import * as p from "@clack/prompts";
 import { NEW_PROJECT_OPTIONS } from "../lib/configuration/new-project-config";
-import { downloadRepository } from "../lib/new-project/download-helper";
 import {
   NEW_PROJECT_CONFIG,
   SAFE_DELETE_FILES,
 } from "../lib/new-project/config";
+import { InjectConfigCodegen } from "../lib/codegen/inject-config";
+import { cwd } from "process";
+import { downloadRepository } from "../lib/new-project/actions/download-helper";
 import { downloadDependenciesUsingNpm } from "../lib/new-project/actions/download-depedencies";
-import { runCommandInsideProject } from "../lib/new-project/actions/run-command";
-import { execSync } from "child_process";
-import { checkIfGitIsInstalled } from "../lib/new-project/actions/download-helper";
-import { DownloadFromRegistry } from "../lib/new-project/actions/download-from-registry";
-import { injectKeyValue } from "../lib/codegen/inject-config";
 
 export class NewProjectCommand {
   constructor() {}
 
   async handle(name: string, options: Record<string, any>) {
-    console.log(name, options);
     /**
      * Check if provided name is available for creating a directory
      */
@@ -49,58 +39,86 @@ export class NewProjectCommand {
     const config = NEW_PROJECT_CONFIG;
     const starterTemplateName = `${config.gitOrg}/${config.repoName}`;
 
-    // await p.tasks([
-    //   {
-    //     title: "Downloading the starter template",
-    //     task: async (message) => {
-    //       const success = await downloadRepository(starterTemplateName, name);
-    //       !success && process.exit(0);
-    //       return "Starter template cloned! 🎉";
-    //     },
-    //   },
-    //   {
-    //     title: "Cleaning up files",
-    //     task: async (message) => {
-    //       const deleteFilesPromise = [];
-    //       for (const dirOrFileName of SAFE_DELETE_FILES) {
-    //         deleteFilesPromise.push(remove(join(name, dirOrFileName)));
-    //       }
-
-    //       await Promise.allSettled(deleteFilesPromise);
-    //       return "Files cleaned up 🗑️";
-    //     },
-    //   },
-    //   {
-    //     title: "Installing via npm",
-    //     task: async (message) => {
-    //       downloadDependenciesUsingNpm(name);
-    //       return "Installed dependencies using npm";
-    //     },
-    //   },
-    //   {
-    //     title: "Setting up the selected configuration",
-    //     task: (message) => {},
-    //   },
-    // ]);
+    const newProjectDirectory = join(cwd(), name);
 
     const finalOptions = { ...options, ...missingOptions };
+    const injectConfigTask = new InjectConfigCodegen(newProjectDirectory);
+    await p.tasks([
+      {
+        title: "Downloading the starter template",
+        task: async (message) => {
+          const success = await downloadRepository(starterTemplateName, name);
+          !success && process.exit(0);
+          return "Starter template cloned! 🎉";
+        },
+      },
+      {
+        title: "Cleaning up files",
+        task: async (message) => {
+          const deleteFilesPromise = [];
+          for (const dirOrFileName of SAFE_DELETE_FILES) {
+            deleteFilesPromise.push(remove(join(name, dirOrFileName)));
+          }
 
-    console.log(finalOptions);
+          await Promise.allSettled(deleteFilesPromise);
+          return "Files cleaned up 🗑️";
+        },
+      },
+      {
+        title: "Creating .env file",
+        task: async (message) => {
+          await copyFile(
+            join(newProjectDirectory, ".env.example"),
+            join(newProjectDirectory, ".env")
+          );
+          return "Created .env file";
+        },
+      },
+      {
+        title: "Installing via npm",
+        task: async (message) => {
+          await downloadDependenciesUsingNpm(name);
+          return "Dependencies installed 🧰";
+        },
+      },
+      {
+        title: "Setting up the selected configuration",
+        task: async (message) => {
+          const { database, cache, storage, mailer, queue } = finalOptions;
+          /**
+           * Setup queue configuration
+           */
+          const getProjectSettingConfNamespace = (path: string) =>
+            `new-project-settings/config/${path}.json`;
 
-    const { queue } = finalOptions;
+          const url = `https://raw.githubusercontent.com/intentjs/registry/refs/heads/main/`;
+          await injectConfigTask.handle(
+            url + getProjectSettingConfNamespace(`queue/${queue}`)
+          );
 
-    if (queue) {
-      const downloadFromRegistry = new DownloadFromRegistry();
-      const configToApply = await downloadFromRegistry.handle("");
-      console.log("config to apply  ===> ", configToApply);
-      const filePath = join("config", "queue.ts");
-      injectKeyValue(filePath, configToApply);
-    }
-    console.log({ ...options, ...missingOptions });
+          await injectConfigTask.handle(
+            url + getProjectSettingConfNamespace(`db/${database}`)
+          );
+
+          await injectConfigTask.handle(
+            url + getProjectSettingConfNamespace(`storage/${storage}`)
+          );
+
+          await injectConfigTask.handle(
+            url + getProjectSettingConfNamespace(`mailer/${mailer}`)
+          );
+
+          await injectConfigTask.handle(
+            url + getProjectSettingConfNamespace(`cache/${cache}`)
+          );
+
+          return `Configuration set!`;
+        },
+      },
+    ]);
   }
 
   buildPromptOptions(options: Record<string, any>) {
-    console.log(options);
     const missingPromptOptions = [] as Record<string, any>;
     if (!("database" in options)) {
       const promptConfig = NEW_PROJECT_OPTIONS["database"];

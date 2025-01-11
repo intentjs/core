@@ -1,7 +1,20 @@
-import { execSync } from "child_process";
+import { exec, execSync } from "child_process";
+import { promisify } from "node:util";
 
+const execAsync = promisify(exec);
 export const downloadDependenciesUsingNpm = async (dirName: string) => {
-  execSync(`cd ${dirName}`);
-  execSync(`npm i`, { stdio: "ignore" });
-  execSync("cd ..");
+  await execAsync(`npm install`, {
+    windowsHide: true,
+    cwd: dirName,
+  });
+};
+
+export const downloadPackageUsingNpm = async (
+  dirName: string,
+  dependencies: string[]
+) => {
+  await execAsync(`npm install ${dependencies.join(" ")} --save`, {
+    windowsHide: true,
+    cwd: dirName,
+  });
 };

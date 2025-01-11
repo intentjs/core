@@ -1,48 +1,74 @@
-import { Project, SyntaxKind } from "ts-morph";
+import { join, normalize } from "path";
+import { DownloadFromRegistry } from "./download-registry";
+import { InjectConfig } from "./ast/inject-config";
+import { downloadPackageUsingNpm } from "../new-project/actions/download-depedencies";
+import { EnvManager } from "./env-manager";
 
-export const injectKeyValue = (
-  filePath: string,
-  registryObject: Record<string, any>
-) => {
-  const project = new Project({
-    manipulationSettings: {
-      useTrailingCommas: true,
-    },
-  });
-  const sourceFile = project.addSourceFileAtPath(filePath);
+export class InjectConfigCodegen {
+  constructor(private projectDirectory: string) {}
 
-  const returnStatement = sourceFile.getFirstDescendantByKind(
-    SyntaxKind.ReturnStatement
-  );
-  let objects = returnStatement?.getFirstDescendantByKind(
-    SyntaxKind.ObjectLiteralExpression
-  );
+  async handle(registryUrl: string): Promise<void> {
+    try {
+      const downloadFromRegistryTask = new DownloadFromRegistry();
+      const config = (await downloadFromRegistryTask.handle(
+        registryUrl
+      )) as InjectConfigRegistryType;
 
-  console.log(registryObject);
-  const { namespace, dependencies, key: pathArray, value } = registryObject;
+      const { filename, dependencies, env } = config;
+      if (!filename) {
+        console.warn(
+          "cannot proceed to inject the config without `filename` attribute."
+        );
+      }
+      const filePath = normalize(join(this.projectDirectory, filename));
 
-  for (let i = 0; i < pathArray.length - 1; i++) {
-    const key = pathArray[i];
-    const property = objects?.getProperty(key);
-
-    if (property) {
-      objects = property.getFirstChildByKind(
-        SyntaxKind.ObjectLiteralExpression
+      /**
+       * Inject key, value in the specified `filename`
+       */
+      const injectConfigTask = new InjectConfig(
+        this.projectDirectory,
+        filePath
       );
+      injectConfigTask.handle(config);
+
+      if (dependencies) {
+        await this.installDependencies(dependencies);
+      }
+
+      if (env && env.length) {
+        await this.setEnvironmentVariables(env);
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 
-  if (objects) {
-    console.log(JSON.stringify(value));
-    objects.addPropertyAssignment({
-      name: pathArray[pathArray.length - 1],
-      initializer: JSON.stringify(value),
-    });
+  async setEnvironmentVariables(env: [string, string][]): Promise<void> {
+    const envManager = new EnvManager(
+      normalize(join(this.projectDirectory, ".env"))
+    );
 
-    const updatedText = objects.getText().replace(/,\s*,/g, ",");
-    objects.replaceWithText(updatedText);
+    for (const envRow of env) {
+      const [variable, value] = envRow;
+      if (!variable) continue;
+      await envManager.updateVariable(variable, value);
+    }
   }
 
-  sourceFile.formatText();
-  sourceFile.saveSync();
+  async installDependencies(dependencies: Record<string, any>): Promise<void> {
+    await downloadPackageUsingNpm(
+      this.projectDirectory,
+      Object.keys(dependencies)
+    );
+  }
+}
+
+export type InjectConfigRegistryType = {
+  type: "inject-config";
+  dependencies: Record<string, any> | undefined;
+  namespace: string;
+  key: string[];
+  filename: string;
+  env: [string, string][];
+  value: Record<string, any>;
 };
