@@ -12,6 +12,7 @@ import { InjectConfigCodegen } from "../lib/codegen/inject-config";
 import { cwd } from "process";
 import { downloadRepository } from "../lib/new-project/actions/download-helper";
 import { downloadDependenciesUsingNpm } from "../lib/new-project/actions/download-depedencies";
+import picocolors from "picocolors";
 
 export class NewProjectCommand {
   constructor() {}
@@ -75,7 +76,7 @@ export class NewProjectCommand {
         },
       },
       {
-        title: "Installing via npm",
+        title: "Installing dependencies via npm",
         task: async (message) => {
           await downloadDependenciesUsingNpm(name);
           return "Dependencies installed 🧰";
@@ -92,22 +93,30 @@ export class NewProjectCommand {
             `new-project-settings/config/${path}.json`;
 
           const url = `https://raw.githubusercontent.com/intentjs/registry/refs/heads/main/`;
+
+          message(`Injecting config for ${picocolors.yellow(queue)} queue`);
           await injectConfigTask.handle(
             url + getProjectSettingConfNamespace(`queue/${queue}`)
           );
 
+          message(`Injecting config for ${picocolors.yellow(database)} db`);
           await injectConfigTask.handle(
             url + getProjectSettingConfNamespace(`db/${database}`)
           );
 
+          message(
+            `Injecting config for ${picocolors.yellow(storage)} filesystem`
+          );
           await injectConfigTask.handle(
             url + getProjectSettingConfNamespace(`storage/${storage}`)
           );
 
+          message(`Injecting config for ${picocolors.yellow(mailer)} mailer`);
           await injectConfigTask.handle(
             url + getProjectSettingConfNamespace(`mailer/${mailer}`)
           );
 
+          message(`Injecting config for ${picocolors.yellow(cache)} cache`);
           await injectConfigTask.handle(
             url + getProjectSettingConfNamespace(`cache/${cache}`)
           );
@@ -199,7 +208,6 @@ export class NewProjectCommand {
 
     // Check if name is available
     const dirPath = join(process.cwd(), name);
-    console.log(dirPath);
     if (existsSync(dirPath)) {
       console.log(
         INTENT_LOG_PREFIX,

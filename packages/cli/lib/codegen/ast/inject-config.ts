@@ -33,9 +33,11 @@ export class InjectConfig {
       return;
     }
 
-    this.addImports(registryObject);
-    this.updateObjectProperties(objects, registryObject);
-    await this.saveChanges(objects);
+    const propertyAdded = this.updateObjectProperties(objects, registryObject);
+    if (propertyAdded) {
+      this.addImports(registryObject);
+      await this.saveChanges(objects);
+    }
   }
 
   addImports(registryObject: Record<string, any>): void {
@@ -85,16 +87,25 @@ export class InjectConfig {
   private updateObjectProperties(
     objects: ObjectLiteralExpression,
     registryObject: Record<string, any>
-  ): void {
+  ): boolean {
     // Remove existing properties
+    const initializerName = registryObject.key[registryObject.key.length - 1];
+    let propAlreadyExists = false;
     objects.getProperties().forEach((property) => {
-      property.remove();
+      const propName = property.getSymbol()?.getName();
+      if (propName !== initializerName) {
+        property.remove();
+      } else {
+        propAlreadyExists = true;
+      }
     });
+
+    if (propAlreadyExists) return false;
 
     // Add new property
     const newConfig = objects
       .addPropertyAssignment({
-        name: registryObject.key[registryObject.key.length - 1],
+        name: initializerName,
         initializer: "{}",
       })
       .getInitializer();
@@ -111,7 +122,10 @@ export class InjectConfig {
               : JSON.stringify(value),
         });
       }
+      return true;
     }
+
+    return false;
   }
 
   transformEnvValues(obj: Record<string, any>) {
