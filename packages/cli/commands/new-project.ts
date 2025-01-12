@@ -27,6 +27,8 @@ export class NewProjectCommand {
      * Build Prompt Options
      */
     const promptOptions = this.buildPromptOptions(options);
+
+    p.intro("Setting up a new intent project");
     const missingOptions = await p.group(
       { ...promptOptions },
       {
@@ -125,6 +127,16 @@ export class NewProjectCommand {
         },
       },
     ]);
+
+    p.outro("Project setup complete! 🎉");
+
+    console.log("Building amazing products using Intent!");
+
+    console.log();
+    console.log(`${picocolors.gray("$")} ${picocolors.green(`cd ${name}`)}`);
+    console.log(
+      `${picocolors.gray("$")} ${picocolors.cyan("node intent dev")}`
+    );
   }
 
   buildPromptOptions(options: Record<string, any>) {
