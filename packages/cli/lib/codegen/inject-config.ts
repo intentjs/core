@@ -39,7 +39,7 @@ export class InjectConfigCodegen {
         await this.setEnvironmentVariables(env);
       }
     } catch (e) {
-      console.log(e);
+      console.log("error ==> ", e);
     }
   }
 
