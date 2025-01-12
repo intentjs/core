@@ -33,7 +33,6 @@
     "chokidar": "^3.5.1",
     "commander": "^12.1.0",
     "fs-extra": "^11.2.0",
-    "got": "^14.4.5",
     "picocolors": "^1.1.0",
     "prettier": "^3.4.2",
     "radash": "^12.1.0",
@@ -46,7 +45,6 @@
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.13",
     "@types/node": "^22.7.4",
-    "@types/tar": "^6.1.13",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2"
