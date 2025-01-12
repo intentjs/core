@@ -35,7 +35,7 @@ export const NEW_PROJECT_OPTIONS = {
     selectOptions: [
       { value: "in-memory", label: `In-Memory ${defaultTag}` },
       { value: "redis", label: "Redis" },
-      { value: "dicedb", label: "DiceDB" },
+      // { value: "dicedb", label: "DiceDB" },
     ],
   },
   mailer: {
