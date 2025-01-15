@@ -40,6 +40,15 @@ export default configNamespace(
         database: +process.env.REDIS_DB || 0,
         prefix: 'intentjs',
       },
+
+      dicedb: {
+        driver: 'dicedb',
+        host: process.env.DICEDB_HOST || '127.0.0.1',
+        password: process.env.DICEDB_PASSWORD || undefined,
+        port: +process.env.DICEDB_PORT || 6379,
+        database: +process.env.DICEDB_DB || 0,
+        prefix: 'intentjs',
+      },
     },
   }),
 );
