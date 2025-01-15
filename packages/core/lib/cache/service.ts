@@ -6,10 +6,15 @@ import {
   InMemoryDriverOption,
   RedisDriverOption,
 } from './interfaces';
+import { DiceDbDriver } from './drivers/dice-db';
 
 @Injectable()
 export class CacheService {
-  static driverMap = { redis: RedisDriver, memory: InMemoryDriver };
+  static driverMap = {
+    redis: RedisDriver,
+    memory: InMemoryDriver,
+    dicedb: DiceDbDriver,
+  };
   static stores = new Map<string, CacheDriver>();
 
   constructor() {}

@@ -11,6 +11,17 @@ export interface RedisDriverOption {
   prefix?: string;
 }
 
+export interface DiceDbDriverOption {
+  driver: 'dicedb';
+  host?: string;
+  port?: number;
+  url?: string;
+  username?: string;
+  password?: string;
+  database?: number;
+  prefix?: string;
+}
+
 export interface InMemoryDriverOption {
   driver: 'memory';
   prefix: string;
@@ -20,7 +31,10 @@ export interface CacheOptions {
   isGlobal?: boolean;
   default: string;
   stores: {
-    [key: string]: RedisDriverOption | InMemoryDriverOption;
+    [key: string]:
+      | RedisDriverOption
+      | InMemoryDriverOption
+      | DiceDbDriverOption;
   };
 }
 
