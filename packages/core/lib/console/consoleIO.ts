@@ -113,6 +113,11 @@ export class ConsoleIO {
     ConsoleLogger.error(msg);
   }
 
+  /**
+   * Use this method to print a warning message
+   * @param msg
+   * @returns void
+   */
   warn(msg: string) {
     ConsoleLogger.warn(msg);
   }
