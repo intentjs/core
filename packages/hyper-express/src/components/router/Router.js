@@ -83,7 +83,7 @@ class Router {
                     continue;
                 } else if (!this.#context_pattern) {
                     throw new Error(
-                        'HyperExpress.Router: Route pattern is required unless created from a chainable route instance using Route.route() method.'
+                        'HyperExpress.Router: Route pattern is required unless created from a chainable route instance using Route.route() method.',
                     );
                 } else {
                     // The path is the context pattern
@@ -196,13 +196,16 @@ class Router {
                             record.method,
                             merge_relative_paths(pattern, record.pattern),
                             record.options,
-                            record.handler
-                        )
+                            record.handler,
+                        ),
                     );
 
                     // Register middlewares from router locally with adjusted pattern
                     return middlewares.forEach((record) =>
-                        reference._register_middleware(merge_relative_paths(pattern, record.pattern), record.middleware)
+                        reference._register_middleware(
+                            merge_relative_paths(pattern, record.pattern),
+                            record.middleware,
+                        ),
                     );
                 case 'route':
                     // Register route from router locally with adjusted pattern
@@ -210,13 +213,13 @@ class Router {
                         object.method,
                         merge_relative_paths(pattern, object.pattern),
                         object.options,
-                        object.handler
+                        object.handler,
                     );
                 case 'middleware':
                     // Register middleware from router locally with adjusted pattern
                     return reference._register_middleware(
                         merge_relative_paths(pattern, object.patch),
-                        object.middleware
+                        object.middleware,
                     );
             }
         });
@@ -249,7 +252,7 @@ class Router {
         // If we have a context pattern, then this is a contextual Chainable and should not allow middlewares or routers to be bound to it
         if (this.#context_pattern)
             throw new Error(
-                'HyperExpress.Router.use() -> Cannot bind middlewares or routers to a contextual router created using Router.route() method.'
+                'HyperExpress.Router.use() -> Cannot bind middlewares or routers to a contextual router created using Router.route() method.',
             );
 
         // Parse a pattern for this use call with a fallback to the local-global scope aka. '/' pattern
@@ -258,7 +261,7 @@ class Router {
         // Validate that the pattern value does not contain any wildcard or path parameter prefixes which are not allowed
         if (pattern.indexOf('*') > -1 || pattern.indexOf(':') > -1)
             throw new Error(
-                'HyperExpress: Server/Router.use() -> Wildcard "*" & ":parameter" prefixed paths are not allowed when binding middlewares or routers using this method.'
+                'HyperExpress: Server/Router.use() -> Wildcard "*" & ":parameter" prefixed paths are not allowed when binding middlewares or routers using this method.',
             );
 
         // Register each candidate individually depending on the type of candidate value
