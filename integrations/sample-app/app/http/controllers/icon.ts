@@ -93,7 +93,7 @@ export class IntentController {
     return { hello: 'world' };
   }
 
-  @Validate(LoginDto)
+  // @Validate(LoginDto)
   @UseGuards(CustomGuard)
   @Post('/json')
   async postJson(
