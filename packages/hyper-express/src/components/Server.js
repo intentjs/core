@@ -55,7 +55,7 @@ class Server extends Router {
         // Only accept object as a parameter type for options
         if (options == null || typeof options !== 'object')
             throw new Error(
-                'HyperExpress: HyperExpress.Server constructor only accepts an object type for the options parameter.'
+                'HyperExpress: HyperExpress.Server constructor only accepts an object type for the options parameter.',
             );
 
         // Initialize extended Router instance
@@ -90,7 +90,7 @@ class Server extends Router {
 
             // Throw error if uWebsockets.js fails to initialize
             throw new Error(
-                `new HyperExpress.Server(): Failed to create new Server instance due to an invalid configuration in options.\n${_options}`
+                `new HyperExpress.Server(): Failed to create new Server instance due to an invalid configuration in options.\n${_options}`,
             );
         }
 
@@ -110,7 +110,7 @@ class Server extends Router {
     _bind_auto_close() {
         const reference = this;
         ['exit', 'SIGINT', 'SIGUSR1', 'SIGUSR2', 'SIGTERM'].forEach((type) =>
-            process.once(type, () => reference.close())
+            process.once(type, () => reference.close()),
         );
     }
 
@@ -147,7 +147,7 @@ class Server extends Router {
                     host = second;
                 } else {
                     throw new Error(
-                        `HyperExpress.Server.listen(): The second argument must either be a callback function or a string as a hostname.`
+                        `HyperExpress.Server.listen(): The second argument must either be a callback function or a string as a hostname.`,
                     );
                 }
 
@@ -164,7 +164,7 @@ class Server extends Router {
                 await Promise.all([fs.access(key_file_name), fs.access(cert_file_name)]);
             } catch (error) {
                 throw new Error(
-                    `HyperExpress.Server.listen(): The provided SSL certificate file at "${cert_file_name}" or private key file at "${key_file_name}" does not exist or is not readable.\n${error}`
+                    `HyperExpress.Server.listen(): The provided SSL certificate file at "${cert_file_name}" or private key file at "${key_file_name}" does not exist or is not readable.\n${error}`,
                 );
             }
         }
@@ -192,7 +192,7 @@ class Server extends Router {
                     resolve(listen_socket);
                 } else {
                     reject(
-                        'HyperExpress.Server.listen(): No Socket Received From uWebsockets.js likely due to an invalid host or busy port.'
+                        'HyperExpress.Server.listen(): No Socket Received From uWebsockets.js likely due to an invalid host or busy port.',
                     );
                 }
             };
@@ -364,14 +364,14 @@ class Server extends Router {
         // Do not allow route creation once it is locked after a not found handler has been bound
         if (this.#routes_locked === true)
             throw new Error(
-                `HyperExpress: Routes/Routers must not be created or used after the Server.listen() has been called. [${method.toUpperCase()} ${pattern}]`
+                `HyperExpress: Routes/Routers must not be created or used after the Server.listen() has been called. [${method.toUpperCase()} ${pattern}]`,
             );
 
         // Do not allow duplicate routes for performance/stability reasons
         // We make an exception for 'upgrade' routes as they must replace the default route added by WebsocketRoute
         if (method !== 'upgrade' && this.#routes[method][pattern])
             throw new Error(
-                `HyperExpress: Failed to create route as duplicate routes are not allowed. Ensure that you do not have any routers or routes that try to handle requests with the same pattern. [${method.toUpperCase()} ${pattern}]`
+                `HyperExpress: Failed to create route as duplicate routes are not allowed. Ensure that you do not have any routers or routes that try to handle requests with the same pattern. [${method.toUpperCase()} ${pattern}]`,
             );
 
         // Create a Route object to contain route information through handling process
@@ -402,7 +402,7 @@ class Server extends Router {
                 const current = this.#routes[method][pattern];
                 if (current && current._temporary !== true)
                     throw new Error(
-                        `HyperExpress: Failed to create upgrade route as an upgrade route with the same pattern already exists and duplicate routes are not allowed. [${method.toUpperCase()} ${pattern}]`
+                        `HyperExpress: Failed to create upgrade route as an upgrade route with the same pattern already exists and duplicate routes are not allowed. [${method.toUpperCase()} ${pattern}]`,
                     );
 
                 // Overwrite the upgrade route that exists from WebsocketRoute with this custom route
@@ -436,7 +436,7 @@ class Server extends Router {
         // Do not allow route creation once it is locked after a not found handler has been bound
         if (this.#routes_locked === true)
             throw new Error(
-                `HyperExpress: Routes/Routers must not be created or used after the Server.listen() has been called. [${method.toUpperCase()} ${pattern}]`
+                `HyperExpress: Routes/Routers must not be created or used after the Server.listen() has been called. [${method.toUpperCase()} ${pattern}]`,
             );
 
         // Initialize middlewares array for specified pattern
@@ -467,7 +467,7 @@ class Server extends Router {
 
         // Iterate through all routes
         Object.keys(this.#routes).forEach((method) =>
-            Object.keys(this.#routes[method]).forEach((pattern) => this.#routes[method][pattern].compile())
+            Object.keys(this.#routes[method]).forEach((pattern) => this.#routes[method][pattern].compile()),
         );
 
         // Lock routes from further creation
@@ -544,7 +544,7 @@ class Server extends Router {
             // Throw error if listening socket does not exist
             if (!this.#listen_socket)
                 throw new Error(
-                    'HyperExpress: Server.port is not available as the server is not listening. Please ensure you called already Server.listen() OR have not yet called Server.close() when accessing this property.'
+                    'HyperExpress: Server.port is not available as the server is not listening. Please ensure you called already Server.listen() OR have not yet called Server.close() when accessing this property.',
                 );
 
             // Cache the resolved port
