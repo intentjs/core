@@ -84,10 +84,14 @@ export const ANY: RouteDecoratorType = (
 export const UseGuards = (...guards: Type<IntentGuard>[]) => {
   return function (target: object, key?: string | symbol, descriptor?: any) {
     if (key) {
-      Reflect.defineMetadata(GUARD_KEY, guards, target, key);
+      const existingGuards = Reflect.getMetadata(GUARD_KEY, target, key);
+      const composeGuards = [...(existingGuards || []), ...guards];
+      Reflect.defineMetadata(GUARD_KEY, composeGuards, target, key);
       return;
     }
-    Reflect.defineMetadata(GUARD_KEY, guards, target);
+    const existingGuards = Reflect.getMetadata(GUARD_KEY, target);
+    const composeGuards = [...(existingGuards || []), ...guards];
+    Reflect.defineMetadata(GUARD_KEY, composeGuards, target);
     return;
   };
 };
