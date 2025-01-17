@@ -36,7 +36,6 @@ export class HyperServer {
 
     for (const route of routes) {
       const { path, httpHandler } = route;
-
       const middlewares = this.composeMiddlewares(path, route.method);
       switch (route.method) {
         case HttpMethods.GET:
@@ -81,7 +80,7 @@ export class HyperServer {
   configureStaticServer() {
     const staticServeConfig = ConfigService.get('http.staticServe');
 
-    if (!staticServeConfig || typeof staticServeConfig !== "object") {
+    if (!staticServeConfig || typeof staticServeConfig !== 'object') {
       return;
     }
 
