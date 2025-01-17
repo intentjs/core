@@ -11,4 +11,10 @@ export class Storage {
   static disk(disk?: string) {
     return StorageService.getDriver(disk);
   }
+
+  static async download(url: string): Promise<Buffer> {
+    const res = await fetch(url);
+    const data = await res.arrayBuffer();
+    return Buffer.from(data);
+  }
 }
