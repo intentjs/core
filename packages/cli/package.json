@@ -27,12 +27,12 @@
     "publish:npm": "npm publish --access public"
   },
   "dependencies": {
-    "@clack/prompts": "^0.9.0",
-    "@swc/cli": "^0.5.2",
-    "@swc/core": "^1.10.0",
-    "chokidar": "^3.5.1",
-    "commander": "^12.1.0",
-    "fs-extra": "^11.2.0",
+    "@clack/prompts": "^0.9.1",
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.7",
+    "chokidar": "^4.0.3",
+    "commander": "^13.0.0",
+    "fs-extra": "^11.3.0",
     "picocolors": "^1.1.0",
     "prettier": "^3.4.2",
     "radash": "^12.1.0",
