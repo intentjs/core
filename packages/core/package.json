@@ -34,7 +34,6 @@
     "publish:next": "npm publish --access public --tag next",
     "test": "jest",
     "test:dev": "jest --watch",
-    "email:dev": "email dev",
     "precopy:assets": "mkdir -p dist",
     "copy:assets": "cp -rip './resources' 'dist/resources'"
   },
@@ -65,12 +64,11 @@
     "typescript": "^5.5.2"
   },
   "dependencies": {
-    "@intentjs/hyper-express": "^0.0.5",
+    "@intentjs/hyper-express": "^0.0.6",
     "@nestjs/common": "^10.4.8",
     "@nestjs/core": "^10.4.8",
-    "@react-email/components": "^0.0.25",
+    "@react-email/components": "^0.0.32",
     "archy": "^1.0.0",
-    "axios": "^1.7.7",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cli-table3": "^0.6.3",
@@ -86,8 +84,6 @@
     "ms": "^2.1.3",
     "objection": "^3.1.4",
     "picocolors": "^1.1.0",
-    "react-email": "^3.0.1",
-    "rxjs": "^7.8.1",
     "ts-morph": "^22.0.0",
     "ulid": "^2.3.0",
     "winston": "^3.13.0",
