@@ -1,6 +1,6 @@
 {
   "name": "@intentjs/core",
-  "version": "0.1.43",
+  "version": "0.1.44",
   "description": "Core module for Intent",
   "repository": {
     "type": "git",
@@ -58,7 +58,7 @@
     "eslint-plugin-sonarjs": "^1.0.4",
     "jest": "^29.7.0",
     "prettier": "^3.3.3",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "^0.2.2",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.1.4",
     "typescript": "^5.5.2"
@@ -73,11 +73,12 @@
     "class-validator": "^0.14.1",
     "cli-table3": "^0.6.3",
     "console.mute": "^0.3.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "enquirer": "^2.4.1",
     "eta": "^3.5.0",
     "fs-extra": "^11.1.1",
-    "helmet": "^7.1.0",
+    "helmet": "^8.0.0",
     "ioredis": "^5.3.2",
     "knex": "^3.1.0",
     "live-directory": "^3.0.3",
