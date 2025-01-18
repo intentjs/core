@@ -1,15 +1,10 @@
 import { InvalidValue } from '../../lib';
 import { Obj } from '../../lib';
 
-jest.mock('../../config/service');
+jest.mock('../../lib/config/service');
 
 describe('Object Helper', () => {
   beforeEach(async () => {});
-
-  //   it('should throw exception', () => {
-  //     const arr = {};
-  //     expect(Arr.toObj(arr as [], [])).toThrow(InvalidValue);
-  //   });
 
   it('should return flattened object with dot notation', () => {
     const obj = {

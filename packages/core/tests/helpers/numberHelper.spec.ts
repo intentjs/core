@@ -1,6 +1,6 @@
 import { Num } from '../../lib';
 
-jest.mock('../../../lib/config/service');
+jest.mock('../../lib/config/service');
 
 describe('Numbers Helper', () => {
   beforeEach(async () => {});

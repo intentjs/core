@@ -5,10 +5,6 @@ jest.mock('../../lib/config/service');
 describe('Array Helper', () => {
   beforeEach(async () => {});
 
-  //   it('should throw exception', () => {
-  //     const arr = {};
-  //     expect(Arr.toObj(arr as [], [])).toThrow(InvalidValue);
-  //   });
 
   it('should return object', () => {
     const arr = [
