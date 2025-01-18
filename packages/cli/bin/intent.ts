@@ -13,7 +13,7 @@ program
   .option("-c, --config [path]", "Path to the .intentrc file.")
   .option("-t, --tsconfig [tsConfigPath]", "Path to tsconfig file.")
   .option("-w, --watch", "Run in watch mode (live-reload).")
-  .option("-wa, --watch-assets", "Watch non-ts (e.g., .graphql) files mode.")
+  .option("-a, --watch-assets", "Watch non-ts (e.g., .graphql) files mode.")
   .option("-d, --debug [hostport] ", "Run in debug mode (with --inspect flag).")
   .option(
     "-dtc, --disable-type-check",
