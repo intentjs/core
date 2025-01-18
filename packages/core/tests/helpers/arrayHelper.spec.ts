@@ -1,6 +1,6 @@
-import { Arr } from '../array';
+import { Arr } from '../../lib';
 
-jest.mock('../../config/service');
+jest.mock('../../lib/config/service');
 
 describe('Array Helper', () => {
   beforeEach(async () => {});

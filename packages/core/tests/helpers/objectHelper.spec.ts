@@ -1,5 +1,5 @@
-import { InvalidValue } from '../../exceptions';
-import { Obj } from '../object';
+import { InvalidValue } from '../../lib';
+import { Obj } from '../../lib';
 
 jest.mock('../../config/service');
 
