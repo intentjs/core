@@ -4,7 +4,7 @@ export const defaultTag = picocolors.gray(`(default)`);
 
 export const NEW_PROJECT_OPTIONS = {
   database: {
-    option: "-db, --database <type>",
+    option: "-d, --database <type>",
     description: "Default DB for your application",
     choices: ["pg", "mysql", "sqlite"],
     question: "Choice of Database?",
