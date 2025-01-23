@@ -1,4 +1,4 @@
-import { LimiterDriver } from '../interfaces/LimiterDriver';
+import { LimiterDriver } from '../interfaces/limiterDriver';
 
 export class MemoryDriver implements LimiterDriver {
   private static keyCounts = {};
