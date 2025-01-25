@@ -12,7 +12,6 @@ import { InjectConfigCodegen } from "../lib/codegen/inject-config";
 import { cwd } from "process";
 import { downloadRepository } from "../lib/new-project/actions/download-helper";
 import { downloadDependenciesUsingNpm } from "../lib/new-project/actions/download-depedencies";
-import picocolors from "picocolors";
 
 export class NewProjectCommand {
   constructor() {}
@@ -96,29 +95,29 @@ export class NewProjectCommand {
 
           const url = `https://raw.githubusercontent.com/intentjs/registry/refs/heads/main/`;
 
-          message(`Injecting config for ${picocolors.yellow(queue)} queue`);
+          message(`Injecting config for ${pc.yellow(queue)} queue`);
           await injectConfigTask.handle(
             url + getProjectSettingConfNamespace(`queue/${queue}`)
           );
 
-          message(`Injecting config for ${picocolors.yellow(database)} db`);
+          message(`Injecting config for ${pc.yellow(database)} db`);
           await injectConfigTask.handle(
             url + getProjectSettingConfNamespace(`db/${database}`)
           );
 
           message(
-            `Injecting config for ${picocolors.yellow(storage)} filesystem`
+            `Injecting config for ${pc.yellow(storage)} filesystem`
           );
           await injectConfigTask.handle(
             url + getProjectSettingConfNamespace(`storage/${storage}`)
           );
 
-          message(`Injecting config for ${picocolors.yellow(mailer)} mailer`);
+          message(`Injecting config for ${pc.yellow(mailer)} mailer`);
           await injectConfigTask.handle(
             url + getProjectSettingConfNamespace(`mailer/${mailer}`)
           );
 
-          message(`Injecting config for ${picocolors.yellow(cache)} cache`);
+          message(`Injecting config for ${pc.yellow(cache)} cache`);
           await injectConfigTask.handle(
             url + getProjectSettingConfNamespace(`cache/${cache}`)
           );
@@ -133,9 +132,9 @@ export class NewProjectCommand {
     console.log("Building amazing products using Intent!");
 
     console.log();
-    console.log(`${picocolors.gray("$")} ${picocolors.green(`cd ${name}`)}`);
+    console.log(`${pc.gray("$")} ${pc.green(`cd ${name}`)}`);
     console.log(
-      `${picocolors.gray("$")} ${picocolors.cyan("node intent dev")}`
+      `${pc.gray("$")} ${pc.cyan("node intent dev")}`
     );
   }
 
