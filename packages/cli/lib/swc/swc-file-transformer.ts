@@ -10,6 +10,8 @@ import { debounce } from "radash";
 import { TypeCheckerHost } from "../type-checker/type-checker";
 import { SWC_DEBUG_LOG_PREFIX } from "../utils/log-helpers";
 import { Output, transformFile } from "@swc/core";
+import { glob } from "node:fs/promises";
+import { watch } from "node:fs";
 
 export class SwcFileTransformer {
   tsConfigLoader = new TsConfigLoader();
@@ -28,15 +30,16 @@ export class SwcFileTransformer {
 
       await this.transformFiles(tsConfigPath, options, extras);
 
-      const delayedOnChange = debounce({ delay: 150 }, () => {
-        this.transformFiles(tsConfigPath, options, extras);
-        onSuccessHook && onSuccessHook();
-      });
-
       if (onSuccessHook) {
         const debouncedSuccess = debounce({ delay: 500 }, onSuccessHook);
         debouncedSuccess();
       }
+
+      const delayedOnChange = debounce({ delay: 150 }, () => {
+        this.transformFiles(tsConfigPath, options, extras).then((val) => {
+          onSuccessHook && onSuccessHook();
+        });
+      });
 
       this.watchIncludedFiles(tsConfigPath, delayedOnChange);
     } else {
@@ -162,24 +165,38 @@ export class SwcFileTransformer {
     return filePath.replace(/\//g, "\\");
   }
 
-  watchIncludedFiles(tsConfigPath: string, onChange: () => void) {
+  async watchIncludedFiles(
+    tsConfigPath: string,
+    onChange: () => void
+  ): Promise<void> {
     const tsConfig = this.tsConfigLoader.load(tsConfigPath);
     const { includeDirs } = tsConfig;
+    const cwd = process.cwd();
 
-    const watcher = chokidar.watch(
-      [...includeDirs, "../../node_modules/@intentjs/**/*"].map((dir: string) =>
-        join(dir, "**/*.ts")
-      ),
-      {
-        persistent: true,
-        ignoreInitial: true,
-        awaitWriteFinish: { stabilityThreshold: 50, pollInterval: 10 },
-      }
+    const watchPatterns = [...includeDirs, "../../node_modules/@intentjs"].map(
+      (dir: string) => join(cwd, dir)
     );
+    const watcher = chokidar.watch(".", {
+      persistent: true,
+      ignoreInitial: true,
+      cwd,
+      awaitWriteFinish: { stabilityThreshold: 50, pollInterval: 10 },
+      ignored: (filepath) => {
+        if (filepath === process.cwd()) {
+          return false;
+        }
+
+        for (const watchPattern of watchPatterns) {
+          if (filepath.includes(watchPattern)) return false;
+        }
+
+        return true;
+      },
+    });
 
     watcher
       .on("add", () => onChange())
-      .on("change", () => onChange())
-      .on("error", () => onChange());
+      .on("change", (filepath: string) => onChange())
+      .on("error", (error) => onChange());
   }
 }

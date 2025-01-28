@@ -7,7 +7,7 @@ export class TestCacheConsoleCommand {
     const strValue = 'Hello world!';
     const objValue = { msg: 'Hey there!' };
 
-    const disks = ['memory', 'redis'];
+    const disks = ['memory', 'redis', 'dicedb'];
     for (const disk of disks) {
       _cli.info(`Testing integration for ${disk} cache`);
       /**

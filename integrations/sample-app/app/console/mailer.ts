@@ -13,6 +13,7 @@ export class TestMailConsoleCommand {
       .line('Rise & Shine,')
       .line('V')
       .subject('Hey there from Intent');
+    console.log((await mail3.getMailData()).html);
     await Mail.init().to('vinayak@tryhanalabs.com').send(mail3);
     return true;
   }

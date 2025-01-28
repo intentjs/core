@@ -93,8 +93,9 @@ export class IntentController {
     return { hello: 'world' };
   }
 
+  // @Validate(LoginDto)
+  @UseGuards(CustomGuard)
   @Post('/json')
-  @Validate(LoginDto)
   async postJson(
     @Req() req: Request,
     @Dto() dto: LoginDto,
@@ -130,9 +131,6 @@ export class IntentController {
     //   'user agent ===> ',
     //   userAgent,
     // );
-
-    // console.log('all headers ===> ', headers);
-    console.log('uploaded files ==> ', req.dto(), dto);
 
     const readStream = createReadStream(
       join(findProjectRoot(), 'storage/uploads/sample-image.jpg'),

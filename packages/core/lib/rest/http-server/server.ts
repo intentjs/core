@@ -7,6 +7,9 @@ import LiveDirectory from 'live-directory';
 import { FileNotFoundException } from '../../exceptions/file-not-found-exception';
 import { Str } from '../../utils';
 import { joinRoute } from '../helpers';
+import { PassThrough } from 'node:stream';
+import { HttpException } from '../../exceptions';
+import { HttpStatus } from './status-codes';
 
 export class HyperServer {
   protected hyper: HyperExpress.Server;
@@ -36,7 +39,6 @@ export class HyperServer {
 
     for (const route of routes) {
       const { path, httpHandler } = route;
-
       const middlewares = this.composeMiddlewares(path, route.method);
       switch (route.method) {
         case HttpMethods.GET:
@@ -81,7 +83,7 @@ export class HyperServer {
   configureStaticServer() {
     const staticServeConfig = ConfigService.get('http.staticServe');
 
-    if (!staticServeConfig || typeof staticServeConfig !== "object") {
+    if (!staticServeConfig || typeof staticServeConfig !== 'object') {
       return;
     }
 
@@ -117,11 +119,16 @@ export class HyperServer {
       const fileParts = file.path.split('.');
       const extension = fileParts[fileParts.length - 1];
 
-      const content = file.content;
+      const content = file.content as any;
       if (content instanceof Buffer) {
         return res.type(extension).send(content);
+      } else if (content instanceof PassThrough) {
+        return content.pipe(res.type(extension));
       } else {
-        return res.type(extension).stream(content);
+        throw new HttpException(
+          'Unsupported content type',
+          HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+        );
       }
     });
   }

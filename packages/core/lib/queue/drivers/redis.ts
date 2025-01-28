@@ -87,7 +87,7 @@ export class RedisQueueDriver implements PollQueueDriver {
   ): Promise<void> {
     await this.client.zadd(
       this.getDelayedQueue(`${rawPayload.queue}`),
-      Date.now() + rawPayload.delay * 1000,
+      rawPayload.delay,
       this.getProcessedMessage(message),
     );
   }

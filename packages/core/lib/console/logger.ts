@@ -13,7 +13,7 @@ export class ConsoleLogger {
   }
 
   /**
-   * Use this method to print an information line
+   * Use this method to print a warning message
    * @param msg
    * @returns void
    */
