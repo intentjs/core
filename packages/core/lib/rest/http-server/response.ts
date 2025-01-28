@@ -86,13 +86,7 @@ export class Response {
     /**
      * Set the status code of the response
      */
-    if (!this.statusCode && method === 'POST') {
-      res.status(HttpStatus.CREATED);
-    } else if (this.statusCode) {
-      res.status(this.statusCode);
-    } else {
-      res.status(HttpStatus.OK);
-    }
+    res.status(this.statusCode ?? (method === 'POST' ? HttpStatus.CREATED : HttpStatus.OK));
 
     /**
      * Set the headers
